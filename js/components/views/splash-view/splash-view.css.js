@@ -39,13 +39,13 @@ export const styles = css`
   .diag::before { left: -4px; background: var(--ink); }
   .diag::after { right: -4px; background: var(--red); }
 
-  /* wordmark */
-  .title { margin-top: auto; }
+  /* wordmark — tamaño fluido (cqw) para que COUNTER nunca desborde */
+  .title { margin-top: auto; container-type: inline-size; }
   .title .k { font-family: var(--font-body); font-size: 11px; letter-spacing: .2em; text-transform: uppercase;
     color: var(--red); font-weight: 700; margin-bottom: 6px; animation: pc-up .6s cubic-bezier(.16,1,.3,1) .5s both; }
-  .title h1 { font-family: var(--font-display); font-weight: 800; line-height: .86; letter-spacing: -.045em; text-transform: uppercase; margin: 0; }
-  .title h1 .l1 { font-size: 43px; display: block; animation: pc-up .6s cubic-bezier(.16,1,.3,1) .58s both; }
-  .title h1 .l2 { font-size: 43px; display: block; -webkit-text-stroke: 2px var(--ink); color: transparent;
+  .title h1 { font-family: var(--font-display); font-weight: 800; line-height: .86; letter-spacing: -.045em; text-transform: uppercase; margin: 0; white-space: nowrap; }
+  .title h1 .l1 { font-size: min(44px, 12.4cqw); display: block; animation: pc-up .6s cubic-bezier(.16,1,.3,1) .58s both; }
+  .title h1 .l2 { font-size: min(44px, 12.4cqw); display: block; -webkit-text-stroke: 2px var(--ink); color: transparent;
     animation: pc-up .6s cubic-bezier(.16,1,.3,1) .66s both; }
 
   .tag { margin-top: 18px; display: inline-block; align-self: flex-start; background: var(--blue); color: var(--paper);

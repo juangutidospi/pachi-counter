@@ -13,8 +13,8 @@ export const styles = css`
     border: var(--border-w) solid var(--ink); background: var(--paper);
   }
   @media (max-width: 460px) {
-    :host { padding: 0; }
-    .frame { height: 100vh; border-radius: 0; border: none; box-shadow: none; }
+    :host { padding: 0; width: 100%; }
+    .frame { width: 100%; height: 100vh; border-radius: 0; border: none; box-shadow: none; }
   }
 
   .screen {
