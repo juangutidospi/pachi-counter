@@ -48,10 +48,9 @@ test('todos los tokens de tema usados están definidos en tokens.css', () => {
   assert.deepEqual(missing, [], `Tokens usados sin definir en tokens.css: ${missing.join(', ')}`);
 });
 
-test('el tema claro redefine los tokens estructurales de superficie', () => {
+test('la paleta Bauhaus define los tokens de marca', () => {
   const tokensCss = readFileSync(join(root, 'css', 'tokens.css'), 'utf8');
-  const lightBlock = tokensCss.slice(tokensCss.indexOf('[data-theme="light"]'));
-  for (const token of ['--color-bg', '--color-surface', '--color-text', '--color-accent']) {
-    assert.ok(lightBlock.includes(token), `El tema claro no redefine ${token}`);
+  for (const token of ['--paper', '--ink', '--red', '--blue', '--yellow']) {
+    assert.ok(new RegExp(`${token}\\s*:`).test(tokensCss), `Falta el token de marca ${token}`);
   }
 });

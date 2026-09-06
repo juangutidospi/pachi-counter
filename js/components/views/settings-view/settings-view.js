@@ -1,7 +1,6 @@
 import { AppElement } from '../../../core/AppElement.js';
 import { store } from '../../../core/store.js';
 import { router } from '../../../core/router.js';
-import { theme } from '../../../core/theme.js';
 import { t, getLang, setLang } from '../../../core/i18n.js';
 import { uiIcon } from '../../../core/icons.js';
 import { escapeHtml } from '../../../core/escape-html.js';
@@ -42,11 +41,6 @@ export class SettingsView extends AppElement {
           <seg-control id="lang"></seg-control>
         </div>
 
-        <div class="field">
-          <label>${t('settings.themeLabel')}</label>
-          <seg-control id="theme"></seg-control>
-        </div>
-
         <h6>${t('settings.dataTitle')}</h6>
         <div class="card elev-sm data">
           <div class="row"><span class="k">${t('settings.savedIn')}</span><span class="mono">localStorage · pachi.v1</span></div>
@@ -81,11 +75,6 @@ export class SettingsView extends AppElement {
     lang.options = ['es', 'en'].map((v) => ({ value: v, label: t('settings.lang.' + v) }));
     lang.value = getLang();
     this.on(lang, 'change', (e) => setLang(e.detail.value));
-
-    const themeCtl = this.$('#theme');
-    themeCtl.options = ['dark', 'light'].map((v) => ({ value: v, label: t('settings.theme.' + v) }));
-    themeCtl.value = theme.current;
-    this.on(themeCtl, 'change', (e) => theme.set(e.detail.value));
 
     this.on(this.$('#reminder'), 'change', (e) => store.setReminder(e.target.value));
     this.on(this.$('#export'), 'click', () => this._export());

@@ -15,7 +15,8 @@ export const es = {
   },
 
   splash: {
-    enter: 'toca para entrar',
+    kicker: 'Contador de rachas',
+    enter: 'Toca para entrar',
   },
 
   home: {
@@ -74,8 +75,6 @@ export const es = {
     reminderHint: 'un aviso, sin insistir',
     langLabel: 'Idioma',
     lang: { es: 'Español', en: 'English' },
-    themeLabel: 'Tema',
-    theme: { dark: 'Oscuro', light: 'Claro' },
     dataTitle: 'Datos',
     savedIn: 'Guardado en',
     size: 'Tamaño',
@@ -99,7 +98,7 @@ export const es = {
     tailPh: { quit: 'sin azúcar', build: 'leyendo cada día' },
     iconLabel: 'Icono',
     colorLabel: 'Acento',
-    color: { accent: 'Blurple', accent2: 'Lila', light: 'Claro', deep: 'Profundo' },
+    color: { accent: 'Azul', accent2: 'Rojo', light: 'Amarillo', deep: 'Negro' },
     startLabel: 'Fecha de inicio',
     startToday: 'Hoy',
     startPast: 'Ya llevo días',

@@ -13,10 +13,10 @@ export const DEF_MILESTONES = [1, 3, 7, 21, 30, 90, 180, 365];
  * por lo que el color se adapta a claro/oscuro sin tocar el store.
  */
 export const COUNTER_COLORS = {
-  accent: { key: 'accent', value: 'var(--color-accent)' },
-  accent2: { key: 'accent2', value: 'var(--color-accent-2)' },
-  light: { key: 'light', value: 'var(--color-accent-400)' },
-  deep: { key: 'deep', value: 'var(--color-accent-600)' },
+  accent: { key: 'accent', value: 'var(--blue)', on: 'var(--paper)' },
+  accent2: { key: 'accent2', value: 'var(--red)', on: 'var(--paper)' },
+  light: { key: 'light', value: 'var(--yellow)', on: 'var(--ink)' },
+  deep: { key: 'deep', value: 'var(--ink)', on: 'var(--paper)' },
 };
 
 /** Datos de ejemplo para la primera ejecución (y para el botón demo). */

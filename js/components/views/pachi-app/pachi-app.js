@@ -1,7 +1,6 @@
 import { AppElement } from '../../../core/AppElement.js';
 import { store } from '../../../core/store.js';
 import { router } from '../../../core/router.js';
-import { theme } from '../../../core/theme.js';
 import { t } from '../../../core/i18n.js';
 import { escapeHtml } from '../../../core/escape-html.js';
 import '../splash-view/splash-view.js';
@@ -36,7 +35,6 @@ export class PachiApp extends AppElement {
     this._subs = [
       store.subscribe(() => this._paint()),
       router.subscribe(() => this._paint()),
-      theme.subscribe(() => this._paint()),
     ];
   }
 
@@ -69,9 +67,9 @@ export class PachiApp extends AppElement {
     const route = router.route;
     return `
       <div class="tabbar">
-        <button class="btn btn-ghost link ${route === 'home' ? 'active' : ''}" id="nav-home">${t('nav.streaks')}</button>
-        <button class="btn btn-primary new" id="nav-new">${t('nav.new')}</button>
-        <button class="btn btn-ghost link ${route === 'settings' ? 'active' : ''}" id="nav-settings">${t('nav.settings')}</button>
+        <button class="link ${route === 'home' ? 'active' : ''}" id="nav-home">${t('nav.streaks')}</button>
+        <button class="new" id="nav-new">${t('nav.new')}</button>
+        <button class="link ${route === 'settings' ? 'active' : ''}" id="nav-settings">${t('nav.settings')}</button>
       </div>`;
   }
 
