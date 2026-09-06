@@ -1,120 +1,86 @@
 /* ══════════════════════════════════════════════════════════════════════════
-   Pachi's counter — tokens de diseño (paleta Nocturne + temas).
-   Enlazado en el <head>; los tokens se heredan a cada Shadow DOM vía var(--…).
-   No hardcodear colores en los componentes: usar siempre estos tokens.
+   Pachi's counter — tokens de diseño · lenguaje BAUHAUS constructivista.
+   Tema único (papel), tipografía Syne (display) + Space Grotesk (texto).
+   Colores primarios sobre papel hueso; geometría dura, filos de tinta.
+   Enlazado en el <head>; se hereda a cada Shadow DOM vía var(--…).
    ══════════════════════════════════════════════════════════════════════════ */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap');
 
 :root {
-  /* — Base (tema oscuro, por defecto) — */
-  --color-bg: #161826;
-  --color-surface: #232532;
-  --color-text: #e9e9ed;
-  --color-accent: #9184d9;
-  --color-accent-2: #a7a1db;
-  --color-divider: color-mix(in srgb, #e9e9ed 16%, transparent);
+  /* — Paleta Bauhaus — */
+  --paper: #efe9dc;        /* fondo papel hueso */
+  --paper-2: #e7e0cf;      /* superficie ligeramente más marcada */
+  --ink: #111010;          /* tinta: texto y filos */
+  --red: #e5342a;
+  --blue: #2340d8;
+  --yellow: #f4c020;
+  --dim: #6b6459;          /* texto secundario */
+  --hair: rgba(17, 16, 16, 0.14);   /* filo tenue / rejilla */
+  --line: #111010;         /* filo fuerte (bordes de bloque) */
 
-  /* — Rampa neutra (una sola escala de luminosidad compartida) — */
-  --color-neutral-100: #f3f5fe;
-  --color-neutral-200: #e4e7f5;
-  --color-neutral-300: #cfd3e5;
-  --color-neutral-400: #b2b6ca;
-  --color-neutral-500: #9397ab;
-  --color-neutral-600: #75798c;
-  --color-neutral-700: #595d6c;
-  --color-neutral-800: #3f424d;
-  --color-neutral-900: #292b31;
+  /* — Alias semánticos usados por los componentes — */
+  --color-bg: var(--paper);
+  --color-surface: var(--paper-2);
+  --color-text: var(--ink);
+  --color-accent: var(--blue);       /* acción primaria */
+  --color-accent-2: var(--red);
+  --color-divider: var(--hair);
 
-  /* — Rampa de acento (blurple) — */
-  --color-accent-100: #f5f4ff;
-  --color-accent-200: #e7e5fe;
-  --color-accent-300: #d2cefd;
-  --color-accent-400: #b5abfc;
-  --color-accent-500: #968ae0;
-  --color-accent-600: #796cbf;
-  --color-accent-700: #5d5294;
-  --color-accent-800: #423a6a;
-  --color-accent-900: #2b2741;
+  /* Rampa neutra cálida: 100 = tinta (énfasis), 900 = papel (fondos/pistas). */
+  --color-neutral-100: #111010;
+  --color-neutral-200: #2a2721;
+  --color-neutral-300: #454036;
+  --color-neutral-400: #6b6459;
+  --color-neutral-500: #8a8273;
+  --color-neutral-600: #a49b88;
+  --color-neutral-700: #c3baa4;
+  --color-neutral-800: #d9d0ba;
+  --color-neutral-900: #e6ddc7;
 
-  /* — Rampa de acento secundario (lila) — */
-  --color-accent-2-100: #f5f4ff;
-  --color-accent-2-200: #e7e5fe;
-  --color-accent-2-300: #d2cefd;
-  --color-accent-2-400: #b5afe8;
-  --color-accent-2-500: #9690c9;
-  --color-accent-2-600: #7972a9;
-  --color-accent-2-700: #5c5783;
-  --color-accent-2-800: #423e5d;
-  --color-accent-2-900: #2b293a;
+  /* Acentos primarios (para contadores y estados) */
+  --color-accent-100: #111010;
+  --color-accent-300: #1a2f9e;
+  --color-accent-400: #2340d8;
+  --color-accent-500: #2340d8;
+  --color-accent-600: #1a2f9e;
+  --color-accent-700: var(--blue);
+  --color-accent-800: #c9d0f7;
+  --color-accent-900: #dfe3fb;
 
   /* — Tipografía — */
-  --font-heading: "Inter", system-ui, sans-serif;
-  --font-heading-weight: 500;
-  --font-body: "Inter", system-ui, sans-serif;
-  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --font-display: "Syne", system-ui, sans-serif;
+  --font-heading: "Syne", system-ui, sans-serif;
+  --font-heading-weight: 800;
+  --font-body: "Space Grotesk", system-ui, sans-serif;
+  --font-mono: "Space Grotesk", ui-monospace, monospace;
 
   /* — Espaciado — */
-  --space-1: 2.8px;
-  --space-2: 5.6px;
-  --space-3: 8.4px;
-  --space-4: 11.2px;
-  --space-6: 16.8px;
-  --space-8: 22.4px;
+  --space-1: 3px;
+  --space-2: 6px;
+  --space-3: 9px;
+  --space-4: 12px;
+  --space-6: 18px;
+  --space-8: 24px;
 
-  /* — Radios — */
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 14px;
+  /* — Radios (Bauhaus = filos rectos) — */
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
 
-  /* — Elevación — */
-  --shadow-sm: 0 0 0 1px #3f424d;
-  --shadow-md: 0 0 0 1px #595d6c, 0 6px 18px rgba(0,0,0,0.55);
-  --shadow-lg: 0 0 0 1px #9397ab, 0 16px 40px rgba(0,0,0,0.65);
-}
-
-/* — Tema claro: se aplica solo si el usuario lo elige explícitamente — */
-:root[data-theme="light"] {
-  --color-bg: #f3f4fb;
-  --color-surface: #ffffff;
-  --color-text: #1c2230;
-  --color-accent: #5d5294;
-  --color-accent-2: #6c63a8;
-  --color-divider: color-mix(in srgb, #1c2230 14%, transparent);
-
-  --color-neutral-100: #14161e;
-  --color-neutral-200: #24283a;
-  --color-neutral-300: #3f4459;
-  --color-neutral-400: #565c73;
-  --color-neutral-500: #6f7590;
-  --color-neutral-600: #8b90a8;
-  --color-neutral-700: #b3b7c8;
-  --color-neutral-800: #d7d9e4;
-  --color-neutral-900: #eceef6;
-
-  /* La rampa de acento invierte sus roles: los tonos «altos» (100–400) pasan a
-     ser texto oscuro y los «bajos» (700–900) fondos claros; los medios (500/600)
-     se conservan saturados para que los acentos de contador sigan visibles. */
-  --color-accent-100: #211d38;
-  --color-accent-200: #322c57;
-  --color-accent-300: #4a4180;
-  --color-accent-400: #5d5294;
-  --color-accent-700: #b9aeef;
-  --color-accent-800: #d9d3f7;
-  --color-accent-900: #ece9fb;
-
-  --shadow-sm: 0 0 0 1px color-mix(in srgb, #1c2230 10%, transparent);
-  --shadow-md: 0 0 0 1px color-mix(in srgb, #1c2230 10%, transparent), 0 6px 18px rgba(20,25,43,0.12);
-  --shadow-lg: 0 0 0 1px color-mix(in srgb, #1c2230 14%, transparent), 0 16px 40px rgba(20,25,43,0.18);
+  /* — Elevación: sin sombras blandas; el peso lo dan los filos de tinta — */
+  --border-w: 2px;
+  --shadow-sm: none;
+  --shadow-md: 0 6px 0 rgba(17,16,16,0.12);
+  --shadow-lg: 6px 6px 0 var(--ink);
 }
 
 html, body { margin: 0; height: 100%; }
 body {
-  background:
-    radial-gradient(1100px 700px at 20% -12%, var(--color-neutral-700) 0%, var(--color-bg) 70%);
-  color: var(--color-text);
+  background: var(--paper);
+  color: var(--ink);
   font-family: var(--font-body);
   font-size: 15px;
-  line-height: 1.55;
+  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   min-height: 100%;
 }
