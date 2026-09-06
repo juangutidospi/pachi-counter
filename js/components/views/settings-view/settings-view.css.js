@@ -3,7 +3,7 @@ import { css } from '../../../core/css.js';
 /** Estilos de la vista de ajustes. */
 export const styles = css`
   :host { display: block; }
-  .settings { padding: 60px var(--space-6) 100px; animation: pc-fade .3s ease both; }
+  .settings { padding: 60px var(--space-6) 124px; animation: pc-fade .3s ease both; }
   .back { gap: 4px; margin-left: calc(var(--space-2) * -1); }
   h2 { margin: var(--space-4) 0 0; font-size: 28px; }
 
