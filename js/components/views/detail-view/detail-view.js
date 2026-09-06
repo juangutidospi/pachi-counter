@@ -1,13 +1,11 @@
 import { AppElement } from '../../../core/AppElement.js';
-import { store, COUNTER_COLORS, fmtDate, isoOf, dayIndex } from '../../../core/store.js';
+import { store, COUNTER_COLORS, fmtDate, isoFromDayIndex, dayIndex } from '../../../core/store.js';
 import { router } from '../../../core/router.js';
 import { t } from '../../../core/i18n.js';
 import { uiIcon } from '../../../core/icons.js';
 import { escapeHtml } from '../../../core/escape-html.js';
 import '../../ui/ring-dial/ring-dial.js';
 import { styles } from './detail-view.css.js';
-
-const DAY = 86400000;
 
 /**
  * `<detail-view>` — detalle de un contador: anillo de progreso, frase, tres
@@ -204,7 +202,7 @@ export class DetailView extends AppElement {
           dotFg: done ? on : 'transparent',
           dotRing: done ? 'none' : 'inset 0 0 0 2px var(--ink)',
           fg: done ? 'var(--ink)' : 'var(--dim)',
-          meta: done ? fmtDate(isoOf((start + m) * DAY)) : t('detail.milestoneLeft', { r: m - days }),
+          meta: done ? fmtDate(isoFromDayIndex(start + m)) : t('detail.milestoneLeft', { r: m - days }),
         };
       }),
     };
