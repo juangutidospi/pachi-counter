@@ -1,0 +1,341 @@
+import { t } from './i18n.js';
+
+/* ── constantes de dominio ────────────────────────────────────────────── */
+
+const KEY = 'pachi.v1';
+const DAY = 86400000;
+
+/** Hitos por defecto (en días) de una racha nueva. */
+export const DEF_MILESTONES = [1, 3, 7, 21, 30, 90, 180, 365];
+
+/**
+ * Acentos elegibles para un contador. `value` referencia un token del tema,
+ * por lo que el color se adapta a claro/oscuro sin tocar el store.
+ */
+export const COUNTER_COLORS = {
+  accent: { key: 'accent', value: 'var(--color-accent)' },
+  accent2: { key: 'accent2', value: 'var(--color-accent-2)' },
+  light: { key: 'light', value: 'var(--color-accent-400)' },
+  deep: { key: 'deep', value: 'var(--color-accent-600)' },
+};
+
+/** Datos de ejemplo para la primera ejecución (y para el botón demo). */
+const SEED = [
+  { id: 'c1', name: "Sin fumar", tail: 'sin fumar', kind: 'quit', icon: 'ban', color: 'accent', ago: 3, best: 9, milestones: DEF_MILESTONES, note: 'Para poder subir las escaleras de casa sin pararme en el tercero.' },
+  { id: 'c2', name: 'Saliendo a caminar', tail: 'saliendo a caminar', kind: 'build', icon: 'bolt', color: 'accent2', ago: 12, best: 12, milestones: DEF_MILESTONES, note: '' },
+  { id: 'c3', name: 'Sin refrescos', tail: 'sin refrescos', kind: 'quit', icon: 'drop', color: 'deep', ago: 27, best: 27, milestones: DEF_MILESTONES, note: '' },
+];
+
+/* ── utilidades de fecha (basadas en día UTC, como el prototipo) ──────── */
+
+/** @param {number} ms Milisegundos epoch. @returns {string} Fecha ISO `YYYY-MM-DD`. */
+export function isoOf(ms) { return new Date(ms).toISOString().slice(0, 10); }
+
+/** @param {string} iso Fecha ISO. @returns {number} Índice de día absoluto. */
+export function dayIndex(iso) { return Math.floor(new Date(iso + 'T00:00:00Z').getTime() / DAY); }
+
+/**
+ * Formatea una fecha ISO como «12 sep» con los meses del idioma activo.
+ * @param {string} iso Fecha ISO.
+ * @returns {string} Etiqueta corta día + mes.
+ */
+export function fmtDate(iso) {
+  const d = new Date(iso + 'T00:00:00Z');
+  const months = t('months').split(',');
+  return d.getUTCDate() + ' ' + months[d.getUTCMonth()];
+}
+
+/* ── store ────────────────────────────────────────────────────────────── */
+
+const bus = new EventTarget();
+
+/** @type {{counters: object[], tone: string, reminder: string, offset: number}} */
+let state = load();
+
+/**
+ * Carga el estado desde localStorage; si no hay nada, siembra los ejemplos.
+ * @returns {{counters: object[], tone: string, reminder: string, offset: number}}
+ */
+function load() {
+  const today = dayIndex(isoOf(Date.now()));
+  try {
+    const raw = localStorage.getItem(KEY);
+    if (raw) {
+      const data = JSON.parse(raw);
+      if (data && Array.isArray(data.counters)) {
+        return {
+          counters: data.counters.map((c) => normalize(c, today)),
+          tone: (data.settings && data.settings.tone) || 'direct',
+          reminder: (data.settings && data.settings.reminder) || '21:00',
+          offset: 0,
+        };
+      }
+    }
+  } catch (e) { /* almacenamiento no disponible o corrupto */ }
+  return { counters: seedCounters(), tone: 'direct', reminder: '21:00', offset: 0 };
+}
+
+/** @returns {object[]} Copia de los contadores de ejemplo anclados a hoy. */
+function seedCounters() {
+  const now = Date.now();
+  return SEED.map((s) => normalize({ ...s, start: isoOf(now - s.ago * DAY) }, dayIndex(isoOf(now))));
+}
+
+/**
+ * Rellena campos derivados/ausentes de un contador (compatibilidad de datos).
+ * @param {object} c Contador crudo.
+ * @param {number} today Índice de día de hoy.
+ * @returns {object} Contador normalizado.
+ */
+function normalize(c, today) {
+  const start = c.start || isoOf(Date.now() - (c.ago || 0) * DAY);
+  const milestones = c.milestones && c.milestones.length ? c.milestones : DEF_MILESTONES;
+  const days = Math.max(0, today - dayIndex(start));
+  return {
+    id: c.id, name: c.name, tail: c.tail || c.name.toLowerCase(), kind: c.kind || 'quit',
+    icon: c.icon || 'bolt', color: COUNTER_COLORS[c.color] ? c.color : 'accent',
+    start, best: c.best || 0, milestones, note: c.note || '',
+    seen: c.seen == null ? (milestones.filter((m) => m <= days).pop() || 0) : c.seen,
+    seenDay: c.seenDay == null ? today : c.seenDay,
+  };
+}
+
+/** Guarda el estado de dominio en localStorage. */
+function persist() {
+  try {
+    localStorage.setItem(KEY, JSON.stringify({
+      v: 1,
+      settings: { tone: state.tone, reminder: state.reminder },
+      counters: state.counters,
+    }));
+  } catch (e) { /* ignorar: modo privado, cuota… */ }
+}
+
+/**
+ * Aplica un parche al estado, persiste y notifica a los suscriptores.
+ * @param {Partial<typeof state>} patch Campos a mezclar.
+ * @param {boolean} [save] Si debe persistir (por defecto sí).
+ */
+function commit(patch, save = true) {
+  state = { ...state, ...patch };
+  if (save) persist();
+  bus.dispatchEvent(new CustomEvent('store:changed'));
+}
+
+export const store = {
+  /* — lectura — */
+
+  /** @returns {object[]} Contadores actuales (referencia de solo lectura). */
+  get counters() { return state.counters; },
+  /** @returns {string} Tono de las frases (`warm`|`direct`|`sober`). */
+  get tone() { return state.tone; },
+  /** @returns {string} Hora del recordatorio diario (`HH:MM`). */
+  get reminder() { return state.reminder; },
+  /** @returns {number} Desplazamiento de días del modo demo. */
+  get offset() { return state.offset; },
+
+  /**
+   * Busca un contador por id.
+   * @param {string} id Identificador.
+   * @returns {object|undefined} Contador o undefined.
+   */
+  find(id) { return state.counters.find((c) => c.id === id); },
+
+  /** @returns {number} Índice de día de «hoy» (aplicando el offset de demo). */
+  today() { return dayIndex(isoOf(Date.now())) + state.offset; },
+
+  /**
+   * Días transcurridos de la racha de un contador.
+   * @param {object} c Contador.
+   * @returns {number} Días (>= 0).
+   */
+  daysOf(c) { return Math.max(0, this.today() - dayIndex(c.start)); },
+
+  /**
+   * Escalera de hitos ordenada de un contador.
+   * @param {object} c Contador.
+   * @returns {number[]} Hitos ascendentes.
+   */
+  ladderOf(c) { return (c.milestones && c.milestones.length ? c.milestones : DEF_MILESTONES).slice().sort((a, b) => a - b); },
+
+  /**
+   * Próximo hito por alcanzar de un contador.
+   * @param {object} c Contador.
+   * @returns {number|null} Hito o null si ya superó todos.
+   */
+  nextOf(c) { const d = this.daysOf(c); return this.ladderOf(c).find((m) => m > d) || null; },
+
+  /**
+   * Frase motivadora + antetítulo según la situación y el tono actual.
+   * @param {object} c Contador.
+   * @returns {{kicker: string, text: string}} Antetítulo y frase.
+   */
+  quote(c) {
+    const d = this.daysOf(c);
+    const next = this.nextOf(c);
+    const tone = state.tone;
+    const tail = c.tail;
+    const ladder = this.ladderOf(c);
+    if (d > 0 && ladder.includes(d)) {
+      return { kicker: t('phrase.k.milestone'), text: t(`phrase.milestone.${tone}`, { d, tail }) };
+    }
+    if (d === 0) {
+      return { kicker: t('phrase.k.day0'), text: t(`phrase.day0.${tone}`) };
+    }
+    if (!next) {
+      return { kicker: t('phrase.k.none'), text: t(`phrase.none.${tone}`, { d, tail }) };
+    }
+    const r = next - d;
+    if (r === 1) return { kicker: t('phrase.k.tomorrow'), text: t(`phrase.tomorrow.${tone}`, { next, tail }) };
+    if (r <= 5) return { kicker: t('phrase.k.soon'), text: t(`phrase.soon.${tone}`, { r, next, tail }) };
+    return { kicker: t('phrase.k.next'), text: t(`phrase.next.${tone}`, { d, r, next, tail }) };
+  },
+
+  /**
+   * Contadores ordenados por hito más cercano (para home).
+   * @returns {object[]} Contadores ordenados.
+   */
+  sortedByNearest() {
+    return state.counters.slice().sort((a, b) => this._gap(a) - this._gap(b));
+  },
+
+  /** @returns {object|null} Contador con el hito más cercano, o null. */
+  focusCounter() {
+    return state.counters.length ? this.sortedByNearest()[0] : null;
+  },
+
+  /** @param {object} c Contador. @returns {number} Días hasta el próximo hito (o alto). */
+  _gap(c) { const n = this.nextOf(c); return n ? n - this.daysOf(c) : 9999; },
+
+  /* — escritura — */
+
+  /**
+   * Marca un contador como visto hoy (quita el badge «+1 hoy»).
+   * @param {string} id Identificador.
+   */
+  markSeen(id) {
+    commit({ counters: state.counters.map((c) => (c.id === id ? { ...c, seenDay: this.today() } : c)) });
+  },
+
+  /**
+   * Guarda que se han visto los hitos hasta cierto día (tras celebrar).
+   * @param {string} id Identificador.
+   * @param {number} days Días vistos.
+   */
+  markCelebrated(id, days) {
+    commit({ counters: state.counters.map((c) => (c.id === id ? { ...c, seen: days } : c)) });
+  },
+
+  /**
+   * Actualiza la nota («por qué lo hago») de un contador.
+   * @param {string} id Identificador.
+   * @param {string} note Texto de la nota.
+   */
+  setNote(id, note) {
+    commit({ counters: state.counters.map((c) => (c.id === id ? { ...c, note } : c)) });
+  },
+
+  /**
+   * Reinicia la racha de un contador a 0, guardando la mejor racha.
+   * @param {string} id Identificador.
+   * @returns {number} Mejor racha resultante.
+   */
+  reset(id) {
+    let best = 0;
+    const counters = state.counters.map((c) => {
+      if (c.id !== id) return c;
+      best = Math.max(c.best || 0, this.daysOf(c));
+      return { ...c, best, start: isoOf(this.today() * DAY), seen: 0, seenDay: this.today() };
+    });
+    commit({ counters });
+    return best;
+  },
+
+  /**
+   * Elimina un contador.
+   * @param {string} id Identificador.
+   */
+  remove(id) {
+    commit({ counters: state.counters.filter((c) => c.id !== id) });
+  },
+
+  /**
+   * Crea un contador y devuelve su id.
+   * @param {object} draft Datos del formulario ya validados.
+   * @param {string} draft.name Nombre.
+   * @param {string} draft.tail Cola de lectura.
+   * @param {'quit'|'build'} draft.kind Tipo.
+   * @param {string} draft.icon Clave de icono.
+   * @param {string} draft.color Clave de color.
+   * @param {number} draft.ago Días ya cumplidos.
+   * @param {number[]} draft.milestones Hitos.
+   * @param {string} draft.note Nota.
+   * @returns {string} Id del contador creado.
+   */
+  create(draft) {
+    const id = 'c' + Date.now();
+    const start = isoOf((this.today() - draft.ago) * DAY);
+    const counter = {
+      id, name: draft.name, tail: draft.tail || draft.name.toLowerCase(), kind: draft.kind,
+      icon: draft.icon, color: draft.color, start, best: draft.ago,
+      milestones: draft.milestones, note: draft.note,
+      seen: draft.milestones.filter((m) => m <= draft.ago).pop() || 0, seenDay: this.today(),
+    };
+    commit({ counters: state.counters.concat([counter]) });
+    return id;
+  },
+
+  /** @param {string} tone Nuevo tono de frases. */
+  setTone(tone) { commit({ tone }); },
+  /** @param {string} reminder Hora `HH:MM` del recordatorio. */
+  setReminder(reminder) { commit({ reminder }); },
+
+  /** Borra todos los datos. */
+  wipe() { commit({ counters: [] }); },
+
+  /** Restaura los contadores de ejemplo. */
+  restoreSeed() { commit({ counters: seedCounters() }); },
+
+  /** @returns {number} Tamaño aproximado en bytes del estado persistido. */
+  storeSize() { return JSON.stringify({ v: 1, counters: state.counters }).length; },
+
+  /** @returns {string} JSON exportable del estado. */
+  exportJson() {
+    return JSON.stringify({ v: 1, settings: { tone: state.tone, reminder: state.reminder }, counters: state.counters }, null, 2);
+  },
+
+  /* — demo (viaje en el tiempo, no se persiste) — */
+
+  /** @param {number} delta Días a sumar al offset. */
+  travel(delta) { commit({ offset: state.offset + delta }, false); },
+
+  /**
+   * Detecta si algún contador acaba de alcanzar un hito no celebrado.
+   * @returns {object|null} `{id, days, tail, color, next}` o null.
+   */
+  pendingCelebration() {
+    const hit = state.counters.find((c) => {
+      const d = this.daysOf(c);
+      return d > 0 && this.ladderOf(c).includes(d) && (c.seen || 0) < d;
+    });
+    if (!hit) return null;
+    const d = this.daysOf(hit);
+    return {
+      id: hit.id, days: d, tail: hit.tail,
+      color: (COUNTER_COLORS[hit.color] || COUNTER_COLORS.accent).value,
+      next: this.ladderOf(hit).find((m) => m > d) || null,
+    };
+  },
+
+  /* — suscripción — */
+
+  /**
+   * Suscribe un callback a cualquier cambio de estado.
+   * @param {() => void} handler Se ejecuta tras cada cambio.
+   * @returns {() => void} Función para cancelar la suscripción.
+   */
+  subscribe(handler) {
+    bus.addEventListener('store:changed', handler);
+    return () => bus.removeEventListener('store:changed', handler);
+  },
+};
