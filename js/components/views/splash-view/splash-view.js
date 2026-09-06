@@ -11,32 +11,46 @@ import { styles } from './splash-view.css.js';
 export class SplashView extends AppElement {
   static styles = [styles];
 
-  /** Pinta el logotipo animado, el nombre y la invitación a entrar. */
+  /** Pinta la portada Bauhaus: marco técnico, emblema, wordmark y CTA. */
   render() {
     this.shadowRoot.innerHTML = `
-      <div class="splash">
-        <div class="stack">
-          <div class="logo">
-            <div class="ring r1"></div><div class="ring r2"></div>
-            <div class="ring r3"></div><div class="ring r4"></div>
-            <svg viewBox="0 0 120 120">
-              <circle cx="60" cy="60" r="52" fill="none" stroke="var(--color-accent)" stroke-width="2"
-                stroke-linecap="round" stroke-dasharray="327" stroke-dashoffset="66"></circle>
+      <div class="cover">
+        <div class="grid"></div>
+        <div class="frameline"></div>
+        <span class="tick t1"></span><span class="tick t2"></span>
+        <span class="tick t3"></span><span class="tick t4"></span>
+
+        <div class="scr">
+          <div class="meta"><span>${t('app.name1')} ${t('app.name2')}</span><span class="idx">N°01 · 2026</span></div>
+
+          <div class="art">
+            <div class="diag"></div>
+            <svg viewBox="0 0 200 200" aria-hidden="true">
+              <circle cx="100" cy="100" r="86" fill="var(--ink)"></circle>
+              <path d="M100 100 L100 14 A86 86 0 0 1 186 100 Z" fill="var(--red)"></path>
+              <path d="M100 100 L100 186 A86 86 0 0 1 14 100 Z" fill="var(--yellow)"></path>
+              <circle cx="100" cy="100" r="60" fill="none" stroke="var(--paper)" stroke-width="3"></circle>
+              <circle cx="100" cy="100" r="40" fill="none" stroke="var(--paper)" stroke-width="3"></circle>
+              <rect x="93" y="6" width="14" height="188" fill="var(--blue)"></rect>
+              <circle cx="100" cy="100" r="26" fill="var(--paper)"></circle>
+              <text x="100" y="101" text-anchor="middle" dominant-baseline="central"
+                font-family="Syne, sans-serif" font-weight="800" font-size="34" fill="var(--ink)">P</text>
             </svg>
-            <div class="letter">P</div>
           </div>
-          <div class="gap"></div>
-          <div class="name line1">${t('app.name1')}</div>
-          <div class="name line2">${t('app.name2')}</div>
-          <div class="tagline">${t('app.tagline')}</div>
+
+          <div class="title">
+            <div class="k">— ${t('splash.kicker')}</div>
+            <h1><span class="l1">${t('app.name1')}</span><span class="l2">${t('app.name2')}</span></h1>
+            <span class="tag">${t('app.tagline')}</span>
+            <div class="enter"><span class="arrow">↑</span> ${t('splash.enter')}</div>
+          </div>
         </div>
-        <div class="enter">${t('splash.enter')}</div>
       </div>`;
   }
 
   /** Cablea el toque para entrar (no hay avance automático). */
   afterRender() {
-    this.on(this.$('.splash'), 'click', () => this._enter());
+    this.on(this.$('.cover'), 'click', () => this._enter());
   }
 
   /** Entra a home y, si procede, lanza la celebración pendiente. */

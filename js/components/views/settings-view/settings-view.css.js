@@ -1,30 +1,31 @@
 import { css } from '../../../core/css.js';
 
-/** Estilos de la vista de ajustes. */
+/** Estilos de la vista de ajustes — Bauhaus. */
 export const styles = css`
   :host { display: block; }
-  .settings { padding: 60px var(--space-6) 124px; animation: pc-fade .3s ease both; }
-  .back { gap: 4px; margin-left: calc(var(--space-2) * -1); }
-  h2 { margin: var(--space-4) 0 0; font-size: 28px; }
+  .settings { padding: 44px 22px 128px; animation: pc-fade .3s ease both; container-type: inline-size; }
+  .back { gap: 4px; margin-left: -4px; }
+  h2 { margin: var(--space-4) 0 0; font-size: min(40px, 12cqw); }
 
   .field { margin-top: var(--space-6); }
   .field.first { margin-top: var(--space-8); }
-  .sample { font-size: 12px; margin-top: var(--space-2); }
+  .sample { font-family: var(--font-body); font-size: 12px; margin-top: var(--space-2); color: var(--dim); }
   .reminder-row { display: flex; align-items: center; gap: var(--space-3); }
   .reminder-row .input { width: 120px; }
-  .reminder-row .hint { font-size: 12px; color: var(--color-neutral-500); }
+  .reminder-row .hint { font-family: var(--font-body); font-size: 12px; color: var(--dim); }
 
-  h6 { margin: var(--space-8) 0 var(--space-3); color: var(--color-neutral-500); }
+  h6 { margin: var(--space-8) 0 var(--space-3); color: var(--ink); }
+
   .data { padding: var(--space-4); gap: var(--space-3); }
-  .data .row { display: flex; justify-content: space-between; font-size: 13px; }
-  .data .row .k { color: var(--color-neutral-400); }
-  .data .row .v { color: var(--color-neutral-300); }
-  .data .row .mono { font-family: var(--font-mono); font-size: 12px; color: var(--color-accent-300); }
+  .data .row { display: flex; justify-content: space-between; font-family: var(--font-body); font-size: 13px; }
+  .data .row .k { color: var(--dim); }
+  .data .row .v { color: var(--ink); font-weight: 600; }
+  .data .row .mono { font-family: var(--font-mono); font-weight: 600; font-size: 12px; color: var(--blue); }
   .data .actions { display: flex; gap: var(--space-2); margin-top: var(--space-2); }
-  .data .actions .export { flex: 1; font-size: 13px; }
-  .data .actions .wipe { color: var(--color-neutral-500); font-size: 13px; }
+  .data .actions .export { flex: 1; }
+  .data .actions .wipe { color: var(--red); }
+  .data .actions .wipe:hover { color: var(--paper); background: var(--red); }
 
-  .tools-note { font-size: 12px; margin: calc(var(--space-2) * -1) 0 var(--space-3); }
-
-  .footer { font-size: 11px; margin-top: var(--space-8); text-align: center; }
+  .tools-note { font-family: var(--font-body); font-size: 12px; margin: calc(var(--space-2) * -1) 0 var(--space-3); color: var(--dim); }
+  .footer { font-family: var(--font-body); font-size: 11px; margin-top: var(--space-8); text-align: center; color: var(--dim); }
 `;

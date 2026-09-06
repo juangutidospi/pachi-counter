@@ -15,7 +15,8 @@ export const en = {
   },
 
   splash: {
-    enter: 'tap to enter',
+    kicker: 'Streak counter',
+    enter: 'Tap to enter',
   },
 
   home: {
@@ -74,8 +75,6 @@ export const en = {
     reminderHint: 'one nudge, no nagging',
     langLabel: 'Language',
     lang: { es: 'Español', en: 'English' },
-    themeLabel: 'Theme',
-    theme: { dark: 'Dark', light: 'Light' },
     dataTitle: 'Data',
     savedIn: 'Saved in',
     size: 'Size',
@@ -99,7 +98,7 @@ export const en = {
     tailPh: { quit: 'no sugar', build: 'reading every day' },
     iconLabel: 'Icon',
     colorLabel: 'Accent',
-    color: { accent: 'Blurple', accent2: 'Lilac', light: 'Light', deep: 'Deep' },
+    color: { accent: 'Blue', accent2: 'Red', light: 'Yellow', deep: 'Black' },
     startLabel: 'Start date',
     startToday: 'Today',
     startPast: 'I already have days',

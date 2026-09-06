@@ -51,10 +51,8 @@ export class HomeView extends AppElement {
     return `
       <div class="stats">
         <div class="stat"><div class="num">${totalDays}</div><div class="lbl">${t('home.stat.days')}</div></div>
-        <div class="divider"></div>
         <div class="stat"><div class="num">${store.counters.length}</div><div class="lbl">${t('home.stat.streaks')}</div></div>
-        <div class="divider"></div>
-        <div class="stat"><div class="num accent">${near === 9999 ? '—' : near + ' d'}</div><div class="lbl">${t('home.stat.nearest')}</div></div>
+        <div class="stat hi"><div class="num">${near === 9999 ? '—' : near + ' d'}</div><div class="lbl">${t('home.stat.nearest')}</div></div>
       </div>`;
   }
 

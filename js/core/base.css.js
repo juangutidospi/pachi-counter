@@ -1,10 +1,9 @@
 import { css } from './css.js';
 
 /**
- * Estilos base compartidos por todos los componentes.
- * Reproducen las primitivas del design system (botones, tarjetas, campos,
- * segmentos, tags, diálogo) para poder reutilizarlas dentro de cada Shadow DOM.
- * Se adoptan como primera hoja en `AppElement.styles`.
+ * Estilos base compartidos por todos los componentes — lenguaje Bauhaus.
+ * Filos de tinta, geometría dura, Syne en mayúsculas para acciones, colores
+ * primarios planos. Se adoptan como primera hoja en `AppElement.styles`.
  */
 export const base = css`
   :host { box-sizing: border-box; }
@@ -19,102 +18,104 @@ export const base = css`
   @keyframes pc-dial { from { stroke-dashoffset: 327; } }
   @keyframes pc-conf { from { transform: translateY(-20px) rotate(0deg); opacity: .95; } to { transform: translateY(900px) rotate(340deg); opacity: 0; } }
   @keyframes pc-toast-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+  @keyframes pc-wipe { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+  @keyframes pc-drop { from { opacity: 0; transform: translateY(-14px); } to { opacity: 1; transform: none; } }
 
   /* — tipografía — */
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-heading); font-weight: var(--font-heading-weight);
-    line-height: 1.12; letter-spacing: -0.015em; margin: 0 0 var(--space-2);
+    line-height: .96; letter-spacing: -.03em; margin: 0 0 var(--space-2); text-transform: uppercase;
   }
-  h1 { font-size: 42px; } h2 { font-size: 32px; } h3 { font-size: 25px; }
-  h4 { font-size: 20px; } h5 { font-size: 16px; } h6 { font-size: 13px; }
-  h6 { letter-spacing: 0.08em; text-transform: uppercase; }
+  h1 { font-size: 46px; } h2 { font-size: 34px; } h3 { font-size: 26px; }
+  h4 { font-size: 21px; } h5 { font-size: 17px; } h6 { font-size: 12px; letter-spacing: .1em; }
   p { margin: 0 0 var(--space-3); }
-  .text-muted { color: color-mix(in srgb, var(--color-text) 55%, transparent); }
+  .text-muted { color: var(--dim); }
   :focus { outline: none; }
-  :focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+  :focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
 
   /* — botones — */
   .btn {
     display: inline-flex; align-items: center; justify-content: center; gap: 6px;
     cursor: pointer; text-decoration: none;
-    font-family: var(--font-heading); font-weight: var(--font-heading-weight);
-    font-size: 14px; line-height: 1.2; color: var(--color-text);
-    background: transparent; border: 1px solid transparent;
-    padding: var(--space-2) calc(var(--space-3) * 1.2);
-    border-radius: var(--radius-md);
-    transition: background .15s ease, box-shadow .2s ease, transform .12s ease;
+    font-family: var(--font-heading); font-weight: 700;
+    font-size: 13px; line-height: 1; color: var(--ink); text-transform: uppercase; letter-spacing: .02em;
+    background: transparent; border: var(--border-w) solid transparent;
+    padding: 10px 16px; border-radius: 0;
+    transition: background .12s ease, color .12s ease, transform .1s ease;
   }
   .btn svg { display: block; }
-  .btn:disabled { opacity: 0.45; cursor: not-allowed; }
-  .btn-primary { color: var(--color-accent); border-color: var(--color-accent); }
-  .btn-primary:hover { background: color-mix(in srgb, var(--color-accent) 12%, transparent); }
-  .btn-primary:active { background: color-mix(in srgb, var(--color-accent) 22%, transparent); }
-  .btn-secondary { border-color: var(--color-divider); }
-  .btn-secondary:hover { background: color-mix(in srgb, var(--color-text) 7%, transparent); }
-  .btn-secondary:active { background: color-mix(in srgb, var(--color-text) 14%, transparent); }
-  .btn-ghost { color: var(--color-accent); padding-inline: var(--space-1); }
-  .btn-ghost:hover { background: color-mix(in srgb, var(--color-accent) 10%, transparent); }
-  .btn-icon { width: 36px; height: 36px; padding: 0; }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn-primary { background: var(--blue); color: var(--paper); border-color: var(--blue); }
+  .btn-primary:hover { background: var(--ink); border-color: var(--ink); }
+  .btn-primary:active { transform: translate(1px, 1px); }
+  .btn-secondary { border-color: var(--ink); color: var(--ink); }
+  .btn-secondary:hover { background: var(--ink); color: var(--paper); }
+  .btn-secondary:active { transform: translate(1px, 1px); }
+  .btn-ghost { color: var(--ink); border-color: transparent; padding-inline: 4px; }
+  .btn-ghost:hover { color: var(--blue); }
+  .btn-icon { width: 38px; height: 38px; padding: 0; }
   .btn-block { width: 100%; }
 
   /* — campos — */
   .field > label {
-    display: block; font-size: 12px; margin-bottom: 5px;
-    color: color-mix(in srgb, var(--color-text) 70%, transparent);
+    display: block; font-family: var(--font-body); font-weight: 600; font-size: 11px;
+    letter-spacing: .1em; text-transform: uppercase; margin-bottom: 6px; color: var(--ink);
   }
   .input {
-    width: 100%; min-height: 36px; padding: 6px 10px; font: inherit;
-    font-size: 14px; color: var(--color-text); caret-color: var(--color-accent);
-    background: var(--color-surface);
-    border: 1px solid var(--color-divider); border-radius: var(--radius-md);
+    width: 100%; min-height: 42px; padding: 9px 12px; font: inherit;
+    font-size: 14px; color: var(--ink); caret-color: var(--blue);
+    background: var(--paper);
+    border: var(--border-w) solid var(--ink); border-radius: 0;
   }
-  .input:hover { border-color: color-mix(in srgb, var(--color-text) 45%, transparent); }
-  .input:focus-visible { border-color: var(--color-accent); outline-offset: 0; }
-  textarea.input { min-height: 90px; resize: vertical; }
+  .input::placeholder { color: var(--dim); }
+  .input:focus-visible { border-color: var(--blue); outline: none; box-shadow: inset 0 0 0 1px var(--blue); }
+  textarea.input { min-height: 84px; resize: vertical; }
 
   /* — segmentos — */
   .seg {
     display: inline-flex; overflow: hidden;
-    border: 1px solid var(--color-divider); border-radius: var(--radius-md);
+    border: var(--border-w) solid var(--ink); border-radius: 0;
   }
   .seg-opt {
     display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-    padding: 7px 12px; font-size: 13px; cursor: pointer; flex: 1;
+    padding: 10px 12px; font-family: var(--font-heading); font-weight: 700; font-size: 12px;
+    text-transform: uppercase; letter-spacing: .02em; cursor: pointer; flex: 1; color: var(--ink);
+    transition: background .12s ease, color .12s ease;
   }
-  .seg-opt + .seg-opt { border-left: 1px solid var(--color-divider); }
+  .seg-opt + .seg-opt { border-left: var(--border-w) solid var(--ink); }
   .seg-opt input { position: absolute; opacity: 0; width: 0; height: 0; pointer-events: none; }
-  .seg-opt:has(input:checked) { color: var(--color-accent); box-shadow: inset 0 0 0 1px var(--color-accent); }
-  .seg-opt:not(:has(input:checked)):hover { background: color-mix(in srgb, var(--color-text) 7%, transparent); }
+  .seg-opt:has(input:checked) { background: var(--ink); color: var(--paper); }
+  .seg-opt:not(:has(input:checked)):hover { background: color-mix(in srgb, var(--ink) 8%, transparent); }
 
   /* — tarjetas — */
   .card {
     display: flex; flex-direction: column; gap: var(--space-2);
-    padding: var(--space-3); border-radius: var(--radius-md); background: var(--color-surface);
+    padding: var(--space-4); border-radius: 0; background: var(--paper);
+    border: var(--border-w) solid var(--ink);
   }
-  .card-title { font-family: var(--font-heading); font-weight: var(--font-heading-weight); font-size: 17px; line-height: 1.2; }
-  .elev-sm { box-shadow: var(--shadow-sm); }
-  .elev-md { box-shadow: var(--shadow-md); }
+  .card-title { font-family: var(--font-heading); font-weight: 800; font-size: 18px; line-height: 1; text-transform: uppercase; letter-spacing: -.01em; }
+  .elev-sm, .elev-md { box-shadow: none; }
   .elev-lg { box-shadow: var(--shadow-lg); }
 
   /* — tags — */
   .tag {
-    display: inline-flex; align-items: center; font-size: 11px;
-    letter-spacing: 0.02em; padding: 3px 10px; border-radius: calc(var(--radius-md) * 0.75);
+    display: inline-flex; align-items: center; font-family: var(--font-body); font-weight: 600;
+    font-size: 10px; letter-spacing: .1em; text-transform: uppercase; padding: 3px 8px; border-radius: 0;
   }
-  .tag-neutral { background: var(--color-neutral-800); color: var(--color-neutral-100); }
+  .tag-neutral { background: var(--ink); color: var(--paper); }
 
   /* — diálogo — */
   .dialog-backdrop {
     position: absolute; inset: 0; display: grid; place-items: center;
     padding: var(--space-6);
-    background: color-mix(in srgb, var(--color-neutral-900) 62%, transparent);
+    background: color-mix(in srgb, var(--ink) 34%, transparent);
   }
   .dialog {
-    width: min(340px, 100%); display: flex; flex-direction: column; gap: var(--space-3);
-    padding: var(--space-4); border-radius: var(--radius-lg);
-    background: var(--color-surface); box-shadow: var(--shadow-lg);
+    width: min(330px, 100%); display: flex; flex-direction: column; gap: var(--space-3);
+    padding: var(--space-6); border-radius: 0;
+    background: var(--paper); border: var(--border-w) solid var(--ink); box-shadow: var(--shadow-lg);
   }
-  .dialog-title { font-family: var(--font-heading); font-weight: var(--font-heading-weight); font-size: 20px; }
-  .dialog-body { font-size: 14px; opacity: 0.85; }
+  .dialog-title { font-family: var(--font-heading); font-weight: 800; font-size: 24px; text-transform: uppercase; letter-spacing: -.02em; }
+  .dialog-body { font-size: 14px; color: var(--dim); }
   .dialog-actions { display: flex; justify-content: flex-end; gap: var(--space-2); margin-top: var(--space-2); }
 `;
