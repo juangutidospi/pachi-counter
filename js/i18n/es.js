@@ -82,6 +82,8 @@ export const es = {
     bytes: '{n} bytes',
     export: 'Exportar JSON',
     wipe: 'Borrar todo',
+    toolsTitle: 'Herramientas',
+    toolsNote: 'Panel de demostración: viaja en el tiempo o restaura ejemplos.',
     footer: 'Pachi’s counter · v1 · sin cuenta, sin nube',
   },
 

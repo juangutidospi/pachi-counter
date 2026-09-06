@@ -82,6 +82,8 @@ export const en = {
     bytes: '{n} bytes',
     export: 'Export JSON',
     wipe: 'Delete all',
+    toolsTitle: 'Tools',
+    toolsNote: 'Demo panel: travel in time or restore examples.',
     footer: 'Pachi’s counter · v1 · no account, no cloud',
   },
 

@@ -27,7 +27,9 @@ export const styles = css`
     position: absolute; bottom: 0; left: 0; right: 0; z-index: 40;
     padding: var(--space-3) var(--space-6) 30px;
     display: flex; align-items: center; justify-content: space-between; gap: var(--space-3);
-    background: linear-gradient(to top, var(--color-bg) 45%, transparent);
+    /* Casi opaca: oculta limpio el contenido que scrollea por detrás, con solo
+       un pequeño desvanecido en el borde superior. */
+    background: linear-gradient(to top, var(--color-bg) 82%, transparent);
   }
   .tabbar .link { font-size: 12px; color: var(--color-neutral-600); }
   .tabbar .link.active { color: var(--color-accent); }

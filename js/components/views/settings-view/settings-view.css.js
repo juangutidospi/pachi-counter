@@ -3,7 +3,7 @@ import { css } from '../../../core/css.js';
 /** Estilos de la vista de ajustes. */
 export const styles = css`
   :host { display: block; }
-  .settings { padding: 60px var(--space-6) 100px; animation: pc-fade .3s ease both; }
+  .settings { padding: 60px var(--space-6) 124px; animation: pc-fade .3s ease both; }
   .back { gap: 4px; margin-left: calc(var(--space-2) * -1); }
   h2 { margin: var(--space-4) 0 0; font-size: 28px; }
 
@@ -23,6 +23,8 @@ export const styles = css`
   .data .actions { display: flex; gap: var(--space-2); margin-top: var(--space-2); }
   .data .actions .export { flex: 1; font-size: 13px; }
   .data .actions .wipe { color: var(--color-neutral-500); font-size: 13px; }
+
+  .tools-note { font-size: 12px; margin: calc(var(--space-2) * -1) 0 var(--space-3); }
 
   .footer { font-size: 11px; margin-top: var(--space-8); text-align: center; }
 `;

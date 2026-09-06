@@ -4,12 +4,9 @@ import { store } from '../../../core/store.js';
 import { t } from '../../../core/i18n.js';
 import { styles } from './splash-view.css.js';
 
-/** Milisegundos que dura la splash antes de avanzar sola a home. */
-const SPLASH_MS = 2900;
-
 /**
- * `<splash-view>` — pantalla de bienvenida animada. Avanza a home al tocar
- * o automáticamente tras `SPLASH_MS`.
+ * `<splash-view>` — pantalla de bienvenida animada. Solo avanza a home
+ * cuando el usuario toca; no hay avance automático.
  */
 export class SplashView extends AppElement {
   static styles = [styles];
@@ -37,22 +34,13 @@ export class SplashView extends AppElement {
       </div>`;
   }
 
-  /** Cablea el toque para saltar y arranca el temporizador de avance. */
+  /** Cablea el toque para entrar (no hay avance automático). */
   afterRender() {
     this.on(this.$('.splash'), 'click', () => this._enter());
-    clearTimeout(this._timer);
-    this._timer = setTimeout(() => this._enter(), SPLASH_MS);
-  }
-
-  /** Limpia el temporizador al desmontar. */
-  disconnectedCallback() {
-    super.disconnectedCallback();
-    clearTimeout(this._timer);
   }
 
   /** Entra a home y, si procede, lanza la celebración pendiente. */
   _enter() {
-    clearTimeout(this._timer);
     router.go('home');
     const pending = store.pendingCelebration();
     if (pending) router.openCelebration(pending);

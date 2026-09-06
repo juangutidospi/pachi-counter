@@ -6,6 +6,7 @@ import { t, getLang, setLang } from '../../../core/i18n.js';
 import { uiIcon } from '../../../core/icons.js';
 import { escapeHtml } from '../../../core/escape-html.js';
 import '../../ui/seg-control/seg-control.js';
+import '../../ui/demo-panel/demo-panel.js';
 import { styles } from './settings-view.css.js';
 
 /**
@@ -55,6 +56,10 @@ export class SettingsView extends AppElement {
             <button class="btn btn-ghost wipe" id="wipe">${t('settings.wipe')}</button>
           </div>
         </div>
+
+        <h6>${t('settings.toolsTitle')}</h6>
+        <p class="text-muted tools-note">${t('settings.toolsNote')}</p>
+        <demo-panel></demo-panel>
 
         <p class="text-muted footer">${t('settings.footer')}</p>
       </div>`;
