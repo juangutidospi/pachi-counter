@@ -1,0 +1,209 @@
+/**
+ * English dictionary. Must keep exactly the same keys as `es.js`
+ * (checked by the parity test). `{param}` values are interpolated at
+ * translation time.
+ */
+export const en = {
+  months: 'Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec',
+
+  word: { day: 'day', days: 'days' },
+
+  app: {
+    name1: 'Pachi’s',
+    name2: 'counter',
+    tagline: 'ONE MORE DAY, ALWAYS',
+  },
+
+  splash: {
+    enter: 'tap to enter',
+  },
+
+  home: {
+    greetingHas: 'Your streaks',
+    greetingEmpty: 'Let’s start',
+    settings: 'Settings',
+    stat: { days: 'Days added', streaks: 'Live streaks', nearest: 'Nearest goal' },
+    focusKicker: 'Today · {name}',
+    empty: {
+      title: 'Nothing counted yet',
+      body: 'Create your first counter. It starts at 0 today and climbs on its own, one day at a time, until you reset it.',
+      cta: 'Create my first counter',
+    },
+  },
+
+  card: {
+    today: '+1 today',
+    since: 'since {date}',
+    best: 'best: {best} d',
+    goalHitToday: 'goal today!',
+    goalDaysTo: '{r} days to {next}',
+    goalAll: 'all goals',
+  },
+
+  detail: {
+    back: 'Streaks',
+    share: 'Share',
+    kind: { quit: 'Quit something', build: 'Build something' },
+    stat: { current: 'Current streak', best: 'Best streak', next: 'Next goal' },
+    weeksTitle: 'Last 5 weeks',
+    weeksFull: 'full streak',
+    weeksOf: '{d} of 35 days',
+    gridBefore: 'before starting',
+    gridDay: 'day {n}',
+    milestonesTitle: 'Goals',
+    milestoneLabel: '{m} {word} {tail}',
+    milestoneLeft: '{r} d',
+    noteTitle: 'My note',
+    noteAutosave: 'saved as you type',
+    notePh: 'Why I do it. To read it on hard days.',
+    hard: 'Today is hard',
+    reset: 'I relapsed, back to 0',
+    remove: 'Delete',
+  },
+
+  settings: {
+    title: 'Settings',
+    toneLabel: 'Tone of the phrases',
+    tone: { warm: 'Warm', direct: 'Direct', sober: 'Sober' },
+    toneSample: {
+      warm: 'Hang in there, 3 days to go until 30 days sin refrescos.',
+      direct: 'You’re on day 27. 3 more days and it’s 30 days sin refrescos.',
+      sober: 'Day 27. Next goal: 30 days.',
+    },
+    reminderLabel: 'Daily reminder',
+    reminderHint: 'one nudge, no nagging',
+    langLabel: 'Language',
+    lang: { es: 'Español', en: 'English' },
+    themeLabel: 'Theme',
+    theme: { dark: 'Dark', light: 'Light' },
+    dataTitle: 'Data',
+    savedIn: 'Saved in',
+    size: 'Size',
+    bytes: '{n} bytes',
+    export: 'Export JSON',
+    wipe: 'Delete all',
+    footer: 'Pachi’s counter · v1 · no account, no cloud',
+  },
+
+  create: {
+    title: 'New counter',
+    subtitle: 'It starts counting the moment you create it.',
+    kindLabel: 'Type',
+    kind: { quit: 'Quit something', build: 'Build something' },
+    nameLabel: 'Name',
+    namePh: { quit: 'No sugar', build: 'Reading every day' },
+    tailLabel: 'It will read like',
+    tailPrefix: '0 days',
+    tailPh: { quit: 'no sugar', build: 'reading every day' },
+    iconLabel: 'Icon',
+    colorLabel: 'Accent',
+    color: { accent: 'Blurple', accent2: 'Lilac', light: 'Light', deep: 'Deep' },
+    startLabel: 'Start date',
+    startToday: 'Today',
+    startPast: 'I already have days',
+    agoSuffix: 'days already done',
+    msLabel: 'Goals',
+    msDefault: 'Default',
+    msCustom: 'Mine',
+    msPh: '1, 3, 7, 21, 30, 90',
+    msPreview: '{list} days',
+    msPreviewEmpty: 'write at least one goal',
+    whyLabel: 'Why I do it',
+    whyOptional: '(optional)',
+    whyPh: 'It will show in the detail, for the hard days.',
+    cancel: 'Cancel',
+    submit: 'Start counting',
+  },
+
+  reset: {
+    title: 'Back to 0?',
+    body: 'Your streak of {d} days {tail} goes back to 0. It stays saved as your best streak ({best} days) and the counter starts again today.',
+    keep: 'Still standing',
+    confirm: 'Back to 0',
+  },
+
+  hard: {
+    kicker: 'You’ve been {d} {word} {tail}',
+    defaultText: 'A hard day doesn’t erase {d} days. You just have to not break it today.',
+    footDefault: 'Write your reason in the detail and it will show up here when you need it.',
+    footNote: 'You wrote this. Tomorrow the counter reads {tomorrow}.',
+    close: 'Still standing',
+  },
+
+  celebrate: {
+    tail: 'days {tail}',
+    phrase: '{d} days {tail}!',
+    footNext: 'Next goal: {next} days. {r} to go.',
+    footNone: 'No more goals. Now you’re the record to beat.',
+    close: 'Keep counting',
+  },
+
+  nav: {
+    streaks: 'Streaks',
+    new: '+ New',
+    settings: 'Settings',
+  },
+
+  demo: {
+    title: 'Demo · time travel',
+    today: 'today',
+    offset: '{label}',
+    back1: '− 1 day',
+    fwd1: '+ 1 day',
+    fwd7: '+ 7 days',
+    empty: 'See empty state',
+    restore: 'Restore examples',
+    splash: 'Splash',
+    days: '{sign}{n} days',
+  },
+
+  toast: {
+    reset: 'Counter at 0. Best streak saved: {best} days.',
+    removed: 'Counter deleted.',
+    created: '“{name}” starts counting today.',
+    wiped: 'Everything deleted.',
+    copied: 'Copied: “{d} days {tail}”',
+    exported: 'JSON copied to clipboard.',
+  },
+
+  phrase: {
+    k: {
+      milestone: 'Goal reached',
+      day0: 'Day 0',
+      none: 'Off the scale',
+      tomorrow: 'Tomorrow',
+      soon: 'Almost there',
+      next: 'Next goal',
+    },
+    milestone: {
+      sober: '{d} days {tail}. Goal reached.',
+      warm: '{d} days {tail}! Time to look back and feel proud.',
+      direct: '{d} days {tail}! Goal reached. Nobody takes it from you.',
+    },
+    day0: {
+      sober: 'Counter started. Tomorrow it reads 1 day.',
+      warm: 'Today is day 0, and the hard part (starting) is already done.',
+      direct: 'Day 0. Tomorrow it reads 1. You just have to reach tomorrow.',
+    },
+    none: {
+      sober: '{d} days. All goals met.',
+      warm: 'You’ve passed every goal: {d} days {tail}. Now you’re the record.',
+      direct: 'You’ve passed every goal: {d} days {tail}. Now you’re the record.',
+    },
+    tomorrow: {
+      sober: 'Tomorrow marks {next} days {tail}.',
+      warm: 'Tomorrow you hit {next} days {tail}. Just one to go.',
+      direct: 'Tomorrow you hit {next} days {tail}. Just one to go.',
+    },
+    soon: {
+      sober: '{r} days left until {next} days {tail}.',
+      warm: 'Hang in there, {r} days to go until {next} days {tail}.',
+      direct: 'Come on: {r} days to reach {next} days {tail}. It’s done.',
+    },
+    next: {
+      sober: 'Day {d}. Next goal: {next} days.',
+      warm: 'You’re on day {d}. Little by little, {next} days {tail} is closer than it seems.',
+      direct: 'You’re on day {d}. {r} more days and it’s {next} days {tail}.',
+    },
+  },
+};

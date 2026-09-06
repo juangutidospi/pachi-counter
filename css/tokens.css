@@ -1,0 +1,122 @@
+/* ══════════════════════════════════════════════════════════════════════════
+   Pachi's counter — tokens de diseño (paleta Nocturne + temas).
+   Enlazado en el <head>; los tokens se heredan a cada Shadow DOM vía var(--…).
+   No hardcodear colores en los componentes: usar siempre estos tokens.
+   ══════════════════════════════════════════════════════════════════════════ */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  /* — Base (tema oscuro, por defecto) — */
+  --color-bg: #161826;
+  --color-surface: #232532;
+  --color-text: #e9e9ed;
+  --color-accent: #9184d9;
+  --color-accent-2: #a7a1db;
+  --color-divider: color-mix(in srgb, #e9e9ed 16%, transparent);
+
+  /* — Rampa neutra (una sola escala de luminosidad compartida) — */
+  --color-neutral-100: #f3f5fe;
+  --color-neutral-200: #e4e7f5;
+  --color-neutral-300: #cfd3e5;
+  --color-neutral-400: #b2b6ca;
+  --color-neutral-500: #9397ab;
+  --color-neutral-600: #75798c;
+  --color-neutral-700: #595d6c;
+  --color-neutral-800: #3f424d;
+  --color-neutral-900: #292b31;
+
+  /* — Rampa de acento (blurple) — */
+  --color-accent-100: #f5f4ff;
+  --color-accent-200: #e7e5fe;
+  --color-accent-300: #d2cefd;
+  --color-accent-400: #b5abfc;
+  --color-accent-500: #968ae0;
+  --color-accent-600: #796cbf;
+  --color-accent-700: #5d5294;
+  --color-accent-800: #423a6a;
+  --color-accent-900: #2b2741;
+
+  /* — Rampa de acento secundario (lila) — */
+  --color-accent-2-100: #f5f4ff;
+  --color-accent-2-200: #e7e5fe;
+  --color-accent-2-300: #d2cefd;
+  --color-accent-2-400: #b5afe8;
+  --color-accent-2-500: #9690c9;
+  --color-accent-2-600: #7972a9;
+  --color-accent-2-700: #5c5783;
+  --color-accent-2-800: #423e5d;
+  --color-accent-2-900: #2b293a;
+
+  /* — Tipografía — */
+  --font-heading: "Inter", system-ui, sans-serif;
+  --font-heading-weight: 500;
+  --font-body: "Inter", system-ui, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  /* — Espaciado — */
+  --space-1: 2.8px;
+  --space-2: 5.6px;
+  --space-3: 8.4px;
+  --space-4: 11.2px;
+  --space-6: 16.8px;
+  --space-8: 22.4px;
+
+  /* — Radios — */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 14px;
+
+  /* — Elevación — */
+  --shadow-sm: 0 0 0 1px #3f424d;
+  --shadow-md: 0 0 0 1px #595d6c, 0 6px 18px rgba(0,0,0,0.55);
+  --shadow-lg: 0 0 0 1px #9397ab, 0 16px 40px rgba(0,0,0,0.65);
+}
+
+/* — Tema claro: se aplica solo si el usuario lo elige explícitamente — */
+:root[data-theme="light"] {
+  --color-bg: #f3f4fb;
+  --color-surface: #ffffff;
+  --color-text: #1c2230;
+  --color-accent: #5d5294;
+  --color-accent-2: #6c63a8;
+  --color-divider: color-mix(in srgb, #1c2230 14%, transparent);
+
+  --color-neutral-100: #14161e;
+  --color-neutral-200: #24283a;
+  --color-neutral-300: #3f4459;
+  --color-neutral-400: #565c73;
+  --color-neutral-500: #6f7590;
+  --color-neutral-600: #8b90a8;
+  --color-neutral-700: #b3b7c8;
+  --color-neutral-800: #d7d9e4;
+  --color-neutral-900: #eceef6;
+
+  /* La rampa de acento invierte sus roles: los tonos «altos» (100–400) pasan a
+     ser texto oscuro y los «bajos» (700–900) fondos claros; los medios (500/600)
+     se conservan saturados para que los acentos de contador sigan visibles. */
+  --color-accent-100: #211d38;
+  --color-accent-200: #322c57;
+  --color-accent-300: #4a4180;
+  --color-accent-400: #5d5294;
+  --color-accent-700: #b9aeef;
+  --color-accent-800: #d9d3f7;
+  --color-accent-900: #ece9fb;
+
+  --shadow-sm: 0 0 0 1px color-mix(in srgb, #1c2230 10%, transparent);
+  --shadow-md: 0 0 0 1px color-mix(in srgb, #1c2230 10%, transparent), 0 6px 18px rgba(20,25,43,0.12);
+  --shadow-lg: 0 0 0 1px color-mix(in srgb, #1c2230 14%, transparent), 0 16px 40px rgba(20,25,43,0.18);
+}
+
+html, body { margin: 0; height: 100%; }
+body {
+  background:
+    radial-gradient(1100px 700px at 20% -12%, var(--color-neutral-700) 0%, var(--color-bg) 70%);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100%;
+}
+* { box-sizing: border-box; }
+::-webkit-scrollbar { width: 0; height: 0; }
