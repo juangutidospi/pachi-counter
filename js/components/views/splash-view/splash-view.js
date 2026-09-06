@@ -25,16 +25,36 @@ export class SplashView extends AppElement {
 
           <div class="art">
             <div class="diag"></div>
-            <svg viewBox="0 0 200 200" aria-hidden="true">
-              <circle cx="100" cy="100" r="86" fill="var(--ink)"></circle>
-              <path d="M100 100 L100 14 A86 86 0 0 1 186 100 Z" fill="var(--red)"></path>
-              <path d="M100 100 L100 186 A86 86 0 0 1 14 100 Z" fill="var(--yellow)"></path>
-              <circle cx="100" cy="100" r="60" fill="none" stroke="var(--paper)" stroke-width="3"></circle>
-              <circle cx="100" cy="100" r="40" fill="none" stroke="var(--paper)" stroke-width="3"></circle>
-              <rect x="93" y="6" width="14" height="188" fill="var(--blue)"></rect>
-              <circle cx="100" cy="100" r="26" fill="var(--paper)"></circle>
-              <text x="100" y="101" text-anchor="middle" dominant-baseline="central"
-                font-family="Syne, sans-serif" font-weight="800" font-size="34" fill="var(--ink)">P</text>
+            <svg class="emblem" viewBox="0 0 200 200" aria-hidden="true">
+              <defs>
+                <clipPath id="pc-clip"><circle cx="100" cy="100" r="86"></circle></clipPath>
+                <linearGradient id="pc-sheen" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0" stop-color="#fff" stop-opacity="0"></stop>
+                  <stop offset="0.5" stop-color="#fff" stop-opacity="0.55"></stop>
+                  <stop offset="1" stop-color="#fff" stop-opacity="0"></stop>
+                </linearGradient>
+              </defs>
+
+              <g class="disc">
+                <circle class="base" cx="100" cy="100" r="86" fill="var(--ink)"></circle>
+                <path class="q q-red" d="M100 100 L100 14 A86 86 0 0 1 186 100 Z" fill="var(--red)"></path>
+                <path class="q q-yellow" d="M100 100 L100 186 A86 86 0 0 1 14 100 Z" fill="var(--yellow)"></path>
+                <g class="grooves" fill="none" stroke="var(--paper)" stroke-width="3" stroke-linecap="round">
+                  <circle class="groove g1" cx="100" cy="100" r="72" pathLength="100"></circle>
+                  <circle class="groove g2" cx="100" cy="100" r="58" pathLength="100"></circle>
+                  <circle class="groove g3" cx="100" cy="100" r="44" pathLength="100"></circle>
+                </g>
+              </g>
+
+              <rect class="bar" x="93" y="6" width="14" height="188" fill="var(--blue)"></rect>
+
+              <g class="hub">
+                <circle cx="100" cy="100" r="26" fill="var(--paper)"></circle>
+                <text x="100" y="101" text-anchor="middle" dominant-baseline="central"
+                  font-family="Syne, sans-serif" font-weight="800" font-size="34" fill="var(--ink)">P</text>
+              </g>
+
+              <rect class="sheen" x="-40" y="-20" width="46" height="240" fill="url(#pc-sheen)" clip-path="url(#pc-clip)"></rect>
             </svg>
           </div>
 
