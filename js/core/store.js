@@ -72,7 +72,9 @@ function load() {
       }
     }
   } catch (e) { /* almacenamiento no disponible o corrupto */ }
-  return { counters: seedCounters(), tone: 'direct', reminder: '21:00', offset: 0 };
+  // Primer arranque: sin datos de ejemplo, el usuario empieza vacío y añade
+  // los suyos. Los ejemplos quedan disponibles vía restoreSeed() (panel demo).
+  return { counters: [], tone: 'direct', reminder: '21:00', offset: 0 };
 }
 
 /** @returns {object[]} Copia de los contadores de ejemplo anclados a hoy. */
