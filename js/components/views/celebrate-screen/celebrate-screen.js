@@ -5,8 +5,8 @@ import { t } from '../../../core/i18n.js';
 import { escapeHtml } from '../../../core/escape-html.js';
 import { styles } from './celebrate-screen.css.js';
 
-/** Colores del confeti (tokens del tema). */
-const CONFETTI_TONES = ['var(--color-accent)', 'var(--color-accent-300)', 'var(--color-accent-600)', 'var(--color-neutral-400)'];
+/** Colores del confeti (primarios Bauhaus). */
+const CONFETTI_TONES = ['var(--blue)', 'var(--red)', 'var(--yellow)', 'var(--ink)'];
 
 /**
  * `<celebrate-screen>` — pantalla de celebración al alcanzar un hito.

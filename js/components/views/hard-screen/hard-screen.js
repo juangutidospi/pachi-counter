@@ -22,7 +22,7 @@ export class HardScreen extends AppElement {
     const foot = c.note ? t('hard.footNote', { tomorrow: days + 1 }) : t('hard.footDefault');
     this.shadowRoot.innerHTML = `
       <div class="hard" id="scrim">
-        <div>
+        <div class="inner">
           <div class="kicker">${escapeHtml(t('hard.kicker', { d: days, word, tail: c.tail }))}</div>
           <p class="text">${escapeHtml(text)}</p>
           <div class="sep"></div>

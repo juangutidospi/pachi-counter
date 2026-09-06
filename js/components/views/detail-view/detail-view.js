@@ -164,7 +164,9 @@ export class DetailView extends AppElement {
     const prev = ladder.filter((m) => m <= days).pop() || 0;
     const pct = next ? Math.min(1, (days - prev) / (next - prev)) : 1;
     const best = Math.max(c.best || 0, days);
-    const color = (COUNTER_COLORS[c.color] || COUNTER_COLORS.accent).value;
+    const cc = COUNTER_COLORS[c.color] || COUNTER_COLORS.accent;
+    const color = cc.value;
+    const on = cc.on;
     const start = dayIndex(c.start);
     const today = store.today();
 
@@ -173,8 +175,8 @@ export class DetailView extends AppElement {
       const day = today - i;
       const inStreak = day >= start && day <= today;
       grid.push({
-        bg: inStreak ? color : 'var(--color-neutral-900)',
-        ring: day === today ? '0 0 0 1.5px var(--color-neutral-300)' : 'none',
+        bg: inStreak ? color : 'transparent',
+        ring: day === today ? '0 0 0 2px var(--ink)' : 'none',
         title: inStreak ? t('detail.gridDay', { n: day - start }) : t('detail.gridBefore'),
       });
     }
@@ -199,9 +201,9 @@ export class DetailView extends AppElement {
           label: t('detail.milestoneLabel', { m, word: t(m === 1 ? 'word.day' : 'word.days'), tail: c.tail }),
           mark: done ? '✓' : '',
           dotBg: done ? color : 'transparent',
-          dotFg: 'var(--color-neutral-900)',
-          dotRing: done ? 'none' : 'inset 0 0 0 1px var(--color-neutral-700)',
-          fg: done ? 'var(--color-neutral-100)' : 'var(--color-neutral-500)',
+          dotFg: done ? on : 'transparent',
+          dotRing: done ? 'none' : 'inset 0 0 0 2px var(--ink)',
+          fg: done ? 'var(--ink)' : 'var(--dim)',
           meta: done ? fmtDate(isoOf((start + m) * DAY)) : t('detail.milestoneLeft', { r: m - days }),
         };
       }),
