@@ -36,12 +36,32 @@ export class PachiApp extends AppElement {
       store.subscribe(() => this._paint()),
       router.subscribe(() => this._paint()),
     ];
+    // Los días se derivan de la fecha actual: recalcular al volver a la app y
+    // programar un refresco automático a la medianoche local.
+    this._onWake = () => { if (!document.hidden) store.tickDay(); };
+    document.addEventListener('visibilitychange', this._onWake);
+    window.addEventListener('focus', this._onWake);
+    this._scheduleMidnight();
   }
 
-  /** Cancela las suscripciones persistentes al desmontar. */
+  /** Cancela las suscripciones persistentes y temporizadores al desmontar. */
   disconnectedCallback() {
     super.disconnectedCallback();
     if (this._subs) this._subs.forEach((off) => off());
+    document.removeEventListener('visibilitychange', this._onWake);
+    window.removeEventListener('focus', this._onWake);
+    clearTimeout(this._midnightTimer);
+  }
+
+  /** Programa un `tickDay()` justo tras la próxima medianoche local y se reprograma. */
+  _scheduleMidnight() {
+    const now = new Date();
+    const next = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 2, 0);
+    clearTimeout(this._midnightTimer);
+    this._midnightTimer = setTimeout(() => {
+      store.tickDay();
+      this._scheduleMidnight();
+    }, next.getTime() - now.getTime());
   }
 
   /** Compone el marco con la vista activa, overlays, tabbar y toast. */

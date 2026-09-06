@@ -17,7 +17,7 @@ function detectInitial() {
     const saved = localStorage.getItem(LANG_KEY);
     if (saved && DICTS[saved]) return saved;
   } catch (e) { /* almacenamiento no disponible */ }
-  const nav = (navigator.language || 'es').slice(0, 2);
+  const nav = ((typeof navigator !== 'undefined' && navigator.language) || 'es').slice(0, 2);
   return DICTS[nav] ? nav : 'es';
 }
 
@@ -48,7 +48,7 @@ export function setLang(lang) {
   if (!DICTS[lang] || lang === current) return;
   current = lang;
   try { localStorage.setItem(LANG_KEY, lang); } catch (e) { /* ignorar */ }
-  document.documentElement.lang = lang;
+  if (typeof document !== 'undefined') document.documentElement.lang = lang;
   bus.dispatchEvent(new CustomEvent('i18n:changed', { detail: { lang } }));
 }
 
@@ -65,4 +65,4 @@ export function onI18nChanged(handler) {
   return () => bus.removeEventListener('i18n:changed', handler);
 }
 
-document.documentElement.lang = current;
+if (typeof document !== 'undefined') document.documentElement.lang = current;

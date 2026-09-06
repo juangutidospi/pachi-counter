@@ -26,13 +26,46 @@ const SEED = [
   { id: 'c3', name: 'Sin refrescos', tail: 'sin refrescos', kind: 'quit', icon: 'drop', color: 'deep', ago: 27, best: 27, milestones: DEF_MILESTONES, note: '' },
 ];
 
-/* ── utilidades de fecha (basadas en día UTC, como el prototipo) ──────── */
+/* ── utilidades de fecha (día natural LOCAL, estable ante cambios de hora) ─
+   La fecha se toma en hora local (el contador cambia a tu medianoche, no a la
+   UTC) y el índice de día se calcula con Date.UTC sobre esos componentes de
+   calendario: así cada fecha natural tiene un entero fijo, inmune a DST. */
 
-/** @param {number} ms Milisegundos epoch. @returns {string} Fecha ISO `YYYY-MM-DD`. */
-export function isoOf(ms) { return new Date(ms).toISOString().slice(0, 10); }
+/**
+ * Fecha ISO `YYYY-MM-DD` del instante dado, en hora LOCAL.
+ * @param {number} ms Milisegundos epoch.
+ * @returns {string} Fecha ISO local.
+ */
+export function isoOf(ms) {
+  const d = new Date(ms);
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
 
-/** @param {string} iso Fecha ISO. @returns {number} Índice de día absoluto. */
-export function dayIndex(iso) { return Math.floor(new Date(iso + 'T00:00:00Z').getTime() / DAY); }
+/**
+ * Índice de día absoluto (entero) de una fecha de calendario.
+ * @param {string} iso Fecha ISO `YYYY-MM-DD`.
+ * @returns {number} Días desde epoch para esa fecha natural.
+ */
+export function dayIndex(iso) {
+  const [y, m, d] = iso.split('-').map(Number);
+  return Math.floor(Date.UTC(y, m - 1, d) / DAY);
+}
+
+/**
+ * Fecha ISO `YYYY-MM-DD` correspondiente a un índice de día (inverso de dayIndex).
+ * @param {number} index Índice de día absoluto.
+ * @returns {string} Fecha ISO.
+ */
+export function isoFromDayIndex(index) {
+  const d = new Date(index * DAY);
+  const y = d.getUTCFullYear();
+  const m = String(d.getUTCMonth() + 1).padStart(2, '0');
+  const day = String(d.getUTCDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
 
 /**
  * Formatea una fecha ISO como «12 sep» con los meses del idioma activo.
@@ -40,9 +73,9 @@ export function dayIndex(iso) { return Math.floor(new Date(iso + 'T00:00:00Z').g
  * @returns {string} Etiqueta corta día + mes.
  */
 export function fmtDate(iso) {
-  const d = new Date(iso + 'T00:00:00Z');
+  const [, m, d] = iso.split('-').map(Number);
   const months = t('months').split(',');
-  return d.getUTCDate() + ' ' + months[d.getUTCMonth()];
+  return d + ' ' + months[m - 1];
 }
 
 /* ── store ────────────────────────────────────────────────────────────── */
@@ -247,7 +280,7 @@ export const store = {
     const counters = state.counters.map((c) => {
       if (c.id !== id) return c;
       best = Math.max(c.best || 0, this.daysOf(c));
-      return { ...c, best, start: isoOf(this.today() * DAY), seen: 0, seenDay: this.today() };
+      return { ...c, best, start: isoFromDayIndex(this.today()), seen: 0, seenDay: this.today() };
     });
     commit({ counters });
     return best;
@@ -276,7 +309,7 @@ export const store = {
    */
   create(draft) {
     const id = 'c' + Date.now();
-    const start = isoOf((this.today() - draft.ago) * DAY);
+    const start = isoFromDayIndex(this.today() - draft.ago);
     const counter = {
       id, name: draft.name, tail: draft.tail || draft.name.toLowerCase(), kind: draft.kind,
       icon: draft.icon, color: draft.color, start, best: draft.ago,
@@ -310,6 +343,13 @@ export const store = {
 
   /** @param {number} delta Días a sumar al offset. */
   travel(delta) { commit({ offset: state.offset + delta }, false); },
+
+  /**
+   * Fuerza a los componentes a recalcular los días (sin cambiar ni persistir
+   * nada). Se usa al cruzar la medianoche o al volver a la app, ya que los días
+   * se derivan de la fecha actual en cada render.
+   */
+  tickDay() { bus.dispatchEvent(new CustomEvent('store:changed')); },
 
   /**
    * Detecta si algún contador acaba de alcanzar un hito no celebrado.
