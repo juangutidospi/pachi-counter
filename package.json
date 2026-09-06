@@ -1,0 +1,12 @@
+{
+  "name": "pachi-counter",
+  "version": "1.0.0",
+  "description": "Pachi's counter — contadores de rachas (Web Components, sin build).",
+  "type": "module",
+  "scripts": {
+    "test": "node --test",
+    "serve": "node serve.js",
+    "start": "node serve.js"
+  },
+  "license": "MIT"
+}
