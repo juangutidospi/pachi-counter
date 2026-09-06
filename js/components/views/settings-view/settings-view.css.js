@@ -24,5 +24,7 @@ export const styles = css`
   .data .actions .export { flex: 1; font-size: 13px; }
   .data .actions .wipe { color: var(--color-neutral-500); font-size: 13px; }
 
+  .tools-note { font-size: 12px; margin: calc(var(--space-2) * -1) 0 var(--space-3); }
+
   .footer { font-size: 11px; margin-top: var(--space-8); text-align: center; }
 `;
