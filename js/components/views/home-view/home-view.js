@@ -17,12 +17,27 @@ export class HomeView extends AppElement {
 
   /** Compone la cabecera y el cuerpo (lista o estado vacío). */
   render() {
+    this._applyEdition();
     const hasCounters = store.counters.length > 0;
     this.shadowRoot.innerHTML = `
       <div class="home">
         ${this._headTpl}
         ${hasCounters ? this._bodyTpl : this._emptyTpl}
       </div>`;
+  }
+
+  /** Aplica el acento de la «edición» según la estación (hemisferio norte). */
+  _applyEdition() {
+    const month = new Date(Date.now() + store.offset * 86400000).getMonth();
+    const season = month <= 1 || month === 11 ? 'winter' : month <= 4 ? 'spring' : month <= 7 ? 'summer' : 'autumn';
+    const map = {
+      winter: ['var(--blue)', 'var(--paper)'],
+      spring: ['var(--red)', 'var(--paper)'],
+      summer: ['var(--yellow)', 'var(--ink)'],
+      autumn: ['var(--ink)', 'var(--paper)'],
+    };
+    this.style.setProperty('--edition', map[season][0]);
+    this.style.setProperty('--edition-on', map[season][1]);
   }
 
   /** @returns {string} Cabecera-masthead de publicación + saludo y ajustes. */
@@ -47,9 +62,21 @@ export class HomeView extends AppElement {
     return store.today() - dayIndex('2026-01-01') + 1;
   }
 
-  /** @returns {string} Estadísticas + foco + lista de contadores. */
+  /** @returns {string} Estadísticas + foco + lista + columna editorial. */
   get _bodyTpl() {
-    return `${this._statsTpl}${this._focusTpl}<div class="list" id="list"></div>`;
+    return `${this._statsTpl}${this._focusTpl}<div class="list" id="list"></div>${this._columnTpl}`;
+  }
+
+  /** @returns {string} Columna editorial del día (titular + dato). */
+  get _columnTpl() {
+    const ins = store.insight();
+    if (!ins) return '';
+    return `
+      <div class="column">
+        <div class="col-kicker">${ins.kicker}</div>
+        <p class="col-headline">${escapeHtml(ins.headline)}</p>
+        <div class="col-sub">${escapeHtml(ins.sub)}</div>
+      </div>`;
   }
 
   /** @returns {string} Franja de estadísticas resumen. */

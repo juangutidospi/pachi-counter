@@ -27,11 +27,19 @@ export const en = {
     edition: 'No. {n}',
     stat: { days: 'Days added', streaks: 'Live streaks', nearest: 'Nearest goal' },
     focusKicker: 'Today · {name}',
+    column: { kicker: 'The column' },
     empty: {
       title: 'Nothing counted yet',
       body: 'Create your first counter. It starts at 0 today and climbs on its own, one day at a time, until you reset it.',
       cta: 'Create my first counter',
     },
+  },
+
+  insight: {
+    nearMilestone: '{name} nears {n} days',
+    record: 'Personal record in the making: {name}',
+    total: '{n} total days counted',
+    sub: '{streaks} live streaks · best {best} d',
   },
 
   card: {
