@@ -26,7 +26,7 @@ export class CounterCard extends AppElement {
     const vm = this._viewModel(c);
     this.shadowRoot.innerHTML = `
       <button class="card" type="button">
-        <div class="disc" style="background:${vm.color};color:${vm.on}">${vm.days}</div>
+        <div class="disc" style="background:${vm.color};color:${vm.on};font-size:${vm.discSize}">${vm.days}</div>
         <div class="info">
           <div class="name-line">
             <div class="name">${escapeHtml(c.name)}</div>
@@ -59,8 +59,11 @@ export class CounterCard extends AppElement {
     const pct = next ? Math.min(1, (days - prev) / (next - prev)) : 1;
     const gap = next ? next - days : 0;
     const color = COUNTER_COLORS[c.color] || COUNTER_COLORS.accent;
+    const digits = String(days).length;
     return {
       days,
+      // La cifra encoge según los dígitos para no salirse del disco (58px).
+      discSize: digits <= 2 ? '24px' : digits === 3 ? '18px' : '14px',
       dayWord: t(days === 1 ? 'word.day' : 'word.days'),
       best: Math.max(c.best || 0, days),
       startLabel: fmtDate(c.start),
