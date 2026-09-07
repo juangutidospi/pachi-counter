@@ -18,13 +18,16 @@ export const styles = css`
   }
 
   .screen {
-    position: relative; width: 100%; height: 100%; overflow-y: auto; overflow-x: hidden;
+    position: relative; width: 100%; height: 100%; overflow: hidden;
+    display: flex; flex-direction: column;
     background: var(--paper); color: var(--ink);
   }
+  /* Área de contenido con scroll propio; la tabbar queda fija fuera de ella. */
+  .scroll { flex: 1 1 auto; min-height: 0; overflow-y: auto; overflow-x: hidden; }
 
-  /* — tabbar — */
+  /* — tabbar fija al fondo (no se desplaza con el contenido) — */
   .tabbar {
-    position: absolute; bottom: 0; left: 0; right: 0; z-index: 40;
+    flex: none; z-index: 40;
     display: flex; align-items: stretch; justify-content: space-between;
     border-top: var(--border-w) solid var(--ink); background: var(--paper);
   }

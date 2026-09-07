@@ -71,13 +71,13 @@ export class PachiApp extends AppElement {
     this.shadowRoot.innerHTML = `
       <div class="frame">
         <div class="screen">
-          <${viewTag} class="view"></${viewTag}>
+          <div class="scroll"><${viewTag} class="view"></${viewTag}></div>
+          ${showNav ? this._tabbarTpl : ''}
           ${router.isCreateOpen ? '<create-sheet></create-sheet>' : ''}
           ${router.isResetOpen ? '<reset-dialog></reset-dialog>' : ''}
           ${router.isHardOpen ? '<hard-screen></hard-screen>' : ''}
           ${router.celebration ? '<celebrate-screen></celebrate-screen>' : ''}
           ${router.toast ? this._toastTpl : ''}
-          ${showNav ? this._tabbarTpl : ''}
         </div>
       </div>`;
   }

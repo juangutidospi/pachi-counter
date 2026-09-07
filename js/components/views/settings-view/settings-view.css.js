@@ -3,7 +3,7 @@ import { css } from '../../../core/css.js';
 /** Estilos de la vista de ajustes — Bauhaus. */
 export const styles = css`
   :host { display: block; }
-  .settings { padding: 44px 22px 128px; animation: pc-fade .3s ease both; container-type: inline-size; }
+  .settings { padding: 44px 22px 32px; animation: pc-fade .3s ease both; container-type: inline-size; }
   .back { gap: 4px; margin-left: -4px; }
   h2 { margin: var(--space-4) 0 0; font-size: min(40px, 12cqw); }
 
