@@ -8,11 +8,19 @@ export const styles = css`
   }
 
   .frame {
+    position: relative;
     width: 402px; max-width: 100%;
     height: min(844px, calc(100vh - 2 * var(--space-8)));
     height: min(844px, calc(100dvh - 2 * var(--space-8)));
     border-radius: 26px; overflow: hidden; box-shadow: 8px 8px 0 var(--ink);
     border: var(--border-w) solid var(--ink); background: var(--paper);
+  }
+  /* Grano de impresión: textura sutil sobre todo el marco (tacto analógico). */
+  .frame::after {
+    content: ""; position: absolute; inset: 0; z-index: 200; pointer-events: none;
+    opacity: 0.06; mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 160px 160px;
   }
   @media (max-width: 460px) {
     :host { padding: 0; width: 100%; }

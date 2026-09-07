@@ -108,7 +108,7 @@ export class PachiApp extends AppElement {
     return `<div class="toast-host"><div class="toast">${escapeHtml(router.toast)}</div></div>`;
   }
 
-  /** Cablea la barra de navegación. */
+  /** Cablea la barra de navegación y limpia el overlay de transición al acabar. */
   afterRender() {
     const home = this.$('#nav-home');
     if (home) {
@@ -116,6 +116,8 @@ export class PachiApp extends AppElement {
       this.on(this.$('#nav-new'), 'click', () => router.openCreate());
       this.on(this.$('#nav-settings'), 'click', () => router.go('settings'));
     }
+    const wipe = this.$('.wipe');
+    if (wipe) setTimeout(() => wipe.remove(), 900);
   }
 }
 
