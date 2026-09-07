@@ -8,10 +8,10 @@ export const styles = css`
     display: flex; flex-direction: row; align-items: center; gap: 14px; padding: 16px 4px;
     border: 0; border-bottom: var(--border-w) solid var(--ink); background: transparent;
     cursor: pointer; width: 100%; text-align: left;
-    transition: background .12s ease, transform .1s ease;
+    transition: background .12s ease, transform .22s cubic-bezier(.34,1.56,.64,1);
   }
   .card:hover { background: color-mix(in srgb, var(--ink) 6%, transparent); }
-  .card:active { transform: translate(1px, 1px); }
+  .card:active { transform: scale(.975); }
 
   .disc {
     flex: none; width: 58px; height: 58px; border-radius: 50%; display: grid; place-items: center;

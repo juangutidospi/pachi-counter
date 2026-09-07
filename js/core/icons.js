@@ -30,7 +30,7 @@ export const UI_ICONS = {
  * @returns {string} SVG como cadena HTML.
  */
 export function counterIcon(key, size = 20) {
-  return svg(COUNTER_ICONS[key] || COUNTER_ICONS.bolt, size, 1.6);
+  return svg(COUNTER_ICONS[key] || COUNTER_ICONS.bolt, size, 2.1);
 }
 
 /**
@@ -40,7 +40,7 @@ export function counterIcon(key, size = 20) {
  * @returns {string} SVG como cadena HTML.
  */
 export function uiIcon(key, size = 17) {
-  return svg(UI_ICONS[key] || UI_ICONS.gear, size, 1.7);
+  return svg(UI_ICONS[key] || UI_ICONS.gear, size, 2.1);
 }
 
 /**
@@ -52,6 +52,6 @@ export function uiIcon(key, size = 17) {
  */
 function svg(d, size, stroke) {
   return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" ` +
-    `stroke-width="${stroke}" stroke-linecap="round" stroke-linejoin="round" style="display:block">` +
+    `stroke-width="${stroke}" stroke-linecap="square" stroke-linejoin="miter" style="display:block">` +
     `<path d="${d}"></path></svg>`;
 }

@@ -41,16 +41,15 @@ export const base = css`
     font-size: 13px; line-height: 1; color: var(--ink); text-transform: uppercase; letter-spacing: .02em;
     background: transparent; border: var(--border-w) solid transparent;
     padding: 10px 16px; border-radius: 0;
-    transition: background .12s ease, color .12s ease, transform .1s ease;
+    transition: background .12s ease, color .12s ease, transform .22s cubic-bezier(.34,1.56,.64,1);
   }
   .btn svg { display: block; }
   .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn:active:not(:disabled) { transform: scale(.94); }
   .btn-primary { background: var(--blue); color: var(--paper); border-color: var(--blue); }
   .btn-primary:hover { background: var(--ink); border-color: var(--ink); }
-  .btn-primary:active { transform: translate(1px, 1px); }
   .btn-secondary { border-color: var(--ink); color: var(--ink); }
   .btn-secondary:hover { background: var(--ink); color: var(--paper); }
-  .btn-secondary:active { transform: translate(1px, 1px); }
   .btn-ghost { color: var(--ink); border-color: transparent; padding-inline: 4px; }
   .btn-ghost:hover { color: var(--blue); }
   .btn-icon { width: 38px; height: 38px; padding: 0; }

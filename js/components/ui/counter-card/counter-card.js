@@ -2,6 +2,7 @@ import { AppElement } from '../../../core/AppElement.js';
 import { store, COUNTER_COLORS, fmtDate } from '../../../core/store.js';
 import { t } from '../../../core/i18n.js';
 import { escapeHtml } from '../../../core/escape-html.js';
+import { haptic } from '../../../core/haptics.js';
 import { styles } from './counter-card.css.js';
 
 /**
@@ -42,8 +43,10 @@ export class CounterCard extends AppElement {
   afterRender() {
     const card = this.$('.card');
     if (!card) return;
-    this.on(card, 'click', () => this.dispatchEvent(
-      new CustomEvent('open', { detail: { id: this._counter.id }, bubbles: true, composed: true })));
+    this.on(card, 'click', () => {
+      haptic(12);
+      this.dispatchEvent(new CustomEvent('open', { detail: { id: this._counter.id }, bubbles: true, composed: true }));
+    });
     this._animateNumber();
   }
 
