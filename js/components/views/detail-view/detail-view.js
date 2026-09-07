@@ -4,12 +4,11 @@ import { router } from '../../../core/router.js';
 import { t } from '../../../core/i18n.js';
 import { uiIcon } from '../../../core/icons.js';
 import { escapeHtml } from '../../../core/escape-html.js';
-import '../../ui/ring-dial/ring-dial.js';
 import { styles } from './detail-view.css.js';
 
 /**
- * `<detail-view>` — detalle de un contador: anillo de progreso, frase, tres
- * métricas, heatmap de 5 semanas, escalera de hitos, nota editable y acciones
+ * `<detail-view>` — detalle de un contador: disco de vinilo personal (surcos =
+ * hitos), frase, tres métricas, escalera de hitos, nota editable y acciones
  * (día difícil, reiniciar, eliminar).
  */
 export class DetailView extends AppElement {
@@ -24,10 +23,9 @@ export class DetailView extends AppElement {
     this.shadowRoot.innerHTML = `
       <div class="detail">
         ${this._topTpl(vm)}
-        ${this._dialTpl(vm)}
+        ${this._vinylTpl(vm)}
         ${this._phraseTpl(vm)}
         ${this._statsTpl(vm)}
-        ${this._gridTpl(vm)}
         ${this._ladderTpl(vm)}
         ${this._noteTpl(vm)}
         ${this._actionsTpl}
@@ -46,14 +44,29 @@ export class DetailView extends AppElement {
       </div>`;
   }
 
-  /** @param {object} vm Modelo de vista. @returns {string} Anillo con días. */
-  _dialTpl(vm) {
+  /** @param {object} vm Modelo de vista. @returns {string} Disco de vinilo personal. */
+  _vinylTpl(vm) {
+    const grooves = vm.grooves.map((g) =>
+      `<circle cx="130" cy="130" r="${g.r}" fill="none" stroke="${g.reached ? vm.color : 'var(--color-neutral-800)'}" stroke-width="${g.reached ? 4 : 2}"></circle>`
+    ).join('');
     return `
-      <div class="dial-wrap">
-        <ring-dial offset="${vm.ringOffset}" color="${vm.color}">
-          <div class="dial-days">${vm.days}</div>
-          <div class="dial-word">${vm.dayWord} ${escapeHtml(vm.tail)}</div>
-        </ring-dial>
+      <div class="vinyl-wrap">
+        <div class="vinyl">
+          <svg class="disc" viewBox="0 0 260 260" aria-hidden="true">
+            <circle cx="130" cy="130" r="122" fill="var(--ink)"></circle>
+            <rect x="129" y="10" width="2" height="120" fill="var(--color-neutral-700)" opacity="0.55"></rect>
+            ${grooves}
+          </svg>
+          <svg class="progress" viewBox="0 0 260 260" aria-hidden="true">
+            <circle cx="130" cy="130" r="118" fill="none" stroke="var(--color-neutral-800)" stroke-width="4"></circle>
+            <circle class="prog-arc" cx="130" cy="130" r="118" fill="none" stroke="${vm.color}" stroke-width="4"
+              stroke-linecap="round" pathLength="100" stroke-dasharray="100" stroke-dashoffset="${100 - vm.progressPct}"></circle>
+          </svg>
+          <div class="label" style="background:${vm.color};color:${vm.on}">
+            <div class="num" id="odo" style="font-size:${vm.labelSize}">${vm.days}</div>
+            <div class="tail">${escapeHtml(vm.dayWord)} ${escapeHtml(vm.tail)}</div>
+          </div>
+        </div>
       </div>`;
   }
 
@@ -73,18 +86,6 @@ export class DetailView extends AppElement {
         <div class="card elev-sm stat3"><div class="num">${vm.days}</div><div class="lbl">${t('detail.stat.current')}</div></div>
         <div class="card elev-sm stat3"><div class="num" style="color:${vm.bestColor}">${vm.best}</div><div class="lbl">${t('detail.stat.best')}</div></div>
         <div class="card elev-sm stat3"><div class="num">${vm.nextLabel}</div><div class="lbl">${t('detail.stat.next')}</div></div>
-      </div>`;
-  }
-
-  /** @param {object} vm Modelo de vista. @returns {string} Heatmap de 5 semanas. */
-  _gridTpl(vm) {
-    return `
-      <div class="section-head">
-        <h6>${t('detail.weeksTitle')}</h6>
-        <span class="note">${vm.gridNote}</span>
-      </div>
-      <div class="grid">
-        ${vm.grid.map((cell) => `<div class="cell" title="${escapeHtml(cell.title)}" style="background:${cell.bg};box-shadow:${cell.ring}"></div>`).join('')}
       </div>`;
   }
 
@@ -133,6 +134,32 @@ export class DetailView extends AppElement {
     this.on(this.$('#reset'), 'click', () => router.openReset());
     this.on(this.$('#remove'), 'click', () => this._remove());
     this.on(this.$('#note'), 'change', (e) => store.setNote(this._c.id, e.target.value));
+    this._animateOdometer();
+  }
+
+  /** Limpia la animación del odómetro al desmontar. */
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    if (this._raf) cancelAnimationFrame(this._raf);
+  }
+
+  /** Anima el número central contando desde 0 hasta los días actuales. */
+  _animateOdometer() {
+    const el = this.$('#odo');
+    if (!el) return;
+    const target = store.daysOf(this._c);
+    const reduce = typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce || target <= 0) { el.textContent = String(target); return; }
+    const duration = 850;
+    let startTs = null;
+    const step = (ts) => {
+      if (startTs === null) startTs = ts;
+      const p = Math.min(1, (ts - startTs) / duration);
+      const eased = 1 - Math.pow(1 - p, 3);
+      el.textContent = String(Math.round(eased * target));
+      if (p < 1) this._raf = requestAnimationFrame(step);
+    };
+    this._raf = requestAnimationFrame(step);
   }
 
   /** Copia la racha al portapapeles y muestra un toast. */
@@ -166,33 +193,33 @@ export class DetailView extends AppElement {
     const color = cc.value;
     const on = cc.on;
     const start = dayIndex(c.start);
-    const today = store.today();
 
-    const grid = [];
-    for (let i = 34; i >= 0; i--) {
-      const day = today - i;
-      const inStreak = day >= start && day <= today;
-      grid.push({
-        bg: inStreak ? color : 'transparent',
-        ring: day === today ? '0 0 0 2px var(--ink)' : 'none',
-        title: inStreak ? t('detail.gridDay', { n: day - start }) : t('detail.gridBefore'),
-      });
-    }
+    // Surcos del vinilo: un anillo por hito, del interior al exterior; los
+    // hitos alcanzados se graban en color, el resto quedan como surco oscuro.
+    const innerR = 60;
+    const outerR = 104;
+    const n = ladder.length;
+    const grooves = ladder.map((m, i) => ({
+      r: (n <= 1 ? outerR : innerR + (i / (n - 1)) * (outerR - innerR)).toFixed(1),
+      reached: m <= days,
+    }));
+    const digits = String(days).length;
 
     return {
       days,
       dayWord: t(days === 1 ? 'word.day' : 'word.days'),
       tail: c.tail,
       color,
+      on,
       kindLabel: t(c.kind === 'quit' ? 'detail.kind.quit' : 'detail.kind.build'),
       quote: store.quote(c),
       nextLabel: next ? next + ' d' : '—',
       best,
       bestColor: days >= best ? color : 'var(--color-neutral-100)',
-      ringOffset: (327 * (1 - pct)).toFixed(1),
       why: c.note || '',
-      grid,
-      gridNote: days >= 35 ? t('detail.weeksFull') : t('detail.weeksOf', { d: days }),
+      grooves,
+      progressPct: (pct * 100).toFixed(1),
+      labelSize: digits <= 2 ? '46px' : digits === 3 ? '34px' : '26px',
       ladder: ladder.map((m) => {
         const done = m <= days;
         return {
