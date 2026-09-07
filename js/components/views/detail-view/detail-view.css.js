@@ -22,7 +22,7 @@ export const styles = css`
   .vinyl .label {
     position: absolute; inset: 0; margin: auto; width: 39%; aspect-ratio: 1; border-radius: 50%;
     display: grid; place-content: center; text-align: center; border: var(--border-w) solid var(--ink);
-    box-shadow: 0 0 0 4px var(--paper);
+    box-shadow: 0 0 0 4px var(--paper); view-transition-name: pc-hero;
     animation: pc-hub-pop .6s cubic-bezier(.34,1.56,.64,1) .15s both;
   }
   .vinyl .label .num { font-family: var(--font-display); font-weight: 800; line-height: .8; letter-spacing: -.04em; font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1, "zero" 1; }
