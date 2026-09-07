@@ -167,6 +167,8 @@ export const es = {
     wiped: 'Todo borrado.',
     copied: 'Copiado: «{d} días {tail}»',
     exported: 'JSON copiado al portapapeles.',
+    imgSaved: 'Imagen guardada.',
+    imgFail: 'No se pudo generar la imagen.',
   },
 
   phrase: {
