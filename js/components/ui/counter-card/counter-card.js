@@ -61,7 +61,8 @@ export class CounterCard extends AppElement {
     const reduce = typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (reduce || target <= 0) { el.textContent = String(target); return; }
     const index = Number(this.style.getPropertyValue('--i')) || 0;
-    const delay = Math.min(index * 70, 350);
+    // Espera a que la transición de entrada termine de revelar antes de contar.
+    const delay = 620 + Math.min(index * 70, 350);
     const duration = 650;
     el.textContent = '0';
     let startTs = null;
