@@ -1,5 +1,5 @@
 import { AppElement } from '../../../core/AppElement.js';
-import { store } from '../../../core/store.js';
+import { store, dayIndex } from '../../../core/store.js';
 import { router } from '../../../core/router.js';
 import { t } from '../../../core/i18n.js';
 import { uiIcon } from '../../../core/icons.js';
@@ -25,10 +25,14 @@ export class HomeView extends AppElement {
       </div>`;
   }
 
-  /** @returns {string} Cabecera: fecha, saludo y botón de ajustes. */
+  /** @returns {string} Cabecera-masthead de publicación + saludo y ajustes. */
   get _headTpl() {
     const has = store.counters.length > 0;
     return `
+      <div class="masthead">
+        <span class="brand">${t('app.name1')} ${t('app.name2')}</span>
+        <span class="edition">${t('home.edition', { n: this._issueNo() })}</span>
+      </div>
       <div class="head">
         <div>
           <div class="date">${this._todayLabel()}</div>
@@ -36,6 +40,11 @@ export class HomeView extends AppElement {
         </div>
         <button class="btn btn-icon btn-secondary gear" id="gear" aria-label="${t('home.settings')}">${uiIcon('gear', 18)}</button>
       </div>`;
+  }
+
+  /** @returns {number} Número de edición: días desde 2026-01-01 (sube cada día). */
+  _issueNo() {
+    return store.today() - dayIndex('2026-01-01') + 1;
   }
 
   /** @returns {string} Estadísticas + foco + lista de contadores. */
@@ -107,11 +116,13 @@ export class HomeView extends AppElement {
     router.go('detail', id);
   }
 
-  /** @returns {string} Etiqueta de la fecha de hoy (con el offset de demo). */
+  /** @returns {string} Etiqueta de la fecha de hoy (con día de la semana y offset de demo). */
   _todayLabel() {
     const now = new Date(Date.now() + store.offset * 86400000);
     const months = t('months').split(',');
-    return `${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
+    const weekdays = t('weekdays').split(',');
+    const wd = weekdays[(now.getDay() + 6) % 7];
+    return `${wd} · ${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
   }
 }
 

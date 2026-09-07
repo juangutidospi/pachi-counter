@@ -5,6 +5,7 @@
  */
 export const es = {
   months: 'ene,feb,mar,abr,may,jun,jul,ago,sep,oct,nov,dic',
+  weekdays: 'lun,mar,mié,jue,vie,sáb,dom',
 
   word: { day: 'día', days: 'días' },
 
@@ -23,6 +24,7 @@ export const es = {
     greetingHas: 'Tus rachas',
     greetingEmpty: 'Empecemos',
     settings: 'Ajustes',
+    edition: 'N.º {n}',
     stat: { days: 'Días sumados', streaks: 'Rachas vivas', nearest: 'Hito más cerca' },
     focusKicker: 'Hoy · {name}',
     empty: {
