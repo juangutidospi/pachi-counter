@@ -4,6 +4,7 @@ import { store } from '../../../core/store.js';
 import { t } from '../../../core/i18n.js';
 import { escapeHtml } from '../../../core/escape-html.js';
 import { haptic } from '../../../core/haptics.js';
+import { playChime } from '../../../core/sound.js';
 import { styles } from './celebrate-screen.css.js';
 
 /** Colores del confeti (primarios Bauhaus). */
@@ -64,6 +65,7 @@ export class CelebrateScreen extends AppElement {
     if (!this.$('#scrim')) return;
     this.on(this.$('#scrim'), 'click', () => this._close());
     haptic([18, 40, 24]);
+    playChime();
   }
 
   /** Marca el hito como visto y cierra la pantalla. */

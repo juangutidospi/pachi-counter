@@ -100,6 +100,7 @@ function load() {
           counters: data.counters.map((c) => normalize(c, today)),
           tone: (data.settings && data.settings.tone) || 'direct',
           reminder: (data.settings && data.settings.reminder) || '21:00',
+          sound: !!(data.settings && data.settings.sound),
           offset: 0,
         };
       }
@@ -107,7 +108,7 @@ function load() {
   } catch (e) { /* almacenamiento no disponible o corrupto */ }
   // Primer arranque: sin datos de ejemplo, el usuario empieza vacío y añade
   // los suyos. Los ejemplos quedan disponibles vía restoreSeed() (panel demo).
-  return { counters: [], tone: 'direct', reminder: '21:00', offset: 0 };
+  return { counters: [], tone: 'direct', reminder: '21:00', sound: false, offset: 0 };
 }
 
 /** @returns {object[]} Copia de los contadores de ejemplo anclados a hoy. */
@@ -140,7 +141,7 @@ function persist() {
   try {
     localStorage.setItem(KEY, JSON.stringify({
       v: 1,
-      settings: { tone: state.tone, reminder: state.reminder },
+      settings: { tone: state.tone, reminder: state.reminder, sound: state.sound },
       counters: state.counters,
     }));
   } catch (e) { /* ignorar: modo privado, cuota… */ }
@@ -166,6 +167,8 @@ export const store = {
   get tone() { return state.tone; },
   /** @returns {string} Hora del recordatorio diario (`HH:MM`). */
   get reminder() { return state.reminder; },
+  /** @returns {boolean} Si los sonidos están activados. */
+  get sound() { return state.sound; },
   /** @returns {number} Desplazamiento de días del modo demo. */
   get offset() { return state.offset; },
 
@@ -324,6 +327,8 @@ export const store = {
   setTone(tone) { commit({ tone }); },
   /** @param {string} reminder Hora `HH:MM` del recordatorio. */
   setReminder(reminder) { commit({ reminder }); },
+  /** @param {boolean} on Activa o desactiva los sonidos. */
+  setSound(on) { commit({ sound: !!on }); },
 
   /** Borra todos los datos. */
   wipe() { commit({ counters: [] }); },

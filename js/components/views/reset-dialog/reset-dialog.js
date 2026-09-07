@@ -3,6 +3,7 @@ import { store } from '../../../core/store.js';
 import { router } from '../../../core/router.js';
 import { t } from '../../../core/i18n.js';
 import { escapeHtml } from '../../../core/escape-html.js';
+import { playScratch } from '../../../core/sound.js';
 import { styles } from './reset-dialog.css.js';
 
 /**
@@ -37,6 +38,7 @@ export class ResetDialog extends AppElement {
     this.on(this.$('#backdrop'), 'click', (e) => { if (e.target === this.$('#backdrop')) router.closeReset(); });
     this.on(this.$('#keep'), 'click', () => router.closeReset());
     this.on(this.$('#confirm'), 'click', () => {
+      playScratch();
       const best = store.reset(router.selId);
       router.closeReset();
       router.flash(t('toast.reset', { best }));
