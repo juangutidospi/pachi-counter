@@ -8,13 +8,17 @@ export const styles = css`
   }
 
   .frame {
-    width: 402px; max-width: 100%; height: min(844px, calc(100vh - 2 * var(--space-8)));
+    width: 402px; max-width: 100%;
+    height: min(844px, calc(100vh - 2 * var(--space-8)));
+    height: min(844px, calc(100dvh - 2 * var(--space-8)));
     border-radius: 26px; overflow: hidden; box-shadow: 8px 8px 0 var(--ink);
     border: var(--border-w) solid var(--ink); background: var(--paper);
   }
   @media (max-width: 460px) {
     :host { padding: 0; width: 100%; }
-    .frame { width: 100%; height: 100vh; border-radius: 0; border: none; box-shadow: none; }
+    /* 100dvh = altura visible real en móvil (evita el desbordamiento por la
+       barra dinámica de iOS Safari); 100vh como respaldo. */
+    .frame { width: 100%; height: 100vh; height: 100dvh; border-radius: 0; border: none; box-shadow: none; }
   }
 
   .screen {

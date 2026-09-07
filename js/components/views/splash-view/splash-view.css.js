@@ -29,8 +29,9 @@ export const styles = css`
   .meta .idx { background: var(--ink); color: var(--paper); padding: 3px 8px; }
 
   /* emblema — motion graphics */
-  .art { flex: 1; display: grid; place-items: center; position: relative; margin: 2px 0; }
-  .emblem { width: 224px; height: 224px; overflow: visible; position: relative; z-index: 2; }
+  .art { flex: 1; min-height: 0; display: grid; place-items: center; position: relative; margin: 2px 0; }
+  /* El emblema se adapta a la altura disponible para no desbordar en pantallas cortas. */
+  .emblem { width: min(224px, 38vh); height: auto; aspect-ratio: 1; overflow: visible; position: relative; z-index: 2; }
   .emblem .disc, .emblem .hub, .emblem .bar, .emblem .q { transform-box: fill-box; }
 
   /* disco: entra con escala+giro y luego gira lentísimo (vinilo premium) */
