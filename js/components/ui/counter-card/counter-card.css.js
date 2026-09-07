@@ -16,7 +16,7 @@ export const styles = css`
   .disc {
     flex: none; width: 58px; height: 58px; border-radius: 50%; display: grid; place-items: center;
     font-family: var(--font-display); font-weight: 800; font-size: 24px; line-height: 1; letter-spacing: -.03em;
-    border: var(--border-w) solid var(--ink);
+    font-variant-numeric: tabular-nums; border: var(--border-w) solid var(--ink);
   }
   .disc small { display: none; }
 

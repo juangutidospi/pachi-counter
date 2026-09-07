@@ -44,6 +44,37 @@ export class CounterCard extends AppElement {
     if (!card) return;
     this.on(card, 'click', () => this.dispatchEvent(
       new CustomEvent('open', { detail: { id: this._counter.id }, bubbles: true, composed: true })));
+    this._animateNumber();
+  }
+
+  /** Cancela la cuenta ascendente al desmontar. */
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    if (this._raf) cancelAnimationFrame(this._raf);
+  }
+
+  /** Cuenta el número del disco desde 0 hasta los días, con leve retardo en cascada. */
+  _animateNumber() {
+    const el = this.$('.disc');
+    if (!el || !this._counter) return;
+    const target = store.daysOf(this._counter);
+    const reduce = typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce || target <= 0) { el.textContent = String(target); return; }
+    const index = Number(this.style.getPropertyValue('--i')) || 0;
+    const delay = Math.min(index * 70, 350);
+    const duration = 650;
+    el.textContent = '0';
+    let startTs = null;
+    const step = (ts) => {
+      if (startTs === null) startTs = ts;
+      const elapsed = ts - startTs - delay;
+      if (elapsed < 0) { this._raf = requestAnimationFrame(step); return; }
+      const p = Math.min(1, elapsed / duration);
+      const eased = 1 - Math.pow(1 - p, 3);
+      el.textContent = String(Math.round(eased * target));
+      if (p < 1) this._raf = requestAnimationFrame(step);
+    };
+    this._raf = requestAnimationFrame(step);
   }
 
   /**
