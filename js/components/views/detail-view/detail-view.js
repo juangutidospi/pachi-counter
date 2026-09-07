@@ -6,6 +6,7 @@ import { uiIcon } from '../../../core/icons.js';
 import { escapeHtml } from '../../../core/escape-html.js';
 import { buildPosterFile, shareOrSave } from '../../../core/share-card.js';
 import { grooveTexture, seedAngle } from '../../../core/groove-seed.js';
+import { spin, spinStop } from '../../../core/sound.js';
 import { styles } from './detail-view.css.js';
 
 /**
@@ -191,6 +192,7 @@ export class DetailView extends AppElement {
       this._angle += this._vel;
       if (!this._dragging) this._vel = this._vel * 0.95 + IDLE * 0.05;
       disc.style.transform = `rotate(${this._angle}deg)`;
+      spin(Math.min(1, Math.abs(this._vel) / 12)); // crujido según la velocidad
       this._rafSpin = requestAnimationFrame(loop);
     };
     this._rafSpin = requestAnimationFrame(loop);
@@ -201,6 +203,7 @@ export class DetailView extends AppElement {
     super.disconnectedCallback();
     if (this._raf) cancelAnimationFrame(this._raf);
     if (this._rafSpin) cancelAnimationFrame(this._rafSpin);
+    spinStop();
   }
 
   /** Anima el número central contando desde 0 hasta los días actuales. */

@@ -82,3 +82,41 @@ export function playTick() {
   if (!store.sound) return;
   tone(880, 0, 0.06, 0.1, 'square');
 }
+
+/* — sonido continuo del vinilo al girar (ligado a la velocidad) — */
+let spinSrc = null;
+let spinGain = null;
+
+/**
+ * Ajusta el crujido del vinilo según la velocidad de giro.
+ * @param {number} speed Velocidad normalizada 0–1.
+ */
+export function spin(speed) {
+  if (!store.sound) { if (spinGain) spinGain.gain.value = 0; return; }
+  const ac = context();
+  if (!ac) return;
+  if (!spinSrc) {
+    const buf = ac.createBuffer(1, ac.sampleRate, ac.sampleRate);
+    const d = buf.getChannelData(0);
+    for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+    spinSrc = ac.createBufferSource(); spinSrc.buffer = buf; spinSrc.loop = true;
+    const flt = ac.createBiquadFilter(); flt.type = 'bandpass'; flt.frequency.value = 2600; flt.Q.value = 0.7;
+    spinGain = ac.createGain(); spinGain.gain.value = 0;
+    spinSrc.connect(flt).connect(spinGain).connect(ac.destination);
+    spinSrc.start();
+  }
+  const target = Math.min(0.09, Math.max(0, speed - 0.06) * 0.16);
+  spinGain.gain.setTargetAtTime(target, ac.currentTime, 0.05);
+}
+
+/** Detiene el crujido del vinilo (al salir del detalle). */
+export function spinStop() {
+  if (!spinSrc) return;
+  const ac = context();
+  try {
+    if (spinGain && ac) spinGain.gain.setTargetAtTime(0, ac.currentTime, 0.06);
+    const src = spinSrc;
+    setTimeout(() => { try { src.stop(); } catch (e) { /* ya parado */ } }, 200);
+  } catch (e) { /* ignora */ }
+  spinSrc = null; spinGain = null;
+}
