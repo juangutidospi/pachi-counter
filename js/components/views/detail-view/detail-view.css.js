@@ -18,7 +18,7 @@ export const styles = css`
   .vinyl .prog-arc { transition: stroke-dashoffset .8s cubic-bezier(.16,1,.3,1);
     animation: pc-arc 1s cubic-bezier(.16,1,.3,1) .1s both; }
   .vinyl .label {
-    position: absolute; inset: 0; margin: auto; width: 45%; aspect-ratio: 1; border-radius: 50%;
+    position: absolute; inset: 0; margin: auto; width: 39%; aspect-ratio: 1; border-radius: 50%;
     display: grid; place-content: center; text-align: center; border: var(--border-w) solid var(--ink);
     box-shadow: 0 0 0 4px var(--paper);
     animation: pc-hub-pop .6s cubic-bezier(.34,1.56,.64,1) .15s both;

@@ -44,22 +44,21 @@ export class DetailView extends AppElement {
       </div>`;
   }
 
-  /** @param {object} vm Modelo de vista. @returns {string} Disco de vinilo personal. */
+  /** @param {object} vm Modelo de vista. @returns {string} Disco de vinilo personal (líneas sobre papel). */
   _vinylTpl(vm) {
     const grooves = vm.grooves.map((g) =>
-      `<circle cx="130" cy="130" r="${g.r}" fill="none" stroke="${g.reached ? vm.color : 'var(--color-neutral-800)'}" stroke-width="${g.reached ? 4 : 2}"></circle>`
+      `<circle cx="130" cy="130" r="${g.r}" fill="none" stroke="${g.reached ? vm.color : 'var(--color-neutral-700)'}" stroke-width="${g.reached ? 4 : 1.5}" opacity="${g.reached ? 1 : 0.5}"></circle>`
     ).join('');
     return `
       <div class="vinyl-wrap">
         <div class="vinyl">
           <svg class="disc" viewBox="0 0 260 260" aria-hidden="true">
-            <circle cx="130" cy="130" r="122" fill="var(--ink)"></circle>
-            <rect x="129" y="10" width="2" height="120" fill="var(--color-neutral-700)" opacity="0.55"></rect>
+            <circle cx="130" cy="130" r="120" fill="none" stroke="var(--ink)" stroke-width="2"></circle>
             ${grooves}
+            <line x1="130" y1="12" x2="130" y2="130" stroke="var(--color-neutral-600)" stroke-width="1.5" opacity="0.45"></line>
           </svg>
           <svg class="progress" viewBox="0 0 260 260" aria-hidden="true">
-            <circle cx="130" cy="130" r="118" fill="none" stroke="var(--color-neutral-800)" stroke-width="4"></circle>
-            <circle class="prog-arc" cx="130" cy="130" r="118" fill="none" stroke="${vm.color}" stroke-width="4"
+            <circle class="prog-arc" cx="130" cy="130" r="120" fill="none" stroke="${vm.color}" stroke-width="4"
               stroke-linecap="round" pathLength="100" stroke-dasharray="100" stroke-dashoffset="${100 - vm.progressPct}"></circle>
           </svg>
           <div class="label" style="background:${vm.color};color:${vm.on}">
@@ -196,8 +195,8 @@ export class DetailView extends AppElement {
 
     // Surcos del vinilo: un anillo por hito, del interior al exterior; los
     // hitos alcanzados se graban en color, el resto quedan como surco oscuro.
-    const innerR = 60;
-    const outerR = 104;
+    const innerR = 64;
+    const outerR = 112;
     const n = ladder.length;
     const grooves = ladder.map((m, i) => ({
       r: (n <= 1 ? outerR : innerR + (i / (n - 1)) * (outerR - innerR)).toFixed(1),
