@@ -11,9 +11,11 @@ export const styles = css`
 
   /* — disco de vinilo personal — */
   .vinyl-wrap { display: grid; place-items: center; margin-top: var(--space-6); }
-  .vinyl { position: relative; width: min(264px, 74vw); aspect-ratio: 1; }
+  .vinyl { position: relative; width: min(264px, 74vw); aspect-ratio: 1;
+    touch-action: none; cursor: grab; user-select: none; -webkit-user-select: none; }
+  .vinyl.dragging { cursor: grabbing; }
   .vinyl svg { position: absolute; inset: 0; width: 100%; height: 100%; }
-  .vinyl .disc { transform-origin: center; animation: pc-spin 46s linear infinite; }
+  .vinyl .disc { transform-origin: center; will-change: transform; }
   .vinyl .progress { transform: rotate(-90deg); }
   .vinyl .prog-arc { transition: stroke-dashoffset .8s cubic-bezier(.16,1,.3,1);
     animation: pc-arc 1s cubic-bezier(.16,1,.3,1) .1s both; }
@@ -26,12 +28,16 @@ export const styles = css`
   .vinyl .label .num { font-family: var(--font-display); font-weight: 800; line-height: .8; letter-spacing: -.04em; font-variant-numeric: tabular-nums; }
   .vinyl .label .tail { font-family: var(--font-body); font-weight: 600; font-size: 8.5px; letter-spacing: .1em; text-transform: uppercase; margin-top: 5px; opacity: .85; padding: 0 6px; }
 
-  @keyframes pc-spin { to { transform: rotate(360deg); } }
+  /* brazo de tocadiscos: cae sobre el disco al abrir */
+  .vinyl .tonearm { pointer-events: none; }
+  .vinyl .tonearm .arm { transform-box: view-box; transform-origin: 236px 30px;
+    animation: pc-needle .8s cubic-bezier(.34,1.4,.5,1) .35s both; }
+  @keyframes pc-needle { from { transform: rotate(-26deg); } to { transform: rotate(0deg); } }
   @keyframes pc-arc { from { stroke-dashoffset: 100; } }
   @keyframes pc-hub-pop { from { opacity: 0; transform: scale(0); } to { opacity: 1; transform: scale(1); } }
 
   @media (prefers-reduced-motion: reduce) {
-    .vinyl .disc, .vinyl .prog-arc, .vinyl .label { animation: none; }
+    .vinyl .disc, .vinyl .prog-arc, .vinyl .label, .vinyl .tonearm .arm { animation: none; }
   }
 
   .phrase { margin-top: var(--space-6); padding-left: 14px; border-left: 6px solid var(--red); }
