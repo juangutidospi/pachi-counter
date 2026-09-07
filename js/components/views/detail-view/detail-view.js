@@ -6,6 +6,7 @@ import { uiIcon } from '../../../core/icons.js';
 import { escapeHtml } from '../../../core/escape-html.js';
 import { buildPosterFile, shareOrSave } from '../../../core/share-card.js';
 import { grooveTexture, seedAngle } from '../../../core/groove-seed.js';
+import { spin, spinStop } from '../../../core/sound.js';
 import { styles } from './detail-view.css.js';
 
 /**
@@ -73,6 +74,13 @@ export class DetailView extends AppElement {
             <div class="num" id="odo" style="font-size:${vm.labelSize}">${vm.days}</div>
             <div class="tail">${escapeHtml(vm.dayWord)} ${escapeHtml(vm.tail)}</div>
           </div>
+          <svg class="tonearm" viewBox="0 0 260 260" aria-hidden="true">
+            <g class="arm">
+              <line x1="236" y1="30" x2="150" y2="112" stroke="var(--ink)" stroke-width="5" stroke-linecap="round"></line>
+              <rect x="142" y="103" width="17" height="17" fill="var(--ink)" transform="rotate(44 150 112)"></rect>
+              <circle cx="236" cy="30" r="10" fill="var(--paper)" stroke="var(--ink)" stroke-width="4"></circle>
+            </g>
+          </svg>
         </div>
       </div>`;
   }
@@ -142,15 +150,60 @@ export class DetailView extends AppElement {
     this.on(this.$('#remove'), 'click', () => this._remove());
     this.on(this.$('#note'), 'change', (e) => store.setNote(this._c.id, e.target.value));
     this._animateOdometer();
+    this._initSpinner();
     // Pre-genera el cartel para compartir sin perder el gesto en iOS.
     this._shareFile = null;
     buildPosterFile(this._c).then((file) => { this._shareFile = file; });
+  }
+
+  /** Física del vinilo: giro lento en reposo + arrastre con inercia (flick). */
+  _initSpinner() {
+    const vinyl = this.$('.vinyl');
+    const disc = this.$('.disc');
+    if (!vinyl || !disc) return;
+    const reduce = typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const IDLE = reduce ? 0 : 0.12;
+    this._angle = 0;
+    this._vel = IDLE;
+    this._dragging = false;
+    let last = 0;
+
+    const angleAt = (e) => {
+      const r = vinyl.getBoundingClientRect();
+      return Math.atan2(e.clientY - (r.top + r.height / 2), e.clientX - (r.left + r.width / 2)) * 180 / Math.PI;
+    };
+    this.on(vinyl, 'pointerdown', (e) => {
+      this._dragging = true; this._vel = 0; last = angleAt(e);
+      vinyl.classList.add('dragging');
+      try { vinyl.setPointerCapture(e.pointerId); } catch (err) { /* ignora */ }
+      e.preventDefault();
+    });
+    this.on(vinyl, 'pointermove', (e) => {
+      if (!this._dragging) return;
+      let d = angleAt(e) - last;
+      if (d > 180) d -= 360; else if (d < -180) d += 360;
+      this._angle += d; this._vel = d; last += d;
+    });
+    const release = () => { this._dragging = false; vinyl.classList.remove('dragging'); };
+    this.on(vinyl, 'pointerup', release);
+    this.on(vinyl, 'pointercancel', release);
+
+    const loop = () => {
+      this._angle += this._vel;
+      if (!this._dragging) this._vel = this._vel * 0.95 + IDLE * 0.05;
+      disc.style.transform = `rotate(${this._angle}deg)`;
+      spin(Math.min(1, Math.abs(this._vel) / 12)); // crujido según la velocidad
+      this._rafSpin = requestAnimationFrame(loop);
+    };
+    this._rafSpin = requestAnimationFrame(loop);
   }
 
   /** Limpia la animación del odómetro al desmontar. */
   disconnectedCallback() {
     super.disconnectedCallback();
     if (this._raf) cancelAnimationFrame(this._raf);
+    if (this._rafSpin) cancelAnimationFrame(this._rafSpin);
+    spinStop();
   }
 
   /** Anima el número central contando desde 0 hasta los días actuales. */

@@ -41,6 +41,11 @@ export class SettingsView extends AppElement {
           <seg-control id="lang"></seg-control>
         </div>
 
+        <div class="field">
+          <label>${t('settings.soundLabel')}</label>
+          <seg-control id="sound"></seg-control>
+        </div>
+
         <h6>${t('settings.dataTitle')}</h6>
         <div class="card elev-sm data">
           <div class="row"><span class="k">${t('settings.savedIn')}</span><span class="mono">localStorage · pachi.v1</span></div>
@@ -75,6 +80,11 @@ export class SettingsView extends AppElement {
     lang.options = ['es', 'en'].map((v) => ({ value: v, label: t('settings.lang.' + v) }));
     lang.value = getLang();
     this.on(lang, 'change', (e) => setLang(e.detail.value));
+
+    const sound = this.$('#sound');
+    sound.options = [{ value: 'on', label: t('settings.on') }, { value: 'off', label: t('settings.off') }];
+    sound.value = store.sound ? 'on' : 'off';
+    this.on(sound, 'change', (e) => store.setSound(e.detail.value === 'on'));
 
     this.on(this.$('#reminder'), 'change', (e) => store.setReminder(e.target.value));
     this.on(this.$('#export'), 'click', () => this._export());
