@@ -38,6 +38,20 @@ export async function buildPosterFile(counter) {
 }
 
 /**
+ * Construye el archivo PNG de la «prensa anual» (resumen de la colección).
+ * @returns {Promise<File|null>} Archivo PNG o null si falla.
+ */
+export async function buildAnnualFile() {
+  try {
+    await ensureFonts();
+    const canvas = drawAnnual();
+    const blob = await new Promise((res) => canvas.toBlob(res, 'image/png'));
+    if (!blob) return null;
+    return new File([blob], 'pachi-prensa-anual.png', { type: 'image/png' });
+  } catch (e) { return null; }
+}
+
+/**
  * Comparte el archivo por la hoja del sistema; si no se puede, lo descarga.
  * Debe llamarse SIN await previo dentro del manejador del clic (gesto iOS).
  * @param {File} file Imagen a compartir.
@@ -163,6 +177,88 @@ function drawPoster(c) {
   ctx.fillStyle = HEX.paper; ctx.textBaseline = 'middle';
   ctx.fillText(tag, cx, 1257);
   ctx.letterSpacing = '0px';
+
+  return canvas;
+}
+
+/**
+ * Dibuja la prensa anual (resumen de la colección) en un canvas.
+ * @returns {HTMLCanvasElement} Canvas con el resumen.
+ */
+function drawAnnual() {
+  const canvas = document.createElement('canvas');
+  canvas.width = W; canvas.height = H;
+  const ctx = canvas.getContext('2d');
+
+  const pressings = store.pressings;
+  const counters = store.counters;
+  const entities = pressings.map((p) => ({ days: p.days, color: p.color, name: p.name, seed: p.id || p.name }))
+    .concat(counters.map((c) => ({ days: store.daysOf(c), color: c.color, name: c.name, seed: c.id || c.name })));
+  const best = entities.slice().sort((a, b) => b.days - a.days)[0] || { days: 0, color: 'accent', name: '—', seed: 'x' };
+  const totalPressed = pressings.reduce((s, p) => s + p.days, 0);
+  const year = new Date().getFullYear();
+  const col = COLOR[best.color] || COLOR.accent;
+
+  ctx.fillStyle = HEX.paper; ctx.fillRect(0, 0, W, H);
+  ctx.strokeStyle = HEX.ink; ctx.lineWidth = 4; ctx.strokeRect(44, 44, W - 88, H - 88);
+  drawTick(ctx, 44, 44); drawTick(ctx, W - 44, 44); drawTick(ctx, 44, H - 44); drawTick(ctx, W - 44, H - 44);
+
+  // masthead
+  ctx.fillStyle = HEX.ink; ctx.textBaseline = 'middle';
+  setFont(ctx, 600, 26, 'Space Grotesk'); ctx.letterSpacing = '6px'; ctx.textAlign = 'left';
+  ctx.fillText('PACHI’S COUNTER', 96, 112);
+  const badge = `${t('annual.title').toUpperCase()} · ${year}`;
+  ctx.textAlign = 'right';
+  const bw = ctx.measureText(badge).width;
+  ctx.fillStyle = HEX.ink; ctx.fillRect(W - 96 - bw - 32, 92, bw + 32, 40);
+  ctx.fillStyle = HEX.paper; ctx.fillText(badge, W - 112, 112);
+  ctx.letterSpacing = '0px';
+
+  // vinilo del mejor disco
+  const cx = W / 2, cy = 520, R = 250;
+  ctx.setLineDash([]);
+  grooveTexture(best.seed, 20, 150, R).forEach((g) => {
+    ctx.beginPath(); ctx.arc(cx, cy, g.r, 0, Math.PI * 2);
+    ctx.strokeStyle = HEX.groove; ctx.lineWidth = 2; ctx.globalAlpha = g.opacity;
+    ctx.setLineDash(g.gap ? [6, 12] : []); ctx.stroke();
+  });
+  ctx.globalAlpha = 1; ctx.setLineDash([]);
+  ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI * 2); ctx.strokeStyle = HEX.ink; ctx.lineWidth = 5; ctx.stroke();
+  ctx.beginPath(); ctx.arc(cx, cy, 128, 0, Math.PI * 2); ctx.fillStyle = col.fill; ctx.fill(); ctx.lineWidth = 5; ctx.strokeStyle = HEX.ink; ctx.stroke();
+  ctx.fillStyle = col.on; ctx.textAlign = 'center';
+  const ns = best.days >= 1000 ? 120 : best.days >= 100 ? 150 : 190;
+  setFont(ctx, 800, ns, 'Syne'); ctx.fillText(String(best.days), cx, cy - 4);
+
+  // etiqueta "mejor disco" + nombre
+  ctx.fillStyle = HEX.dim; setFont(ctx, 700, 22, 'Space Grotesk'); ctx.letterSpacing = '4px';
+  ctx.fillText(t('annual.bestLabel').toUpperCase(), cx, 830); ctx.letterSpacing = '0px';
+  ctx.fillStyle = HEX.ink; setFont(ctx, 800, 60, 'Syne');
+  fitText(ctx, best.name.toUpperCase(), W - 220, 60, 'Syne', 800);
+  ctx.fillText(best.name.toUpperCase(), cx, 888);
+
+  // fila de estadísticas
+  const cells = [
+    [String(totalPressed), t('annual.daysLabel')],
+    [String(pressings.length), t('annual.recordsLabel')],
+    [String(counters.length), t('annual.streaksLabel')],
+  ];
+  const gy = 980, gh = 150, gx = 96, gw = (W - 192) / 3;
+  ctx.strokeStyle = HEX.ink; ctx.lineWidth = 4; ctx.strokeRect(gx, gy, W - 192, gh);
+  cells.forEach((cell, i) => {
+    const x = gx + i * gw;
+    if (i > 0) { ctx.beginPath(); ctx.moveTo(x, gy); ctx.lineTo(x, gy + gh); ctx.stroke(); }
+    ctx.fillStyle = HEX.ink; ctx.textAlign = 'left';
+    setFont(ctx, 800, 58, 'Syne'); ctx.fillText(cell[0], x + 26, gy + 58);
+    ctx.fillStyle = HEX.dim; setFont(ctx, 600, 20, 'Space Grotesk'); ctx.letterSpacing = '2px';
+    ctx.fillText(cell[1].toUpperCase(), x + 26, gy + 108); ctx.letterSpacing = '0px';
+  });
+
+  // pie
+  ctx.fillStyle = HEX.blue; const tag = t('app.tagline').toUpperCase();
+  setFont(ctx, 700, 26, 'Space Grotesk'); ctx.letterSpacing = '6px'; ctx.textAlign = 'center';
+  const tw = ctx.measureText(tag).width;
+  ctx.fillRect(cx - tw / 2 - 22, 1230, tw + 44, 52);
+  ctx.fillStyle = HEX.paper; ctx.fillText(tag, cx, 1257); ctx.letterSpacing = '0px';
 
   return canvas;
 }

@@ -17,6 +17,7 @@ export const styles = css`
   .head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-4); }
   .head .date { font-family: var(--font-body); font-size: 10.5px; letter-spacing: .16em; text-transform: uppercase; color: var(--dim); font-weight: 600; }
   .head h2 { margin: 8px 0 0; font-size: min(46px, 13cqw); line-height: .84; letter-spacing: -.04em; }
+  .head-actions { display: flex; gap: 8px; flex: none; }
   .gear { flex: none; }
 
   .stats { display: grid; grid-template-columns: repeat(3, 1fr); margin-top: 18px;

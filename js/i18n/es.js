@@ -42,6 +42,24 @@ export const es = {
     sub: '{streaks} rachas vivas · mejor {best} d',
   },
 
+  shelf: {
+    open: 'Colección',
+    title: 'Colección',
+    kicker: 'Discos prensados',
+    count: '{n} discos · {days} días grabados',
+    empty: 'Aún no hay discos. Cada racha que reinicies (o elimines) se prensa aquí como recuerdo.',
+    range: '{start} — {end}',
+    annual: 'Prensa anual',
+  },
+
+  annual: {
+    title: 'Prensa anual',
+    daysLabel: 'Días grabados',
+    recordsLabel: 'Discos',
+    streaksLabel: 'Rachas vivas',
+    bestLabel: 'Mejor disco',
+  },
+
   card: {
     today: '+1 hoy',
     since: 'desde el {date}',

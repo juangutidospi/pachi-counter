@@ -42,6 +42,24 @@ export const en = {
     sub: '{streaks} live streaks · best {best} d',
   },
 
+  shelf: {
+    open: 'Collection',
+    title: 'Collection',
+    kicker: 'Pressed records',
+    count: '{n} records · {days} days pressed',
+    empty: 'No records yet. Every streak you reset (or delete) gets pressed here as a keepsake.',
+    range: '{start} — {end}',
+    annual: 'Annual pressing',
+  },
+
+  annual: {
+    title: 'Annual pressing',
+    daysLabel: 'Days pressed',
+    recordsLabel: 'Records',
+    streaksLabel: 'Live streaks',
+    bestLabel: 'Best record',
+  },
+
   card: {
     today: '+1 today',
     since: 'since {date}',

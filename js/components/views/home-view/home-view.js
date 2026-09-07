@@ -53,7 +53,10 @@ export class HomeView extends AppElement {
           <div class="date">${this._todayLabel()}</div>
           <h2>${t(has ? 'home.greetingHas' : 'home.greetingEmpty')}</h2>
         </div>
-        <button class="btn btn-icon btn-secondary gear" id="gear" aria-label="${t('home.settings')}">${uiIcon('gear', 18)}</button>
+        <div class="head-actions">
+          <button class="btn btn-icon btn-secondary" id="shelf" aria-label="${t('shelf.open')}">${uiIcon('shelf', 18)}</button>
+          <button class="btn btn-icon btn-secondary gear" id="gear" aria-label="${t('home.settings')}">${uiIcon('gear', 18)}</button>
+        </div>
       </div>`;
   }
 
@@ -120,6 +123,7 @@ export class HomeView extends AppElement {
   /** Cablea navegación y rellena la lista con las tarjetas de contador. */
   afterRender() {
     this.on(this.$('#gear'), 'click', () => router.go('settings'));
+    this.on(this.$('#shelf'), 'click', () => router.go('shelf'));
     const createFirst = this.$('#create-first');
     if (createFirst) this.on(createFirst, 'click', () => router.openCreate());
 
@@ -129,7 +133,14 @@ export class HomeView extends AppElement {
       const card = document.createElement('counter-card');
       card.style.setProperty('--i', i);
       card.counter = c;
-      this.on(card, 'open', (e) => this._open(e.detail.id));
+      this.on(card, 'open', (e) => {
+        // Etiqueta el disco pulsado para el morph (View Transitions) al detalle.
+        try {
+          const disc = card.shadowRoot && card.shadowRoot.querySelector('.disc');
+          if (disc) disc.style.viewTransitionName = 'pc-hero';
+        } catch (err) { /* sin soporte */ }
+        this._open(e.detail.id);
+      });
       list.appendChild(card);
     });
   }
