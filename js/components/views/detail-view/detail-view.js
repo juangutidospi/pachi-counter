@@ -4,6 +4,8 @@ import { router } from '../../../core/router.js';
 import { t } from '../../../core/i18n.js';
 import { uiIcon } from '../../../core/icons.js';
 import { escapeHtml } from '../../../core/escape-html.js';
+import { buildPosterFile, shareOrSave } from '../../../core/share-card.js';
+import { grooveTexture, seedAngle } from '../../../core/groove-seed.js';
 import { styles } from './detail-view.css.js';
 
 /**
@@ -46,6 +48,10 @@ export class DetailView extends AppElement {
 
   /** @param {object} vm Modelo de vista. @returns {string} Disco de vinilo personal (líneas sobre papel). */
   _vinylTpl(vm) {
+    // Surcos generativos (únicos por contador) + surcos de hito en color.
+    const texture = vm.texture.map((g) =>
+      `<circle cx="130" cy="130" r="${g.r}" fill="none" stroke="var(--color-neutral-700)" stroke-width="1" opacity="${g.opacity}"${g.gap ? ' stroke-dasharray="3 6"' : ''}></circle>`
+    ).join('');
     const grooves = vm.grooves.map((g) =>
       `<circle cx="130" cy="130" r="${g.r}" fill="none" stroke="${g.reached ? vm.color : 'var(--color-neutral-700)'}" stroke-width="${g.reached ? 4 : 1.5}" opacity="${g.reached ? 1 : 0.5}"></circle>`
     ).join('');
@@ -54,8 +60,10 @@ export class DetailView extends AppElement {
         <div class="vinyl">
           <svg class="disc" viewBox="0 0 260 260" aria-hidden="true">
             <circle cx="130" cy="130" r="120" fill="none" stroke="var(--ink)" stroke-width="2"></circle>
+            ${texture}
             ${grooves}
-            <line x1="130" y1="12" x2="130" y2="130" stroke="var(--color-neutral-600)" stroke-width="1.5" opacity="0.45"></line>
+            <line x1="130" y1="12" x2="130" y2="130" stroke="var(--color-neutral-600)" stroke-width="1.5" opacity="0.45"
+              transform="rotate(${vm.seedAngle} 130 130)"></line>
           </svg>
           <svg class="progress" viewBox="0 0 260 260" aria-hidden="true">
             <circle class="prog-arc" cx="130" cy="130" r="120" fill="none" stroke="${vm.color}" stroke-width="4"
@@ -134,6 +142,9 @@ export class DetailView extends AppElement {
     this.on(this.$('#remove'), 'click', () => this._remove());
     this.on(this.$('#note'), 'change', (e) => store.setNote(this._c.id, e.target.value));
     this._animateOdometer();
+    // Pre-genera el cartel para compartir sin perder el gesto en iOS.
+    this._shareFile = null;
+    buildPosterFile(this._c).then((file) => { this._shareFile = file; });
   }
 
   /** Limpia la animación del odómetro al desmontar. */
@@ -166,12 +177,22 @@ export class DetailView extends AppElement {
     this._raf = requestAnimationFrame(step);
   }
 
-  /** Copia la racha al portapapeles y muestra un toast. */
+  /** Comparte el cartel de la racha (imagen) por la hoja del sistema. */
   _share() {
     const days = store.daysOf(this._c);
-    const text = t('toast.copied', { d: days, tail: this._c.tail });
-    if (navigator.clipboard) navigator.clipboard.writeText(`${days} ${t('word.days')} ${this._c.tail}`).catch(() => {});
-    router.flash(text);
+    const text = `${days} ${t('word.days')} ${this._c.tail}`;
+    const file = this._shareFile;
+    const done = (result) => {
+      if (result === 'saved') router.flash(t('toast.imgSaved'));
+      else if (result === 'error') router.flash(t('toast.imgFail'));
+    };
+    if (file) {
+      // Llamada síncrona a compartir: preserva el gesto de usuario en iOS.
+      shareOrSave(file, text).then(done);
+    } else {
+      // Aún no está listo: se genera y se comparte (puede recaer en descarga).
+      buildPosterFile(this._c).then((f) => shareOrSave(f, text).then(done));
+    }
   }
 
   /** Elimina el contador y vuelve a home. */
@@ -222,6 +243,8 @@ export class DetailView extends AppElement {
       bestColor: days >= best ? color : 'var(--color-neutral-100)',
       why: c.note || '',
       grooves,
+      texture: grooveTexture(c.id || c.name, 16, 54, 116),
+      seedAngle: seedAngle(c.id || c.name),
       progressPct: (pct * 100).toFixed(1),
       labelSize: digits <= 2 ? '46px' : digits === 3 ? '34px' : '26px',
       ladder: ladder.map((m) => {

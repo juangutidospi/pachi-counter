@@ -167,6 +167,8 @@ export const en = {
     wiped: 'Everything deleted.',
     copied: 'Copied: “{d} days {tail}”',
     exported: 'JSON copied to clipboard.',
+    imgSaved: 'Image saved.',
+    imgFail: 'Couldn’t generate the image.',
   },
 
   phrase: {
