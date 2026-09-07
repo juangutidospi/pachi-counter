@@ -27,7 +27,8 @@ export const styles = css`
     background: var(--paper); color: var(--ink);
   }
   /* Área de contenido con scroll propio; la tabbar queda fija fuera de ella. */
-  .scroll { flex: 1 1 auto; min-height: 0; overflow-y: auto; overflow-x: hidden; }
+  .scroll { flex: 1 1 auto; min-height: 0; overflow-y: auto; overflow-x: hidden;
+    overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
 
   /* — tabbar fija al fondo (no se desplaza con el contenido) — */
   .tabbar {
