@@ -4,7 +4,7 @@
    Colores primarios sobre papel hueso; geometría dura, filos de tinta.
    Enlazado en el <head>; se hereda a cada Shadow DOM vía var(--…).
    ══════════════════════════════════════════════════════════════════════════ */
-@import url('https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@600..800&family=Space+Grotesk:wght@400;500;600;700&display=swap');
 
 :root {
   /* — Paleta Bauhaus — */
