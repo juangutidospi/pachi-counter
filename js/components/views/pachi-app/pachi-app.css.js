@@ -50,6 +50,19 @@ export const styles = css`
   }
   .tabbar .new:hover { background: var(--ink); }
 
+  /* — transición constructivista (barrido de bloques primarios) — */
+  .wipe { position: absolute; inset: 0; z-index: 60; pointer-events: none; overflow: hidden; }
+  .wipe .p { position: absolute; inset: 0; transform: translateX(-101%); }
+  .wipe .p1 { background: var(--blue); animation: pc-wipe-across .55s cubic-bezier(.7,0,.25,1) 0s both; }
+  .wipe .p2 { background: var(--red); animation: pc-wipe-across .55s cubic-bezier(.7,0,.25,1) .06s both; }
+  .wipe .p3 { background: var(--yellow); animation: pc-wipe-across .55s cubic-bezier(.7,0,.25,1) .12s both; }
+  @keyframes pc-wipe-across {
+    0% { transform: translateX(-101%); }
+    50% { transform: translateX(0); }
+    100% { transform: translateX(101%); }
+  }
+  @media (prefers-reduced-motion: reduce) { .wipe { display: none; } }
+
   /* — toast — */
   .toast-host {
     position: absolute; left: 0; right: 0; top: 0; height: 100%; z-index: 95;

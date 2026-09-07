@@ -68,6 +68,10 @@ export class PachiApp extends AppElement {
   render() {
     const viewTag = VIEWS[router.route] || 'home-view';
     const showNav = router.route === 'home' || router.route === 'settings';
+    // Transición: barrido de bloques al cambiar de ruta principal (no en modales).
+    const reduce = typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const routeChanged = this._prevRoute != null && this._prevRoute !== router.route && !reduce;
+    this._prevRoute = router.route;
     this.shadowRoot.innerHTML = `
       <div class="frame">
         <div class="screen">
@@ -78,8 +82,14 @@ export class PachiApp extends AppElement {
           ${router.isHardOpen ? '<hard-screen></hard-screen>' : ''}
           ${router.celebration ? '<celebrate-screen></celebrate-screen>' : ''}
           ${router.toast ? this._toastTpl : ''}
+          ${routeChanged ? this._wipeTpl : ''}
         </div>
       </div>`;
+  }
+
+  /** @returns {string} Overlay de transición: tres bloques primarios que barren. */
+  get _wipeTpl() {
+    return '<div class="wipe" aria-hidden="true"><span class="p p1"></span><span class="p p2"></span><span class="p p3"></span></div>';
   }
 
   /** @returns {string} Barra de navegación inferior. */
