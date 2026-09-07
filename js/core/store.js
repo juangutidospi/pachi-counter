@@ -242,6 +242,38 @@ export const store = {
     return state.counters.length ? this.sortedByNearest()[0] : null;
   },
 
+  /**
+   * «Columna» editorial del día: elige el titular más relevante según el estado
+   * (hito inminente, récord personal en marcha o total acumulado) y una línea
+   * de datos. Extiende la metáfora de publicación.
+   * @returns {{kicker:string, headline:string, sub:string}|null}
+   */
+  insight() {
+    const counters = state.counters;
+    if (!counters.length) return null;
+    const totalDays = counters.reduce((sum, c) => sum + this.daysOf(c), 0);
+    const maxBest = Math.max(...counters.map((c) => Math.max(c.best || 0, this.daysOf(c))));
+
+    let near = null;
+    let nearGap = Infinity;
+    counters.forEach((c) => {
+      const n = this.nextOf(c);
+      if (n) { const g = n - this.daysOf(c); if (g < nearGap) { nearGap = g; near = { c, n, g }; } }
+    });
+    const record = counters.find((c) => this.daysOf(c) > 0 && this.daysOf(c) >= (c.best || 0));
+
+    let headline;
+    if (near && near.g > 0 && near.g <= 2) headline = t('insight.nearMilestone', { name: near.c.name, n: near.n });
+    else if (record) headline = t('insight.record', { name: record.name });
+    else headline = t('insight.total', { n: totalDays });
+
+    return {
+      kicker: t('home.column.kicker'),
+      headline,
+      sub: t('insight.sub', { streaks: counters.length, best: maxBest }),
+    };
+  },
+
   /** @param {object} c Contador. @returns {number} Días hasta el próximo hito (o alto). */
   _gap(c) { const n = this.nextOf(c); return n ? n - this.daysOf(c) : 9999; },
 

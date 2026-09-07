@@ -27,11 +27,19 @@ export const es = {
     edition: 'N.º {n}',
     stat: { days: 'Días sumados', streaks: 'Rachas vivas', nearest: 'Hito más cerca' },
     focusKicker: 'Hoy · {name}',
+    column: { kicker: 'La columna' },
     empty: {
       title: 'Aún no cuentas nada',
       body: 'Crea tu primer contador. Arranca en 0 hoy y sube solo, un día cada día, hasta que tú lo resetees.',
       cta: 'Crear mi primer contador',
     },
+  },
+
+  insight: {
+    nearMilestone: '{name} roza los {n} días',
+    record: 'Récord personal en marcha: {name}',
+    total: '{n} días sumados en total',
+    sub: '{streaks} rachas vivas · mejor {best} d',
   },
 
   card: {

@@ -225,6 +225,7 @@ export class DetailView extends AppElement {
       const p = Math.min(1, elapsed / duration);
       const eased = 1 - Math.pow(1 - p, 3);
       el.textContent = String(Math.round(eased * target));
+      el.style.fontVariationSettings = `'wght' ${Math.round(560 + eased * 240)}`; // peso variable Syne
       if (p < 1) this._raf = requestAnimationFrame(step);
     };
     this._raf = requestAnimationFrame(step);

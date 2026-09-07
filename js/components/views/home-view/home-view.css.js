@@ -12,7 +12,7 @@ export const styles = css`
     font-family: var(--font-body); font-weight: 600; font-size: 10px; letter-spacing: .18em; text-transform: uppercase;
   }
   .masthead .brand { color: var(--ink); }
-  .masthead .edition { color: var(--paper); background: var(--ink); padding: 3px 8px; letter-spacing: .1em; }
+  .masthead .edition { color: var(--edition-on, var(--paper)); background: var(--edition, var(--ink)); padding: 3px 8px; letter-spacing: .1em; }
 
   .head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-4); }
   .head .date { font-family: var(--font-body); font-size: 10.5px; letter-spacing: .16em; text-transform: uppercase; color: var(--dim); font-weight: 600; }
@@ -24,7 +24,7 @@ export const styles = css`
   .stat { padding: 12px 12px; border-right: var(--border-w) solid var(--ink); }
   .stat:last-child { border-right: 0; }
   .stat.hi { background: var(--yellow); }
-  .stat .num { font-family: var(--font-display); font-weight: 800; font-size: 27px; line-height: 1; letter-spacing: -.03em; color: var(--ink); }
+  .stat .num { font-family: var(--font-display); font-weight: 800; font-size: 27px; line-height: 1; letter-spacing: -.03em; color: var(--ink); font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1, "zero" 1; }
   .stat .lbl { font-family: var(--font-body); font-size: 9px; letter-spacing: .08em; text-transform: uppercase; color: var(--dim); margin-top: 6px; font-weight: 600; }
 
   .focus { margin-top: 18px; padding-left: 14px; border-left: 6px solid var(--red); }
@@ -32,6 +32,14 @@ export const styles = css`
   .focus p { margin: 7px 0 0; font-family: var(--font-display); font-weight: 700; font-size: 18px; line-height: 1.25; color: var(--ink); text-wrap: pretty; }
 
   .list { margin-top: 20px; border-top: var(--border-w) solid var(--ink); }
+
+  /* columna editorial del día */
+  .column { margin-top: 22px; padding-top: 14px; border-top: var(--border-w) solid var(--ink); }
+  .column .col-kicker { font-family: var(--font-body); font-weight: 700; font-size: 10px; letter-spacing: .18em;
+    text-transform: uppercase; color: var(--red); }
+  .column .col-headline { margin: 8px 0 0; font-family: var(--font-display); font-weight: 800; font-size: 22px;
+    line-height: 1.05; letter-spacing: -.02em; text-transform: uppercase; color: var(--ink); text-wrap: pretty; }
+  .column .col-sub { margin-top: 8px; font-family: var(--font-mono); font-size: 11px; letter-spacing: .04em; color: var(--dim); }
 
   .empty { padding: var(--space-8) 0; display: grid; place-items: center; text-align: center; animation: pc-up .5s cubic-bezier(.16,1,.3,1) both; }
   .empty .rings { position: relative; width: 150px; height: 150px; display: grid; place-items: center; margin: var(--space-8) 0 var(--space-6); }
