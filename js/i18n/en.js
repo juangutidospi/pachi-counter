@@ -5,6 +5,7 @@
  */
 export const en = {
   months: 'Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec',
+  weekdays: 'Mon,Tue,Wed,Thu,Fri,Sat,Sun',
 
   word: { day: 'day', days: 'days' },
 
@@ -23,6 +24,7 @@ export const en = {
     greetingHas: 'Your streaks',
     greetingEmpty: 'Let’s start',
     settings: 'Settings',
+    edition: 'No. {n}',
     stat: { days: 'Days added', streaks: 'Live streaks', nearest: 'Nearest goal' },
     focusKicker: 'Today · {name}',
     empty: {

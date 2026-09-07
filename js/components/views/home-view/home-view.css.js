@@ -3,7 +3,16 @@ import { css } from '../../../core/css.js';
 /** Estilos de la vista home — Bauhaus. */
 export const styles = css`
   :host { display: block; }
-  .home { padding: 44px 22px 32px; animation: pc-fade .35s ease both; container-type: inline-size; }
+  .home { padding: 40px 22px 32px; animation: pc-fade .35s ease both; container-type: inline-size; }
+
+  /* masthead de publicación diaria */
+  .masthead {
+    display: flex; align-items: center; justify-content: space-between; gap: var(--space-3);
+    padding-bottom: 8px; margin-bottom: 14px; border-bottom: var(--border-w) solid var(--ink);
+    font-family: var(--font-body); font-weight: 600; font-size: 10px; letter-spacing: .18em; text-transform: uppercase;
+  }
+  .masthead .brand { color: var(--ink); }
+  .masthead .edition { color: var(--paper); background: var(--ink); padding: 3px 8px; letter-spacing: .1em; }
 
   .head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-4); }
   .head .date { font-family: var(--font-body); font-size: 10.5px; letter-spacing: .16em; text-transform: uppercase; color: var(--dim); font-weight: 600; }
