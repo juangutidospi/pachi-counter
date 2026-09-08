@@ -98,6 +98,7 @@ function load() {
       if (data && Array.isArray(data.counters)) {
         return {
           counters: data.counters.map((c) => normalize(c, today)),
+          pressings: Array.isArray(data.pressings) ? data.pressings : [],
           tone: (data.settings && data.settings.tone) || 'direct',
           reminder: (data.settings && data.settings.reminder) || '21:00',
           sound: !!(data.settings && data.settings.sound),
@@ -108,7 +109,7 @@ function load() {
   } catch (e) { /* almacenamiento no disponible o corrupto */ }
   // Primer arranque: sin datos de ejemplo, el usuario empieza vacío y añade
   // los suyos. Los ejemplos quedan disponibles vía restoreSeed() (panel demo).
-  return { counters: [], tone: 'direct', reminder: '21:00', sound: false, offset: 0 };
+  return { counters: [], pressings: [], tone: 'direct', reminder: '21:00', sound: false, offset: 0 };
 }
 
 /** @returns {object[]} Copia de los contadores de ejemplo anclados a hoy. */
@@ -143,6 +144,7 @@ function persist() {
       v: 1,
       settings: { tone: state.tone, reminder: state.reminder, sound: state.sound },
       counters: state.counters,
+      pressings: state.pressings,
     }));
   } catch (e) { /* ignorar: modo privado, cuota… */ }
 }
@@ -261,9 +263,11 @@ export const store = {
       if (n) { const g = n - this.daysOf(c); if (g < nearGap) { nearGap = g; near = { c, n, g }; } }
     });
     const record = counters.find((c) => this.daysOf(c) > 0 && this.daysOf(c) >= (c.best || 0));
+    const danger = this.dangerCounter();
 
     let headline;
-    if (near && near.g > 0 && near.g <= 2) headline = t('insight.nearMilestone', { name: near.c.name, n: near.n });
+    if (danger) headline = t('insight.danger', { name: danger.name });
+    else if (near && near.g > 0 && near.g <= 2) headline = t('insight.nearMilestone', { name: near.c.name, n: near.n });
     else if (record) headline = t('insight.record', { name: record.name });
     else headline = t('insight.total', { n: totalDays });
 
@@ -312,21 +316,74 @@ export const store = {
    */
   reset(id) {
     let best = 0;
+    const pressing = this._press(this.find(id));
     const counters = state.counters.map((c) => {
       if (c.id !== id) return c;
       best = Math.max(c.best || 0, this.daysOf(c));
       return { ...c, best, start: isoFromDayIndex(this.today()), seen: 0, seenDay: this.today() };
     });
-    commit({ counters });
+    commit({ counters, pressings: pressing ? [...state.pressings, pressing] : state.pressings });
     return best;
   },
 
   /**
-   * Elimina un contador.
+   * Elimina un contador (archivando su racha actual como disco prensado).
    * @param {string} id Identificador.
    */
   remove(id) {
-    commit({ counters: state.counters.filter((c) => c.id !== id) });
+    const pressing = this._press(this.find(id));
+    commit({
+      counters: state.counters.filter((c) => c.id !== id),
+      pressings: pressing ? [...state.pressings, pressing] : state.pressings,
+    });
+  },
+
+  /**
+   * Construye un «disco prensado» (registro histórico) de la racha actual.
+   * @param {object} c Contador.
+   * @returns {object|null} Prensado, o null si la racha es 0.
+   */
+  _press(c) {
+    if (!c) return null;
+    const days = this.daysOf(c);
+    if (days <= 0) return null;
+    return {
+      id: 'p' + Date.now() + Math.floor(this.today()),
+      name: c.name, tail: c.tail, kind: c.kind, color: c.color,
+      days, start: c.start, end: isoFromDayIndex(this.today()),
+    };
+  },
+
+  /** @returns {object[]} Discos prensados, del más reciente al más antiguo. */
+  get pressings() { return state.pressings.slice().reverse(); },
+
+  /**
+   * Historial de recaídas de un contador (a partir de discos prensados con el
+   * mismo nombre): en qué días caíste antes y si HOY es uno de esos «días peligro».
+   * @param {object} c Contador.
+   * @returns {{days:number[], dangerToday:boolean, times:number, next:number|null, worst:number}}
+   */
+  relapseHistory(c) {
+    const key = (s) => String(s || '').trim().toLowerCase();
+    const past = state.pressings.filter((p) => key(p.name) === key(c.name)).map((p) => p.days).filter((d) => d > 0);
+    const d = this.daysOf(c);
+    const times = past.filter((x) => x === d).length;
+    const ahead = past.filter((x) => x > d);
+    return {
+      days: past,
+      dangerToday: d > 0 && times > 0,
+      times,
+      next: ahead.length ? Math.min(...ahead) : null,
+      worst: past.length ? Math.max(...past) : 0,
+    };
+  },
+
+  /**
+   * Primer contador cuyo día actual coincide con un «día peligro» histórico.
+   * @returns {object|null} Contador en día peligro, o null.
+   */
+  dangerCounter() {
+    return state.counters.find((c) => this.relapseHistory(c).dangerToday) || null;
   },
 
   /**
@@ -362,8 +419,8 @@ export const store = {
   /** @param {boolean} on Activa o desactiva los sonidos. */
   setSound(on) { commit({ sound: !!on }); },
 
-  /** Borra todos los datos. */
-  wipe() { commit({ counters: [] }); },
+  /** Borra todos los datos (contadores y colección). */
+  wipe() { commit({ counters: [], pressings: [] }); },
 
   /** Restaura los contadores de ejemplo. */
   restoreSeed() { commit({ counters: seedCounters() }); },

@@ -27,6 +27,7 @@ export class DetailView extends AppElement {
       <div class="detail">
         ${this._topTpl(vm)}
         ${this._vinylTpl(vm)}
+        ${vm.danger ? this._dangerTpl(vm) : ''}
         ${this._phraseTpl(vm)}
         ${this._statsTpl(vm)}
         ${this._ladderTpl(vm)}
@@ -82,6 +83,15 @@ export class DetailView extends AppElement {
             </g>
           </svg>
         </div>
+      </div>`;
+  }
+
+  /** @param {object} vm Modelo de vista. @returns {string} Aviso de «día peligro». */
+  _dangerTpl(vm) {
+    return `
+      <div class="danger">
+        <div class="danger-kicker">${t('detail.dangerKicker')}</div>
+        <p>${escapeHtml(t('detail.dangerText', { d: vm.days }))}</p>
       </div>`;
   }
 
@@ -297,6 +307,7 @@ export class DetailView extends AppElement {
       bestColor: days >= best ? color : 'var(--color-neutral-100)',
       why: c.note || '',
       grooves,
+      danger: store.relapseHistory(c).dangerToday,
       texture: grooveTexture(c.id || c.name, 16, 54, 116),
       seedAngle: seedAngle(c.id || c.name),
       progressPct: (pct * 100).toFixed(1),

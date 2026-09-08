@@ -7,6 +7,7 @@ import '../splash-view/splash-view.js';
 import '../home-view/home-view.js';
 import '../detail-view/detail-view.js';
 import '../settings-view/settings-view.js';
+import '../shelf-view/shelf-view.js';
 import '../create-sheet/create-sheet.js';
 import '../reset-dialog/reset-dialog.js';
 import '../hard-screen/hard-screen.js';
@@ -19,6 +20,7 @@ const VIEWS = {
   home: 'home-view',
   detail: 'detail-view',
   settings: 'settings-view',
+  shelf: 'shelf-view',
 };
 
 /**
@@ -34,7 +36,7 @@ export class PachiApp extends AppElement {
     super.connectedCallback();
     this._subs = [
       store.subscribe(() => this._paint()),
-      router.subscribe(() => this._paint()),
+      router.subscribe(() => this._navigate()),
     ];
     // Los días se derivan de la fecha actual: recalcular al volver a la app y
     // programar un refresco automático a la medianoche local.
@@ -64,13 +66,28 @@ export class PachiApp extends AppElement {
     }, next.getTime() - now.getTime());
   }
 
+  /**
+   * Navega con transición: usa la View Transitions API (crossfade/morph nativo)
+   * si está disponible; si no, el repintado normal dispara la cortinilla de bloques.
+   */
+  _navigate() {
+    const reduce = typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const changed = this._prevRoute != null && this._prevRoute !== router.route;
+    if (changed && !reduce && typeof document !== 'undefined' && document.startViewTransition) {
+      document.startViewTransition(() => this._paint());
+    } else {
+      this._paint();
+    }
+  }
+
   /** Compone el marco con la vista activa, overlays, tabbar y toast. */
   render() {
     const viewTag = VIEWS[router.route] || 'home-view';
     const showNav = router.route === 'home' || router.route === 'settings';
-    // Transición: barrido de bloques al cambiar de ruta principal (no en modales).
+    // Cortinilla de bloques solo como respaldo cuando NO hay View Transitions API.
     const reduce = typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const routeChanged = this._prevRoute != null && this._prevRoute !== router.route && !reduce;
+    const hasVT = typeof document !== 'undefined' && !!document.startViewTransition;
+    const routeChanged = this._prevRoute != null && this._prevRoute !== router.route && !reduce && !hasVT;
     this._prevRoute = router.route;
     this.shadowRoot.innerHTML = `
       <div class="frame">

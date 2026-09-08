@@ -3,9 +3,9 @@ import { css } from '../../../core/css.js';
 /** Estilos de la vista de detalle — Bauhaus. */
 export const styles = css`
   :host { display: block; }
-  .detail { padding: 44px 22px 108px; animation: pc-fade .3s ease both; }
+  .detail { padding: 44px 22px 108px; animation: pc-fade .3s ease both; container-type: inline-size; }
 
-  .top { display: flex; align-items: center; justify-content: space-between; }
+  .top { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); flex-wrap: wrap; }
   .top .back { gap: 4px; margin-left: -4px; }
   .top .right { display: flex; align-items: center; gap: var(--space-2); }
 
@@ -22,7 +22,7 @@ export const styles = css`
   .vinyl .label {
     position: absolute; inset: 0; margin: auto; width: 39%; aspect-ratio: 1; border-radius: 50%;
     display: grid; place-content: center; text-align: center; border: var(--border-w) solid var(--ink);
-    box-shadow: 0 0 0 4px var(--paper);
+    box-shadow: 0 0 0 4px var(--paper); view-transition-name: pc-hero;
     animation: pc-hub-pop .6s cubic-bezier(.34,1.56,.64,1) .15s both;
   }
   .vinyl .label .num { font-family: var(--font-display); font-weight: 800; line-height: .8; letter-spacing: -.04em; font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1, "zero" 1; }
@@ -40,6 +40,10 @@ export const styles = css`
     .vinyl .disc, .vinyl .prog-arc, .vinyl .label, .vinyl .tonearm .arm { animation: none; }
   }
 
+  .danger { margin-top: var(--space-6); padding: var(--space-3) var(--space-4); border: var(--border-w) solid var(--red); background: color-mix(in srgb, var(--red) 8%, transparent); }
+  .danger .danger-kicker { font-family: var(--font-body); font-weight: 700; font-size: 10px; letter-spacing: .16em; text-transform: uppercase; color: var(--red); }
+  .danger p { margin: 6px 0 0; font-family: var(--font-display); font-weight: 700; font-size: 16px; line-height: 1.2; color: var(--ink); text-wrap: pretty; text-transform: none; }
+
   .phrase { margin-top: var(--space-6); padding-left: 14px; border-left: 6px solid var(--red); }
   .phrase .kicker { font-family: var(--font-body); font-weight: 700; font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--blue); }
   .phrase p { margin: 8px 0 0; font-family: var(--font-display); font-weight: 700; font-size: 19px; line-height: 1.25; color: var(--ink); text-wrap: pretty; }
@@ -48,7 +52,9 @@ export const styles = css`
   .stat3 { background: transparent !important; border: 0 !important; border-right: var(--border-w) solid var(--ink) !important;
     border-radius: 0; padding: 12px; gap: 4px; }
   .stat3:last-child { border-right: 0 !important; }
-  .stat3 .num { font-family: var(--font-display); font-weight: 800; font-size: 22px; line-height: 1; color: var(--ink); font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1, "zero" 1; }
+  .stat3 { min-width: 0; }
+  .stat3 .num { font-family: var(--font-display); font-weight: 800; font-size: min(22px, 7cqw); line-height: 1; color: var(--ink); font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1, "zero" 1; white-space: nowrap; }
+  .stat3 .lbl { overflow: hidden; text-overflow: ellipsis; }
   .stat3 .lbl { font-family: var(--font-body); font-size: 8.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--dim); font-weight: 600; }
 
   .section-head { display: flex; align-items: baseline; justify-content: space-between; margin: var(--space-8) 0 var(--space-3); }

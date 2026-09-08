@@ -22,7 +22,7 @@ export const es = {
 
   home: {
     greetingHas: 'Tus rachas',
-    greetingEmpty: 'Empecemos',
+    greetingEmpty: 'Empieza aquí',
     settings: 'Ajustes',
     edition: 'N.º {n}',
     stat: { days: 'Días sumados', streaks: 'Rachas vivas', nearest: 'Hito más cerca' },
@@ -36,10 +36,29 @@ export const es = {
   },
 
   insight: {
+    danger: 'Día peligro en {name}: otras veces caíste hoy. Hoy no.',
     nearMilestone: '{name} roza los {n} días',
     record: 'Récord personal en marcha: {name}',
     total: '{n} días sumados en total',
     sub: '{streaks} rachas vivas · mejor {best} d',
+  },
+
+  shelf: {
+    open: 'Colección',
+    title: 'Colección',
+    kicker: 'Discos prensados',
+    count: '{n} discos · {days} días grabados',
+    empty: 'Aún no hay discos. Cada racha que reinicies (o elimines) se prensa aquí como recuerdo.',
+    range: '{start} — {end}',
+    annual: 'Prensa anual',
+  },
+
+  annual: {
+    title: 'Prensa anual',
+    daysLabel: 'Días grabados',
+    recordsLabel: 'Discos',
+    streaksLabel: 'Rachas vivas',
+    bestLabel: 'Mejor disco',
   },
 
   card: {
@@ -67,6 +86,8 @@ export const es = {
     noteTitle: 'Mi nota',
     noteAutosave: 'se guarda al escribir',
     notePh: 'Por qué lo hago. Para leérmelo los días difíciles.',
+    dangerKicker: 'Día peligro',
+    dangerText: 'Otras veces recaíste al día {d}. Hoy es solo un día más — no lo rompas.',
     hard: 'Hoy me cuesta',
     reset: 'Recaí, volver a 0',
     remove: 'Eliminar',

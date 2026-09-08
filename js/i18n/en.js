@@ -22,7 +22,7 @@ export const en = {
 
   home: {
     greetingHas: 'Your streaks',
-    greetingEmpty: 'Let’s start',
+    greetingEmpty: 'Start here',
     settings: 'Settings',
     edition: 'No. {n}',
     stat: { days: 'Days added', streaks: 'Live streaks', nearest: 'Nearest goal' },
@@ -36,10 +36,29 @@ export const en = {
   },
 
   insight: {
+    danger: 'Danger day on {name}: you fell on this day before. Not today.',
     nearMilestone: '{name} nears {n} days',
     record: 'Personal record in the making: {name}',
     total: '{n} total days counted',
     sub: '{streaks} live streaks · best {best} d',
+  },
+
+  shelf: {
+    open: 'Collection',
+    title: 'Collection',
+    kicker: 'Pressed records',
+    count: '{n} records · {days} days pressed',
+    empty: 'No records yet. Every streak you reset (or delete) gets pressed here as a keepsake.',
+    range: '{start} — {end}',
+    annual: 'Annual pressing',
+  },
+
+  annual: {
+    title: 'Annual pressing',
+    daysLabel: 'Days pressed',
+    recordsLabel: 'Records',
+    streaksLabel: 'Live streaks',
+    bestLabel: 'Best record',
   },
 
   card: {
@@ -67,6 +86,8 @@ export const en = {
     noteTitle: 'My note',
     noteAutosave: 'saved as you type',
     notePh: 'Why I do it. To read it on hard days.',
+    dangerKicker: 'Danger day',
+    dangerText: 'You relapsed on day {d} before. Today is just one more day — don’t break it.',
     hard: 'Today is hard',
     reset: 'I relapsed, back to 0',
     remove: 'Delete',
