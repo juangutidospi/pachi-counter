@@ -19,6 +19,15 @@ export const styles = css`
     from { clip-path: circle(0% at 50% 106%); opacity: .95; transform: translateY(34px) scale(.94); }
     to   { clip-path: circle(175% at 50% 106%); opacity: 1; transform: translateY(0) scale(1); }
   }
+  /* Cierre: animación inversa (encoge hacia el botón + y se desvanece). */
+  .scrim.leaving { animation: pc-fade-out .42s ease both; }
+  .scrim.leaving .sheet { animation: pc-sheet-shrink .46s cubic-bezier(.5,0,.75,.3) both; transform-origin: bottom center; }
+  @keyframes pc-sheet-shrink {
+    from { clip-path: circle(175% at 50% 106%); opacity: 1; transform: translateY(0) scale(1); }
+    to   { clip-path: circle(0% at 50% 106%); opacity: .95; transform: translateY(34px) scale(.94); }
+  }
+  @keyframes pc-fade-out { from { opacity: 1; } to { opacity: 0; } }
+
   @media (prefers-reduced-motion: reduce) {
     .scrim { animation: none; }
     .sheet.enter { animation: pc-fade .2s ease both; }
