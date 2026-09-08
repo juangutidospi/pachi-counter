@@ -23,8 +23,9 @@ export const styles = css`
 
   .info { flex: 1; min-width: 0; }
   .name-line { display: flex; align-items: center; gap: 8px; min-width: 0; }
-  .name { font-family: var(--font-display); font-weight: 800; font-size: 16px; line-height: 1;
-    text-transform: uppercase; letter-spacing: -.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .name { flex: 1; min-width: 0; font-family: var(--font-display); font-weight: 800; font-size: 16px; line-height: 1.05;
+    text-transform: uppercase; letter-spacing: -.01em; overflow-wrap: anywhere;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
   .grew { flex: none; font-family: var(--font-body); font-weight: 700; font-size: 8.5px; letter-spacing: .06em;
     text-transform: uppercase; background: var(--red); color: var(--paper); padding: 2px 6px; }
   .since { font-family: var(--font-body); font-size: 10.5px; color: var(--dim); margin-top: 4px; }
