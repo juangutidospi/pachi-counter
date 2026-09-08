@@ -97,8 +97,8 @@ export class CounterCard extends AppElement {
     const digits = String(days).length;
     return {
       days,
-      // La cifra encoge según los dígitos para no salirse del disco (58px).
-      discSize: digits <= 2 ? '24px' : digits === 3 ? '18px' : '14px',
+      // La cifra encoge según los dígitos para no salirse del disco (48px).
+      discSize: digits <= 2 ? '20px' : digits === 3 ? '15px' : '12px',
       dayWord: t(days === 1 ? 'word.day' : 'word.days'),
       best: Math.max(c.best || 0, days),
       startLabel: fmtDate(c.start),

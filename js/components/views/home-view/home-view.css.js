@@ -3,7 +3,7 @@ import { css } from '../../../core/css.js';
 /** Estilos de la vista home — Bauhaus. */
 export const styles = css`
   :host { display: block; }
-  .home { padding: 40px 22px 44px; animation: pc-fade .35s ease both; container-type: inline-size; }
+  .home { padding: 34px 22px 40px; animation: pc-fade .35s ease both; container-type: inline-size; }
 
   /* masthead de publicación diaria */
   .masthead {
@@ -16,23 +16,23 @@ export const styles = css`
 
   .topbar { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
   .topbar .date { font-family: var(--font-body); font-size: 10.5px; letter-spacing: .16em; text-transform: uppercase; color: var(--dim); font-weight: 600; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .greeting { margin: 8px 0 0; font-size: min(46px, 13cqw); line-height: .84; letter-spacing: -.04em; text-wrap: balance; }
+  .greeting { margin: 6px 0 0; font-size: min(38px, 11cqw); line-height: .86; letter-spacing: -.035em; text-wrap: balance; }
   .head-actions { display: flex; gap: 8px; flex: none; }
   .gear { flex: none; }
 
-  .stats { display: grid; grid-template-columns: repeat(3, 1fr); margin-top: 18px;
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); margin-top: 14px;
     border: var(--border-w) solid var(--ink); }
-  .stat { padding: 12px 10px; min-width: 0; border-right: var(--border-w) solid var(--ink); }
+  .stat { padding: 10px 10px; min-width: 0; border-right: var(--border-w) solid var(--ink); }
   .stat:last-child { border-right: 0; }
   .stat.hi { background: var(--yellow); }
-  .stat .num { font-family: var(--font-display); font-weight: 800; font-size: min(27px, 9cqw); line-height: 1; letter-spacing: -.03em; color: var(--ink); font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1, "zero" 1; }
-  .stat .lbl { font-family: var(--font-body); font-size: 9px; letter-spacing: .06em; text-transform: uppercase; color: var(--dim); margin-top: 6px; font-weight: 600; }
+  .stat .num { font-family: var(--font-display); font-weight: 800; font-size: min(23px, 8cqw); line-height: 1; letter-spacing: -.03em; color: var(--ink); font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1, "zero" 1; }
+  .stat .lbl { font-family: var(--font-body); font-size: 8.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--dim); margin-top: 5px; font-weight: 600; }
 
-  .focus { margin-top: 18px; padding-left: 14px; border-left: 6px solid var(--red); }
-  .focus .kicker { font-family: var(--font-body); font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--blue); font-weight: 700; }
-  .focus p { margin: 7px 0 0; font-family: var(--font-display); font-weight: 700; font-size: 18px; line-height: 1.25; color: var(--ink); text-wrap: pretty; }
+  .focus { margin-top: 14px; padding-left: 12px; border-left: 5px solid var(--red); }
+  .focus .kicker { font-family: var(--font-body); font-size: 9.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--blue); font-weight: 700; }
+  .focus p { margin: 6px 0 0; font-family: var(--font-display); font-weight: 700; font-size: 15.5px; line-height: 1.25; color: var(--ink); text-wrap: pretty; }
 
-  .list { margin-top: 20px; border-top: var(--border-w) solid var(--ink); }
+  .list { margin-top: 14px; border-top: var(--border-w) solid var(--ink); }
 
   /* columna editorial del día */
   .column { margin-top: 22px; padding-top: 14px; border-top: var(--border-w) solid var(--ink); }
