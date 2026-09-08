@@ -48,16 +48,14 @@ export class HomeView extends AppElement {
         <span class="brand">${t('app.name1')} ${t('app.name2')}</span>
         <span class="edition">${t('home.edition', { n: this._issueNo() })}</span>
       </div>
-      <div class="head">
-        <div>
-          <div class="date">${this._todayLabel()}</div>
-          <h2>${t(has ? 'home.greetingHas' : 'home.greetingEmpty')}</h2>
-        </div>
+      <div class="topbar">
+        <div class="date">${this._todayLabel()}</div>
         <div class="head-actions">
           <button class="btn btn-icon btn-secondary" id="shelf" aria-label="${t('shelf.open')}">${uiIcon('shelf', 18)}</button>
           <button class="btn btn-icon btn-secondary gear" id="gear" aria-label="${t('home.settings')}">${uiIcon('gear', 18)}</button>
         </div>
-      </div>`;
+      </div>
+      <h2 class="greeting">${t(has ? 'home.greetingHas' : 'home.greetingEmpty')}</h2>`;
   }
 
   /** @returns {number} Número de edición: días desde 2026-01-01 (sube cada día). */

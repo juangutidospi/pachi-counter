@@ -14,9 +14,9 @@ export const styles = css`
   .masthead .brand { color: var(--ink); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .masthead .edition { flex: none; white-space: nowrap; color: var(--edition-on, var(--paper)); background: var(--edition, var(--ink)); padding: 3px 8px; letter-spacing: .1em; }
 
-  .head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-4); }
-  .head .date { font-family: var(--font-body); font-size: 10.5px; letter-spacing: .16em; text-transform: uppercase; color: var(--dim); font-weight: 600; }
-  .head h2 { margin: 8px 0 0; font-size: min(46px, 13cqw); line-height: .84; letter-spacing: -.04em; }
+  .topbar { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
+  .topbar .date { font-family: var(--font-body); font-size: 10.5px; letter-spacing: .16em; text-transform: uppercase; color: var(--dim); font-weight: 600; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .greeting { margin: 8px 0 0; font-size: min(46px, 13cqw); line-height: .84; letter-spacing: -.04em; text-wrap: balance; }
   .head-actions { display: flex; gap: 8px; flex: none; }
   .gear { flex: none; }
 
@@ -43,11 +43,12 @@ export const styles = css`
   .column .col-sub { margin-top: 8px; font-family: var(--font-mono); font-size: 11px; letter-spacing: .04em; color: var(--dim); }
 
   .empty { padding: var(--space-8) 0; display: grid; place-items: center; text-align: center; animation: pc-up .5s cubic-bezier(.16,1,.3,1) both; }
+  .empty > * { max-width: 100%; }
   .empty .rings { position: relative; width: 150px; height: 150px; display: grid; place-items: center; margin: var(--space-8) 0 var(--space-6); }
   .empty .rings .ring { position: absolute; border-radius: 50%; border: var(--border-w) solid var(--ink); }
   .empty .rings .e1 { inset: 0; } .empty .rings .e2 { inset: 26px; border-color: var(--red); } .empty .rings .e3 { inset: 52px; border-color: var(--blue); }
   .empty .rings .zero { font-family: var(--font-display); font-weight: 800; font-size: 44px; color: var(--ink); }
-  .empty h4 { margin: 0; font-size: 26px; }
-  .empty p { max-width: 252px; font-size: 13px; margin-top: var(--space-2); text-wrap: pretty; color: var(--dim); }
+  .empty h4 { margin: 0; font-size: min(26px, 9cqw); line-height: 1; text-wrap: balance; }
+  .empty p { max-width: min(252px, 100%); font-size: 13px; margin-top: var(--space-2); text-wrap: pretty; color: var(--dim); }
   .empty .cta { margin-top: var(--space-6); }
 `;

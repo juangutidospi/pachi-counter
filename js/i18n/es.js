@@ -22,7 +22,7 @@ export const es = {
 
   home: {
     greetingHas: 'Tus rachas',
-    greetingEmpty: 'Empecemos',
+    greetingEmpty: 'Empieza aquí',
     settings: 'Ajustes',
     edition: 'N.º {n}',
     stat: { days: 'Días sumados', streaks: 'Rachas vivas', nearest: 'Hito más cerca' },

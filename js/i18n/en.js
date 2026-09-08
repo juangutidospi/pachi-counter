@@ -22,7 +22,7 @@ export const en = {
 
   home: {
     greetingHas: 'Your streaks',
-    greetingEmpty: 'Let’s start',
+    greetingEmpty: 'Start here',
     settings: 'Settings',
     edition: 'No. {n}',
     stat: { days: 'Days added', streaks: 'Live streaks', nearest: 'Nearest goal' },
