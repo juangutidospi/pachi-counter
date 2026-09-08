@@ -16,6 +16,11 @@ export const COUNTER_COLORS = {
   accent: { key: 'accent', value: 'var(--blue)', on: 'var(--paper)' },
   accent2: { key: 'accent2', value: 'var(--red)', on: 'var(--paper)' },
   light: { key: 'light', value: 'var(--yellow)', on: 'var(--ink)' },
+  green: { key: 'green', value: 'var(--green)', on: 'var(--paper)' },
+  teal: { key: 'teal', value: 'var(--teal)', on: 'var(--paper)' },
+  violet: { key: 'violet', value: 'var(--violet)', on: 'var(--paper)' },
+  magenta: { key: 'magenta', value: 'var(--magenta)', on: 'var(--paper)' },
+  orange: { key: 'orange', value: 'var(--orange)', on: 'var(--ink)' },
   deep: { key: 'deep', value: 'var(--ink)', on: 'var(--paper)' },
 };
 
@@ -158,6 +163,18 @@ function commit(patch, save = true) {
   state = { ...state, ...patch };
   if (save) persist();
   bus.dispatchEvent(new CustomEvent('store:changed'));
+}
+
+/**
+ * Aplica un parche y persiste SIN notificar a los suscriptores. Para ajustes
+ * que no requieren refrescar la vista al instante (tono, recordatorio, sonido):
+ * evita que el shell repinte y reinicie las tabs mientras se interactúa; el
+ * valor nuevo se relee al navegar.
+ * @param {Partial<typeof state>} patch Campos a mezclar.
+ */
+function commitSilent(patch) {
+  state = { ...state, ...patch };
+  persist();
 }
 
 export const store = {
@@ -413,11 +430,11 @@ export const store = {
   },
 
   /** @param {string} tone Nuevo tono de frases. */
-  setTone(tone) { commit({ tone }); },
+  setTone(tone) { commitSilent({ tone }); },
   /** @param {string} reminder Hora `HH:MM` del recordatorio. */
-  setReminder(reminder) { commit({ reminder }); },
+  setReminder(reminder) { commitSilent({ reminder }); },
   /** @param {boolean} on Activa o desactiva los sonidos. */
-  setSound(on) { commit({ sound: !!on }); },
+  setSound(on) { commitSilent({ sound: !!on }); },
 
   /** Borra todos los datos (contadores y colección). */
   wipe() { commit({ counters: [], pressings: [] }); },

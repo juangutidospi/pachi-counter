@@ -122,6 +122,7 @@ export const es = {
 
   create: {
     title: 'Nuevo contador',
+    badge: 'Nuevo',
     subtitle: 'Empieza a contar desde el momento en que lo creas.',
     kindLabel: 'Tipo',
     kind: { quit: 'Dejar algo', build: 'Hacer algo' },
@@ -130,9 +131,10 @@ export const es = {
     tailLabel: 'Se leerá así',
     tailPrefix: '0 días',
     tailPh: { quit: 'sin azúcar', build: 'leyendo cada día' },
+    lookLabel: 'Aspecto',
     iconLabel: 'Icono',
     colorLabel: 'Acento',
-    color: { accent: 'Azul', accent2: 'Rojo', light: 'Amarillo', deep: 'Negro' },
+    color: { accent: 'Azul', accent2: 'Rojo', light: 'Amarillo', green: 'Verde', teal: 'Turquesa', violet: 'Violeta', magenta: 'Rosa', orange: 'Naranja', deep: 'Negro' },
     startLabel: 'Fecha de inicio',
     startToday: 'Hoy',
     startPast: 'Ya llevo días',
@@ -147,6 +149,7 @@ export const es = {
     whyOptional: '(opcional)',
     whyPh: 'Aparecerá en el detalle, para los días difíciles.',
     cancel: 'Cancelar',
+    close: 'Cerrar',
     submit: 'Empezar a contar',
   },
 

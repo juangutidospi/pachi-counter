@@ -32,24 +32,29 @@ export class SegControl extends AppElement {
   /** @returns {string} Valor seleccionado. */
   get value() { return this._value; }
 
-  /** Pinta el grupo de segmentos como radios accesibles. */
+  /** Pinta el grupo de segmentos como radios accesibles, con indicador deslizante. */
   render() {
     const name = 'seg-' + (this._name || (this._name = Math.random().toString(36).slice(2)));
+    const n = Math.max(this._options.length, 1);
+    const idx = Math.max(0, this._options.findIndex((o) => o.value === this._value));
     this.shadowRoot.innerHTML = `
-      <div class="seg" role="radiogroup">
+      <div class="seg" role="radiogroup" style="--n:${n};--i:${idx}">
+        <span class="ind" aria-hidden="true"></span>
         ${this._options.map((opt) => `
           <label class="seg-opt">
             <input type="radio" name="${name}" value="${escapeHtml(opt.value)}" ${opt.value === this._value ? 'checked' : ''}>
-            ${escapeHtml(opt.label)}
+            <span class="seg-lb">${escapeHtml(opt.label)}</span>
           </label>`).join('')}
       </div>`;
   }
 
-  /** Cablea el cambio de selección. */
+  /** Cablea el cambio de selección y desliza el indicador sin repintar. */
   afterRender() {
-    this.$$('input').forEach((input) => {
+    this.$$('input').forEach((input, i) => {
       this.on(input, 'change', () => {
         this._value = input.value;
+        const seg = this.$('.seg');
+        if (seg) seg.style.setProperty('--i', String(i));
         this.dispatchEvent(new CustomEvent('change', { detail: { value: input.value }, bubbles: true, composed: true }));
       });
     });

@@ -9,12 +9,17 @@ import { grooveTexture } from './groove-seed.js';
  */
 
 /** Paleta concreta (hex) para el canvas, equivalente a los tokens. */
-const HEX = { paper: '#efe9dc', ink: '#111010', dim: '#6b6459', groove: '#c3baa4', blue: '#2340d8', red: '#e5342a', yellow: '#f4c020' };
+const HEX = { paper: '#efe9dc', ink: '#111010', dim: '#6b6459', groove: '#c3baa4', blue: '#2340d8', red: '#e5342a', yellow: '#f4c020', green: '#1f9d57', teal: '#0c9aa2', violet: '#6a3de8', magenta: '#d62f86', orange: '#ef6c14' };
 /** color de contador → relleno y color de texto sobre él. */
 const COLOR = {
   accent: { fill: HEX.blue, on: HEX.paper },
   accent2: { fill: HEX.red, on: HEX.paper },
   light: { fill: HEX.yellow, on: HEX.ink },
+  green: { fill: HEX.green, on: HEX.paper },
+  teal: { fill: HEX.teal, on: HEX.paper },
+  violet: { fill: HEX.violet, on: HEX.paper },
+  magenta: { fill: HEX.magenta, on: HEX.paper },
+  orange: { fill: HEX.orange, on: HEX.ink },
   deep: { fill: HEX.ink, on: HEX.paper },
 };
 
