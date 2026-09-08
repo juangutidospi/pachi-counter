@@ -19,7 +19,7 @@ export const styles = css`
   .empty .rings .r1 { inset: 0; } .empty .rings .r2 { inset: 22px; opacity: .5; } .empty .rings .r3 { inset: 44px; opacity: .25; }
   .empty p { font-size: 13px; max-width: 30ch; margin: 0 auto; text-wrap: pretty; }
 
-  .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-4); }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: var(--space-4); }
   .rec {
     border: var(--border-w) solid var(--ink); padding: var(--space-4); display: flex; flex-direction: column; align-items: center; text-align: center;
     animation: pc-up .4s cubic-bezier(.16,1,.3,1) both;

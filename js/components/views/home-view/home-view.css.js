@@ -11,8 +11,8 @@ export const styles = css`
     padding-bottom: 8px; margin-bottom: 14px; border-bottom: var(--border-w) solid var(--ink);
     font-family: var(--font-body); font-weight: 600; font-size: 10px; letter-spacing: .18em; text-transform: uppercase;
   }
-  .masthead .brand { color: var(--ink); }
-  .masthead .edition { color: var(--edition-on, var(--paper)); background: var(--edition, var(--ink)); padding: 3px 8px; letter-spacing: .1em; }
+  .masthead .brand { color: var(--ink); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .masthead .edition { flex: none; white-space: nowrap; color: var(--edition-on, var(--paper)); background: var(--edition, var(--ink)); padding: 3px 8px; letter-spacing: .1em; }
 
   .head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-4); }
   .head .date { font-family: var(--font-body); font-size: 10.5px; letter-spacing: .16em; text-transform: uppercase; color: var(--dim); font-weight: 600; }
@@ -22,11 +22,11 @@ export const styles = css`
 
   .stats { display: grid; grid-template-columns: repeat(3, 1fr); margin-top: 18px;
     border: var(--border-w) solid var(--ink); }
-  .stat { padding: 12px 12px; border-right: var(--border-w) solid var(--ink); }
+  .stat { padding: 12px 10px; min-width: 0; border-right: var(--border-w) solid var(--ink); }
   .stat:last-child { border-right: 0; }
   .stat.hi { background: var(--yellow); }
-  .stat .num { font-family: var(--font-display); font-weight: 800; font-size: 27px; line-height: 1; letter-spacing: -.03em; color: var(--ink); font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1, "zero" 1; }
-  .stat .lbl { font-family: var(--font-body); font-size: 9px; letter-spacing: .08em; text-transform: uppercase; color: var(--dim); margin-top: 6px; font-weight: 600; }
+  .stat .num { font-family: var(--font-display); font-weight: 800; font-size: min(27px, 9cqw); line-height: 1; letter-spacing: -.03em; color: var(--ink); font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1, "zero" 1; }
+  .stat .lbl { font-family: var(--font-body); font-size: 9px; letter-spacing: .06em; text-transform: uppercase; color: var(--dim); margin-top: 6px; font-weight: 600; }
 
   .focus { margin-top: 18px; padding-left: 14px; border-left: 6px solid var(--red); }
   .focus .kicker { font-family: var(--font-body); font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--blue); font-weight: 700; }
