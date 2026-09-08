@@ -28,12 +28,27 @@ export class CreateSheet extends AppElement {
   render() {
     const d = this._draft;
     const enter = this._mounted ? '' : 'enter';
+    const c = COUNTER_COLORS[d.color] || COUNTER_COLORS.accent;
+    const hasName = !!d.name.trim();
+    const nameShown = hasName ? d.name.trim() : t('create.namePh.' + d.kind);
+    const readTail = d.tail.trim() || t('create.tailPh.' + d.kind);
     this.shadowRoot.innerHTML = `
       <div class="scrim" id="scrim">
-        <div class="sheet ${enter}" id="sheet">
+        <div class="sheet ${enter}" id="sheet" style="--acc:${c.value};--on:${c.on}">
+          <button class="close" id="close" type="button" aria-label="${t('create.close')}">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square"><path d="M6 6l12 12M18 6 6 18"></path></svg>
+          </button>
+          <div class="sheet-scroll">
           <div class="grabber"></div>
-          <h3>${t('create.title')}</h3>
-          <p class="text-muted subtitle">${t('create.subtitle')}</p>
+
+          <header class="head">
+            <div class="pv-disc" id="pv-disc">${counterIcon(d.icon, 30)}</div>
+            <div class="head-txt">
+              <span class="kicker">${t('create.badge')}</span>
+              <h3 class="pv-title ${hasName ? '' : 'ph'}" id="pv-title">${escapeHtml(nameShown)}</h3>
+              <p class="pv-read" id="pv-read">${t('create.tailPrefix')} · ${escapeHtml(readTail)}</p>
+            </div>
+          </header>
 
           <div class="field gap6">
             <label>${t('create.kindLabel')}</label>
@@ -53,30 +68,25 @@ export class CreateSheet extends AppElement {
             </div>
           </div>
 
-          <div class="field">
-            <label>${t('create.iconLabel')}</label>
+          <div class="field look">
+            <label>${t('create.lookLabel')}</label>
+            <div class="swatches">${this._colorsTpl}</div>
             <div class="icons">${this._iconsTpl}</div>
-          </div>
-
-          <div class="field">
-            <label>${t('create.colorLabel')}</label>
-            <div class="colors">${this._colorsTpl}</div>
           </div>
 
           <div class="field">
             <label>${t('create.startLabel')}</label>
             <seg-control id="start"></seg-control>
-            ${d.pastStart ? `
-              <div class="ago-row">
-                <input class="input" type="number" min="0" max="3650" id="ago" value="${d.ago}">
-                <span class="suffix">${t('create.agoSuffix')}</span>
-              </div>` : ''}
+            <div class="ago-row ${d.pastStart ? '' : 'hide'}" id="ago-row">
+              <input class="input" type="number" min="0" max="3650" id="ago" value="${d.ago}">
+              <span class="suffix">${t('create.agoSuffix')}</span>
+            </div>
           </div>
 
           <div class="field">
             <label>${t('create.msLabel')}</label>
             <seg-control id="ms-mode"></seg-control>
-            ${d.msCustom ? `<input class="input ms-custom" id="ms" value="${escapeHtml(d.ms)}" placeholder="${t('create.msPh')}">` : ''}
+            <input class="input ms-custom ${d.msCustom ? '' : 'hide'}" id="ms" value="${escapeHtml(d.ms)}" placeholder="${t('create.msPh')}">
             <div class="ms-preview">${this._msPreview()}</div>
           </div>
 
@@ -86,30 +96,35 @@ export class CreateSheet extends AppElement {
           </div>
 
           <div class="buttons">
-            <button class="btn btn-secondary cancel" id="cancel">${t('create.cancel')}</button>
-            <button class="btn btn-primary submit" id="submit" ${this._invalid() ? 'disabled' : ''}>${t('create.submit')}</button>
+            <button class="btn btn-primary btn-block submit" id="submit" ${this._invalid() ? 'disabled' : ''}>${t('create.submit')}</button>
+          </div>
           </div>
         </div>
       </div>`;
   }
 
-  /** @returns {string} Selector de iconos. */
+  /** @returns {string} Rejilla de iconos; el activo adopta el color elegido. */
   get _iconsTpl() {
-    return Object.keys(COUNTER_ICONS).map((key) =>
-      `<button class="icon-btn ${this._draft.icon === key ? 'active' : ''}" data-icon="${key}" aria-label="${key}">${counterIcon(key, 20)}</button>`
-    ).join('');
-  }
-
-  /** @returns {string} Selector de acentos. */
-  get _colorsTpl() {
-    return Object.keys(COUNTER_COLORS).map((key) => {
-      const c = COUNTER_COLORS[key];
-      const ring = this._draft.color === key ? `box-shadow:0 0 0 2px var(--color-bg), 0 0 0 4px ${c.value};` : '';
-      return `<button class="color-btn" data-color="${key}" aria-label="${t('create.color.' + key)}" style="background:${c.value};${ring}"></button>`;
+    return Object.keys(COUNTER_ICONS).map((key) => {
+      const active = this._draft.icon === key;
+      return `<button class="icon-btn ${active ? 'active' : ''}" data-icon="${key}" aria-label="${key}" aria-pressed="${active}">${counterIcon(key, 18)}</button>`;
     }).join('');
   }
 
-  /** Cablea segmentos, pickers, inputs y acciones. */
+  /** @returns {string} Selector de acentos como swatches Bauhaus. */
+  get _colorsTpl() {
+    return Object.keys(COUNTER_COLORS).map((key) => {
+      const c = COUNTER_COLORS[key];
+      const active = this._draft.color === key;
+      return `<button class="swatch ${active ? 'active' : ''}" data-color="${key}" aria-label="${t('create.color.' + key)}" aria-pressed="${active}" style="background:${c.value}"></button>`;
+    }).join('');
+  }
+
+  /**
+   * Cablea segmentos, pickers, inputs y acciones.
+   * Las selecciones (tipo, color, icono, inicio, hitos) se aplican en el sitio,
+   * sin re-render, para no reiniciar el scroll ni producir parpadeos.
+   */
   afterRender() {
     this._mounted = true;
     const d = this._draft;
@@ -117,32 +132,95 @@ export class CreateSheet extends AppElement {
     const kind = this.$('#kind');
     kind.options = ['quit', 'build'].map((v) => ({ value: v, label: t('create.kind.' + v) }));
     kind.value = d.kind;
-    this.on(kind, 'change', (e) => this._patch({ kind: e.detail.value }));
+    this.on(kind, 'change', (e) => this._setKind(e.detail.value));
 
     const start = this.$('#start');
     start.options = [{ value: 'today', label: t('create.startToday') }, { value: 'past', label: t('create.startPast') }];
     start.value = d.pastStart ? 'past' : 'today';
-    this.on(start, 'change', (e) => this._patch({ pastStart: e.detail.value === 'past' }));
+    this.on(start, 'change', (e) => this._setStart(e.detail.value === 'past'));
 
     const msMode = this.$('#ms-mode');
     msMode.options = [{ value: 'default', label: t('create.msDefault') }, { value: 'custom', label: t('create.msCustom') }];
     msMode.value = d.msCustom ? 'custom' : 'default';
-    this.on(msMode, 'change', (e) => this._patch({ msCustom: e.detail.value === 'custom' }));
+    this.on(msMode, 'change', (e) => this._setMsMode(e.detail.value === 'custom'));
 
-    this.on(this.$('#name'), 'change', (e) => this._patch({ name: e.target.value }, false));
-    this.on(this.$('#tail'), 'change', (e) => this._patch({ tail: e.target.value }, false));
-    this.on(this.$('#why'), 'change', (e) => this._patch({ why: e.target.value }, false));
-    const ago = this.$('#ago');
-    if (ago) this.on(ago, 'change', (e) => this._patch({ ago: Math.max(0, parseInt(e.target.value, 10) || 0) }, false));
-    const ms = this.$('#ms');
-    if (ms) this.on(ms, 'change', (e) => this._patch({ ms: e.target.value }, false));
+    this.on(this.$('#name'), 'input', (e) => this._patch({ name: e.target.value }, false));
+    this.on(this.$('#tail'), 'input', (e) => this._patch({ tail: e.target.value }, false));
+    this.on(this.$('#why'), 'input', (e) => { this._draft.why = e.target.value; });
+    this.on(this.$('#ago'), 'input', (e) => { this._draft.ago = Math.max(0, parseInt(e.target.value, 10) || 0); });
+    this.on(this.$('#ms'), 'input', (e) => { this._draft.ms = e.target.value; this._syncSubmit(); });
 
-    this.$$('.icon-btn').forEach((btn) => this.on(btn, 'click', () => this._patch({ icon: btn.dataset.icon })));
-    this.$$('.color-btn').forEach((btn) => this.on(btn, 'click', () => this._patch({ color: btn.dataset.color })));
+    this.$$('.icon-btn').forEach((btn) => this.on(btn, 'click', () => this._selectIcon(btn.dataset.icon)));
+    this.$$('.swatch').forEach((btn) => this.on(btn, 'click', () => this._selectColor(btn.dataset.color)));
 
     this.on(this.$('#scrim'), 'click', (e) => { if (e.target === this.$('#scrim')) this._cancel(); });
-    this.on(this.$('#cancel'), 'click', () => this._cancel());
+    this.on(this.$('#close'), 'click', () => this._cancel());
     this.on(this.$('#submit'), 'click', () => this._submit());
+  }
+
+  /**
+   * Cambia el tipo (dejar/hacer): actualiza placeholders y la cabecera, sin repintar.
+   * @param {string} kind Nuevo tipo.
+   */
+  _setKind(kind) {
+    this._draft.kind = kind;
+    const name = this.$('#name');
+    const tail = this.$('#tail');
+    if (name) name.placeholder = t('create.namePh.' + kind);
+    if (tail) tail.placeholder = t('create.tailPh.' + kind);
+    this._refreshPreview();
+  }
+
+  /**
+   * Muestra u oculta el campo de días ya cumplidos, sin repintar.
+   * @param {boolean} past Si el inicio es en el pasado.
+   */
+  _setStart(past) {
+    this._draft.pastStart = past;
+    const row = this.$('#ago-row');
+    if (row) row.classList.toggle('hide', !past);
+  }
+
+  /**
+   * Alterna entre hitos por defecto y personalizados, sin repintar.
+   * @param {boolean} custom Si se usan hitos propios.
+   */
+  _setMsMode(custom) {
+    this._draft.msCustom = custom;
+    const ms = this.$('#ms');
+    if (ms) ms.classList.toggle('hide', !custom);
+    this._syncSubmit();
+  }
+
+  /**
+   * Selecciona un icono: actualiza el estado activo y el disco de vista previa.
+   * @param {string} key Clave del icono.
+   */
+  _selectIcon(key) {
+    this._draft.icon = key;
+    this.$$('.icon-btn').forEach((btn) => {
+      const on = btn.dataset.icon === key;
+      btn.classList.toggle('active', on);
+      btn.setAttribute('aria-pressed', String(on));
+    });
+    const disc = this.$('#pv-disc');
+    if (disc) disc.innerHTML = counterIcon(key, 30);
+  }
+
+  /**
+   * Selecciona un color: actualiza el swatch activo y el acento (disco e icono).
+   * @param {string} key Clave del color.
+   */
+  _selectColor(key) {
+    this._draft.color = key;
+    this.$$('.swatch').forEach((btn) => {
+      const on = btn.dataset.color === key;
+      btn.classList.toggle('active', on);
+      btn.setAttribute('aria-pressed', String(on));
+    });
+    const c = COUNTER_COLORS[key] || COUNTER_COLORS.accent;
+    const sheet = this.$('.sheet');
+    if (sheet) { sheet.style.setProperty('--acc', c.value); sheet.style.setProperty('--on', c.on); }
   }
 
   /**
@@ -156,12 +234,26 @@ export class CreateSheet extends AppElement {
     else this._syncSubmit();
   }
 
-  /** Actualiza solo el estado del botón de confirmar (sin re-render). */
+  /** Actualiza el botón de confirmar, la vista previa de hitos y la cabecera viva. */
   _syncSubmit() {
     const submit = this.$('#submit');
     if (submit) submit.disabled = this._invalid();
     const preview = this.$('.ms-preview');
     if (preview) preview.textContent = this._msPreview();
+    this._refreshPreview();
+  }
+
+  /** Refresca la cabecera de vista previa (nombre y lectura) al escribir. */
+  _refreshPreview() {
+    const d = this._draft;
+    const hasName = !!d.name.trim();
+    const title = this.$('#pv-title');
+    if (title) {
+      title.textContent = hasName ? d.name.trim() : t('create.namePh.' + d.kind);
+      title.classList.toggle('ph', !hasName);
+    }
+    const read = this.$('#pv-read');
+    if (read) read.textContent = `${t('create.tailPrefix')} · ${d.tail.trim() || t('create.tailPh.' + d.kind)}`;
   }
 
   /** @returns {number[]} Hitos parseados según el modo. */
