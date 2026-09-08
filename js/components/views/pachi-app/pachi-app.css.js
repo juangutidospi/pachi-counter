@@ -42,36 +42,36 @@ export const styles = css`
   .tabbar {
     flex: none; z-index: 40; position: relative; overflow: visible;
     display: flex; align-items: stretch;
-    height: 76px; padding-top: 2px;
+    height: 56px;
     border-top: var(--border-w) solid var(--ink); background: var(--paper);
   }
   .tab {
-    flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px;
+    flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
     border: 0; background: transparent; cursor: pointer; position: relative; color: var(--dim);
     transition: color .12s ease;
   }
-  .tab .tab-ic { width: 22px; height: 22px; display: block; }
-  .tab .tab-lb { font-family: var(--font-heading); font-weight: 700; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; }
+  .tab .tab-ic { width: 19px; height: 19px; display: block; }
+  .tab .tab-lb { font-family: var(--font-heading); font-weight: 700; font-size: 9.5px; letter-spacing: .06em; text-transform: uppercase; }
   .tab.active { color: var(--ink); }
   .tab.active::before {
-    content: ""; position: absolute; top: -2px; left: 24%; right: 24%; height: 5px; background: var(--blue);
+    content: ""; position: absolute; top: -2px; left: 26%; right: 26%; height: 4px; background: var(--blue);
     transform-origin: center; animation: pc-wipe .3s cubic-bezier(.16,1,.3,1) both;
   }
-  .tab-spacer { width: 96px; flex: none; }
+  .tab-spacer { width: 78px; flex: none; }
 
   .tab-new {
-    position: absolute; left: 50%; top: 2px; transform: translate(-50%, -40%);
-    width: 60px; height: 60px; border-radius: 50%;
+    position: absolute; left: 50%; top: 0; transform: translate(-50%, -34%);
+    width: 50px; height: 50px; border-radius: 50%;
     background: var(--blue); color: var(--paper); border: var(--border-w) solid var(--ink);
-    box-shadow: 4px 4px 0 var(--ink); display: grid; place-items: center; cursor: pointer;
+    box-shadow: 3px 3px 0 var(--ink); display: grid; place-items: center; cursor: pointer;
     transition: background .12s ease, transform .2s cubic-bezier(.34,1.56,.64,1);
   }
   .tab-new:hover { background: var(--ink); }
-  .tab-new:active { transform: translate(-50%, -40%) scale(.92); }
-  .tab-new .tab-plus { width: 26px; height: 26px; display: block; }
+  .tab-new:active { transform: translate(-50%, -34%) scale(.92); }
+  .tab-new .tab-plus { width: 22px; height: 22px; display: block; }
   .tab-new .tab-new-lb {
-    position: absolute; bottom: -17px; left: 50%; transform: translateX(-50%);
-    font-family: var(--font-heading); font-weight: 700; font-size: 9px; letter-spacing: .1em;
+    position: absolute; bottom: -14px; left: 50%; transform: translateX(-50%);
+    font-family: var(--font-heading); font-weight: 700; font-size: 8.5px; letter-spacing: .1em;
     text-transform: uppercase; color: var(--ink); white-space: nowrap;
   }
   @media (prefers-reduced-motion: reduce) { .tab.active::before { animation: none; } }
