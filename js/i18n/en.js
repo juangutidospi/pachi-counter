@@ -176,6 +176,7 @@ export const en = {
   nav: {
     streaks: 'Streaks',
     new: '+ New',
+    add: 'New',
     settings: 'Settings',
   },
 

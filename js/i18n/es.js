@@ -176,6 +176,7 @@ export const es = {
   nav: {
     streaks: 'Rachas',
     new: '+ Nuevo',
+    add: 'Nuevo',
     settings: 'Ajustes',
   },
 

@@ -3,7 +3,7 @@ import { css } from '../../../core/css.js';
 /** Estilos de la vista home — Bauhaus. */
 export const styles = css`
   :host { display: block; }
-  .home { padding: 40px 22px 32px; animation: pc-fade .35s ease both; container-type: inline-size; }
+  .home { padding: 40px 22px 44px; animation: pc-fade .35s ease both; container-type: inline-size; }
 
   /* masthead de publicación diaria */
   .masthead {

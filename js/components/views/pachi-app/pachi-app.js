@@ -112,11 +112,15 @@ export class PachiApp extends AppElement {
   /** @returns {string} Barra de navegación inferior. */
   get _tabbarTpl() {
     const route = router.route;
+    const rings = '<svg class="tab-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"></circle><circle cx="12" cy="12" r="5"></circle><circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"></circle></svg>';
+    const gear = '<svg class="tab-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="miter"><rect x="4" y="4" width="16" height="16"></rect><path d="M4 9h16M4 15h16M10 4v16"></path></svg>';
+    const plus = '<svg class="tab-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="square"><path d="M12 5v14M5 12h14"></path></svg>';
     return `
       <div class="tabbar">
-        <button class="link ${route === 'home' ? 'active' : ''}" id="nav-home">${t('nav.streaks')}</button>
-        <button class="new" id="nav-new">${t('nav.new')}</button>
-        <button class="link ${route === 'settings' ? 'active' : ''}" id="nav-settings">${t('nav.settings')}</button>
+        <button class="tab ${route === 'home' ? 'active' : ''}" id="nav-home">${rings}<span class="tab-lb">${t('nav.streaks')}</span></button>
+        <div class="tab-spacer"></div>
+        <button class="tab ${route === 'settings' ? 'active' : ''}" id="nav-settings">${gear}<span class="tab-lb">${t('nav.settings')}</span></button>
+        <button class="tab-new" id="nav-new" aria-label="${t('nav.add')}">${plus}<span class="tab-new-lb">${t('nav.add')}</span></button>
       </div>`;
   }
 
