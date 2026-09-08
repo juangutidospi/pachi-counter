@@ -6,13 +6,33 @@ export const styles = css`
   .scrim {
     position: absolute; inset: 0; z-index: 70; display: flex; flex-direction: column; justify-content: flex-end;
     background: color-mix(in srgb, var(--ink) 40%, transparent);
+    animation: pc-fade .35s ease both;
   }
   .sheet {
     max-height: 94%; overflow: auto; padding: var(--space-4) var(--space-6) 46px;
     background: var(--paper); border-top: var(--border-w) solid var(--ink);
     box-shadow: 0 -6px 0 rgba(17,16,16,.12);
   }
-  .sheet.enter { animation: pc-sheet .42s cubic-bezier(.16,1,.3,1) both; }
+  /* Revelado circular que crece desde el botón «+» (abajo-centro) hacia arriba. */
+  .sheet.enter { animation: pc-sheet-pop .85s cubic-bezier(.16,1,.3,1) both; transform-origin: bottom center; }
+  @keyframes pc-sheet-pop {
+    from { clip-path: circle(0% at 50% 106%); opacity: .95; transform: translateY(30px) scale(.95); }
+    to   { clip-path: circle(175% at 50% 106%); opacity: 1; transform: translateY(0) scale(1); }
+  }
+  /* Cierre: animación inversa (encoge hacia el botón + y se desvanece). */
+  .scrim.leaving { animation: pc-fade-out .5s ease both; }
+  .scrim.leaving .sheet { animation: pc-sheet-shrink .5s cubic-bezier(.5,0,.85,.35) both; transform-origin: bottom center; }
+  @keyframes pc-sheet-shrink {
+    from { clip-path: circle(175% at 50% 106%); opacity: 1; transform: translateY(0) scale(1); }
+    70%  { opacity: 1; }
+    to   { clip-path: circle(0% at 50% 106%); opacity: .6; transform: translateY(30px) scale(.95); }
+  }
+  @keyframes pc-fade-out { from { opacity: 1; } to { opacity: 0; } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .scrim { animation: none; }
+    .sheet.enter { animation: pc-fade .2s ease both; }
+  }
   .grabber { width: 44px; height: 4px; background: var(--ink); margin: 0 auto var(--space-6); }
   h3 { margin: 0; font-size: 28px; }
   .subtitle { font-family: var(--font-body); font-size: 12px; margin-top: var(--space-1); color: var(--dim); }

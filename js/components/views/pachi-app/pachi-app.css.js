@@ -38,25 +38,43 @@ export const styles = css`
   .scroll { flex: 1 1 auto; min-height: 0; overflow-y: auto; overflow-x: hidden;
     overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
 
-  /* — tabbar fija al fondo (no se desplaza con el contenido) — */
+  /* — tabbar «consola de tocadiscos»: iconos + indicador + botón-disco — */
   .tabbar {
-    flex: none; z-index: 40;
-    display: flex; align-items: stretch; justify-content: space-between;
+    flex: none; z-index: 40; position: relative; overflow: visible;
+    display: flex; align-items: stretch;
+    height: 56px;
     border-top: var(--border-w) solid var(--ink); background: var(--paper);
   }
-  .tabbar .link {
-    flex: 1; padding: 16px 10px; text-align: center; border-radius: 0; border: none;
-    font-family: var(--font-heading); font-weight: 700; font-size: 12px; letter-spacing: .04em;
-    text-transform: uppercase; color: var(--dim); background: transparent;
+  .tab {
+    flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
+    border: 0; background: transparent; cursor: pointer; position: relative; color: var(--dim);
+    transition: color .12s ease;
   }
-  .tabbar .link.active { color: var(--ink); }
-  .tabbar .new {
-    flex: none; padding: 16px 22px; border-radius: 0;
-    border-left: var(--border-w) solid var(--ink); border-right: var(--border-w) solid var(--ink);
-    background: var(--blue); color: var(--paper); font-family: var(--font-heading); font-weight: 700;
-    font-size: 12px; letter-spacing: .04em; text-transform: uppercase; cursor: pointer;
+  .tab .tab-ic { width: 19px; height: 19px; display: block; }
+  .tab .tab-lb { font-family: var(--font-heading); font-weight: 700; font-size: 9.5px; letter-spacing: .06em; text-transform: uppercase; }
+  .tab.active { color: var(--ink); }
+  .tab.active::before {
+    content: ""; position: absolute; top: -2px; left: 26%; right: 26%; height: 4px; background: var(--blue);
+    transform-origin: center; animation: pc-wipe .3s cubic-bezier(.16,1,.3,1) both;
   }
-  .tabbar .new:hover { background: var(--ink); }
+  .tab-spacer { width: 78px; flex: none; }
+
+  .tab-new {
+    position: absolute; left: 50%; top: 0; transform: translate(-50%, -34%);
+    width: 50px; height: 50px; border-radius: 50%;
+    background: var(--blue); color: var(--paper); border: var(--border-w) solid var(--ink);
+    box-shadow: 3px 3px 0 var(--ink); display: grid; place-items: center; cursor: pointer;
+    transition: background .12s ease, transform .2s cubic-bezier(.34,1.56,.64,1);
+  }
+  .tab-new:hover { background: var(--ink); }
+  .tab-new:active { transform: translate(-50%, -34%) scale(.92); }
+  .tab-new .tab-plus { width: 22px; height: 22px; display: block; }
+  .tab-new .tab-new-lb {
+    position: absolute; bottom: -14px; left: 50%; transform: translateX(-50%);
+    font-family: var(--font-heading); font-weight: 700; font-size: 8.5px; letter-spacing: .1em;
+    text-transform: uppercase; color: var(--ink); white-space: nowrap;
+  }
+  @media (prefers-reduced-motion: reduce) { .tab.active::before { animation: none; } }
 
   /* — transición constructivista (barrido de bloques primarios) — */
   .wipe { position: absolute; inset: 0; z-index: 60; pointer-events: none; overflow: hidden; }

@@ -179,8 +179,20 @@ export class CreateSheet extends AppElement {
   /** @returns {boolean} Si el borrador es inválido (no se puede crear). */
   _invalid() { return !this._draft.name.trim() || !this._milestones().length; }
 
-  /** Cierra la hoja sin crear. */
-  _cancel() { this._reset(); router.closeCreate(); }
+  /** Cierra la hoja sin crear, con la animación inversa (encoge hacia el botón +). */
+  _cancel() {
+    if (this._leaving) return;
+    const scrim = this.$('#scrim');
+    const sheet = this.$('.sheet');
+    const reduce = typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!scrim || !sheet || reduce) { this._reset(); router.closeCreate(); return; }
+    this._leaving = true;
+    scrim.classList.add('leaving');
+    let called = false;
+    const done = () => { if (called) return; called = true; this._reset(); router.closeCreate(); };
+    sheet.addEventListener('animationend', done, { once: true });
+    setTimeout(done, 650);
+  }
 
   /** Restablece el borrador para la próxima apertura. */
   _reset() { this._draft = this._blank(); this._mounted = false; }
