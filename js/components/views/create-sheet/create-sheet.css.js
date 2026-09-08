@@ -14,11 +14,10 @@ export const styles = css`
     box-shadow: 0 -6px 0 rgba(17,16,16,.12);
   }
   /* Revelado circular que crece desde el botón «+» (abajo-centro) hacia arriba. */
-  .sheet.enter { animation: pc-sheet-pop .5s cubic-bezier(.16,1,.3,1) both; transform-origin: bottom center; }
+  .sheet.enter { animation: pc-sheet-pop .82s cubic-bezier(.22,1,.36,1) both; transform-origin: bottom center; }
   @keyframes pc-sheet-pop {
-    from { clip-path: circle(0% at 50% 108%); opacity: .5; transform: translateY(16px) scale(.98); }
-    60%  { opacity: 1; }
-    to   { clip-path: circle(160% at 50% 108%); opacity: 1; transform: translateY(0) scale(1); }
+    from { clip-path: circle(0% at 50% 106%); opacity: .92; transform: translateY(26px) scale(.97); }
+    to   { clip-path: circle(170% at 50% 106%); opacity: 1; transform: translateY(0) scale(1); }
   }
   @media (prefers-reduced-motion: reduce) {
     .scrim { animation: none; }
