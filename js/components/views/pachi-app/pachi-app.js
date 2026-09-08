@@ -66,17 +66,54 @@ export class PachiApp extends AppElement {
     }, next.getTime() - now.getTime());
   }
 
+  /** @returns {object} Instantánea del estado de navegación/overlays. */
+  _navSnapshot() {
+    return {
+      route: router.route, create: router.isCreateOpen, reset: router.isResetOpen,
+      hard: router.isHardOpen, celebrate: !!router.celebration, toast: !!router.toast,
+    };
+  }
+
   /**
    * Navega con transición: usa la View Transitions API (crossfade/morph nativo)
    * si está disponible; si no, el repintado normal dispara la cortinilla de bloques.
+   * Optimización: si lo único que cambia es abrir/cerrar la hoja de creación (misma
+   * ruta), añade o quita el `<create-sheet>` sin repintar el resto — así la home no
+   * se refresca (ni re-anima ni recuenta) al cancelar la creación.
    */
   _navigate() {
+    const prev = this._navState;
+    const cur = this._navSnapshot();
+    if (prev && prev.route === cur.route) {
+      const changed = Object.keys(cur).filter((k) => prev[k] !== cur[k]);
+      if (changed.length === 1 && changed[0] === 'create') {
+        this._navState = cur;
+        this._toggleCreateSheet(cur.create);
+        return;
+      }
+    }
+    this._navState = cur;
     const reduce = typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches;
     const changed = this._prevRoute != null && this._prevRoute !== router.route;
     if (changed && !reduce && typeof document !== 'undefined' && document.startViewTransition) {
       document.startViewTransition(() => this._paint());
     } else {
       this._paint();
+    }
+  }
+
+  /**
+   * Añade o quita la hoja de creación sin tocar el resto del shell.
+   * @param {boolean} open Si debe estar presente.
+   */
+  _toggleCreateSheet(open) {
+    const existing = this.$('create-sheet');
+    if (open) {
+      if (existing) return;
+      const screen = this.$('.screen');
+      if (screen) screen.appendChild(document.createElement('create-sheet'));
+    } else if (existing) {
+      existing.remove();
     }
   }
 
