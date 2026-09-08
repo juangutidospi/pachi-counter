@@ -263,9 +263,11 @@ export const store = {
       if (n) { const g = n - this.daysOf(c); if (g < nearGap) { nearGap = g; near = { c, n, g }; } }
     });
     const record = counters.find((c) => this.daysOf(c) > 0 && this.daysOf(c) >= (c.best || 0));
+    const danger = this.dangerCounter();
 
     let headline;
-    if (near && near.g > 0 && near.g <= 2) headline = t('insight.nearMilestone', { name: near.c.name, n: near.n });
+    if (danger) headline = t('insight.danger', { name: danger.name });
+    else if (near && near.g > 0 && near.g <= 2) headline = t('insight.nearMilestone', { name: near.c.name, n: near.n });
     else if (record) headline = t('insight.record', { name: record.name });
     else headline = t('insight.total', { n: totalDays });
 
@@ -354,6 +356,35 @@ export const store = {
 
   /** @returns {object[]} Discos prensados, del más reciente al más antiguo. */
   get pressings() { return state.pressings.slice().reverse(); },
+
+  /**
+   * Historial de recaídas de un contador (a partir de discos prensados con el
+   * mismo nombre): en qué días caíste antes y si HOY es uno de esos «días peligro».
+   * @param {object} c Contador.
+   * @returns {{days:number[], dangerToday:boolean, times:number, next:number|null, worst:number}}
+   */
+  relapseHistory(c) {
+    const key = (s) => String(s || '').trim().toLowerCase();
+    const past = state.pressings.filter((p) => key(p.name) === key(c.name)).map((p) => p.days).filter((d) => d > 0);
+    const d = this.daysOf(c);
+    const times = past.filter((x) => x === d).length;
+    const ahead = past.filter((x) => x > d);
+    return {
+      days: past,
+      dangerToday: d > 0 && times > 0,
+      times,
+      next: ahead.length ? Math.min(...ahead) : null,
+      worst: past.length ? Math.max(...past) : 0,
+    };
+  },
+
+  /**
+   * Primer contador cuyo día actual coincide con un «día peligro» histórico.
+   * @returns {object|null} Contador en día peligro, o null.
+   */
+  dangerCounter() {
+    return state.counters.find((c) => this.relapseHistory(c).dangerToday) || null;
+  },
 
   /**
    * Crea un contador y devuelve su id.

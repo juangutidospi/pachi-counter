@@ -36,6 +36,7 @@ export const en = {
   },
 
   insight: {
+    danger: 'Danger day on {name}: you fell on this day before. Not today.',
     nearMilestone: '{name} nears {n} days',
     record: 'Personal record in the making: {name}',
     total: '{n} total days counted',
@@ -85,6 +86,8 @@ export const en = {
     noteTitle: 'My note',
     noteAutosave: 'saved as you type',
     notePh: 'Why I do it. To read it on hard days.',
+    dangerKicker: 'Danger day',
+    dangerText: 'You relapsed on day {d} before. Today is just one more day — don’t break it.',
     hard: 'Today is hard',
     reset: 'I relapsed, back to 0',
     remove: 'Delete',
