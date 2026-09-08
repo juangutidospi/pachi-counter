@@ -122,6 +122,7 @@ export const en = {
 
   create: {
     title: 'New counter',
+    badge: 'New',
     subtitle: 'It starts counting the moment you create it.',
     kindLabel: 'Type',
     kind: { quit: 'Quit something', build: 'Build something' },
@@ -130,9 +131,10 @@ export const en = {
     tailLabel: 'It will read like',
     tailPrefix: '0 days',
     tailPh: { quit: 'no sugar', build: 'reading every day' },
+    lookLabel: 'Appearance',
     iconLabel: 'Icon',
     colorLabel: 'Accent',
-    color: { accent: 'Blue', accent2: 'Red', light: 'Yellow', deep: 'Black' },
+    color: { accent: 'Blue', accent2: 'Red', light: 'Yellow', green: 'Green', teal: 'Teal', violet: 'Violet', magenta: 'Pink', orange: 'Orange', deep: 'Black' },
     startLabel: 'Start date',
     startToday: 'Today',
     startPast: 'I already have days',
@@ -147,6 +149,7 @@ export const en = {
     whyOptional: '(optional)',
     whyPh: 'It will show in the detail, for the hard days.',
     cancel: 'Cancel',
+    close: 'Close',
     submit: 'Start counting',
   },
 
