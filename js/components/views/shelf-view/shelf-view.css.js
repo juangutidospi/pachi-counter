@@ -7,7 +7,7 @@ export const styles = css`
   .back { gap: 4px; margin-left: -4px; }
 
   .head { margin: var(--space-4) 0 var(--space-6); }
-  .head h2 { margin: 0; font-size: min(40px, 13cqw); }
+  .head h2 { margin: 0; font-size: min(40px, 9cqw); line-height: .9; overflow-wrap: anywhere; }
   .head .kicker { font-family: var(--font-body); font-weight: 700; font-size: 10px; letter-spacing: .16em; text-transform: uppercase; color: var(--red); margin-bottom: 8px; }
   .head .count { font-family: var(--font-mono); font-size: 11px; letter-spacing: .04em; color: var(--dim); margin-top: 8px; }
 
