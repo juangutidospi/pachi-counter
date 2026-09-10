@@ -27,6 +27,7 @@ export class ShelfView extends AppElement {
           <h2>${t('shelf.title')}</h2>
           ${pressings.length ? `<div class="count">${t('shelf.count', { n: pressings.length, days: totalDays })}</div>` : ''}
         </div>
+        ${store.counters.length ? `<button class="btn btn-secondary btn-block mural" id="mural">${uiIcon('grid', 15)} ${t('shelf.mural')}</button>` : ''}
         ${pressings.length ? `<button class="btn btn-primary btn-block annual" id="annual">${t('shelf.annual')}</button>` : ''}
         ${pressings.length ? `<div class="grid">${pressings.map((p, i) => this._recordTpl(p, i)).join('')}</div>` : this._emptyTpl}
       </div>`;
@@ -68,6 +69,8 @@ export class ShelfView extends AppElement {
   /** Cablea la navegación y la prensa anual. */
   afterRender() {
     this.on(this.$('#back'), 'click', () => router.go('home'));
+    const mural = this.$('#mural');
+    if (mural) this.on(mural, 'click', () => router.go('mural'));
     const annual = this.$('#annual');
     if (annual) {
       this._annualFile = null;

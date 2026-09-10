@@ -38,6 +38,7 @@ export const UI_ICONS = {
   back: 'M15 18l-6-6 6-6',
   share: 'M12 15V3m0 0L8 7m4-4 4 4M5 14v5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5',
   shelf: 'M4 5h16v14H4zM9 5v14M15 5v14',
+  grid: 'M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z',
 };
 
 /**
