@@ -51,6 +51,15 @@ export const es = {
     empty: 'Aún no hay discos. Cada racha que reinicies (o elimines) se prensa aquí como recuerdo.',
     range: '{start} — {end}',
     annual: 'Prensa anual',
+    mural: 'Mural',
+  },
+  mural: {
+    kicker: 'Obra generativa',
+    title: 'Tu mural',
+    subtitle: 'Cada contador es una figura; su tamaño crece con los días y cada hito graba un anillo.',
+    composition: 'Composición Nº {n}',
+    cta: 'Guardar / compartir',
+    empty: 'Crea algún contador y tu mural empezará a componerse aquí.',
   },
 
   annual: {

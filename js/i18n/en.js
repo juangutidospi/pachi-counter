@@ -51,6 +51,15 @@ export const en = {
     empty: 'No records yet. Every streak you reset (or delete) gets pressed here as a keepsake.',
     range: '{start} — {end}',
     annual: 'Annual pressing',
+    mural: 'Mural',
+  },
+  mural: {
+    kicker: 'Generative artwork',
+    title: 'Your mural',
+    subtitle: 'Each counter is a shape; its size grows with the days and every goal engraves a ring.',
+    composition: 'Composition No. {n}',
+    cta: 'Save / share',
+    empty: 'Create a counter and your mural will start composing here.',
   },
 
   annual: {
