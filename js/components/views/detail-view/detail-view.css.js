@@ -10,11 +10,21 @@ export const styles = css`
   .top .right { display: flex; align-items: center; gap: var(--space-2); }
 
   /* — disco de vinilo personal — */
-  .vinyl-wrap { display: grid; place-items: center; margin-top: var(--space-6); }
+  .vinyl-wrap { display: grid; place-items: center; margin-top: var(--space-6); perspective: 900px; }
   .vinyl { position: relative; width: min(264px, 74vw); aspect-ratio: 1;
-    touch-action: none; cursor: grab; user-select: none; -webkit-user-select: none; }
-  .vinyl.dragging { cursor: grabbing; }
+    touch-action: none; cursor: grab; user-select: none; -webkit-user-select: none;
+    transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); transition: transform .18s ease; }
+  .vinyl.dragging { cursor: grabbing; transition: none; }
   .vinyl svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+  /* Vinilo vivo: brillo especular que sigue al puntero/giroscopio. */
+  .vinyl .glint { position: absolute; inset: 0; border-radius: 50%; overflow: hidden; pointer-events: none;
+    mix-blend-mode: screen;
+    background: radial-gradient(circle at var(--lx, 38%) var(--ly, 30%),
+      rgba(255,255,255,.55), rgba(255,255,255,.10) 30%, rgba(255,255,255,0) 55%); }
+  @media (prefers-reduced-motion: reduce) {
+    .vinyl { transform: none; transition: none; }
+  }
   .vinyl .disc { transform-origin: center; will-change: transform; }
   .vinyl .progress { transform: rotate(-90deg); }
   .vinyl .prog-arc { transition: stroke-dashoffset .8s cubic-bezier(.16,1,.3,1);

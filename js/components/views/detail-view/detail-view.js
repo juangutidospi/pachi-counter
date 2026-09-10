@@ -71,6 +71,7 @@ export class DetailView extends AppElement {
             <circle class="prog-arc" cx="130" cy="130" r="120" fill="none" stroke="${vm.color}" stroke-width="4"
               stroke-linecap="round" pathLength="100" stroke-dasharray="100" stroke-dashoffset="${100 - vm.progressPct}"></circle>
           </svg>
+          <div class="glint" aria-hidden="true"></div>
           <div class="label" style="background:${vm.color};color:${vm.on}">
             <div class="num" id="odo" style="font-size:${vm.labelSize}">${vm.days}</div>
             <div class="tail">${escapeHtml(vm.dayWord)} ${escapeHtml(vm.tail)}</div>
@@ -161,6 +162,7 @@ export class DetailView extends AppElement {
     this.on(this.$('#note'), 'change', (e) => store.setNote(this._c.id, e.target.value));
     this._animateOdometer();
     this._initSpinner();
+    this._initLive();
     // Pre-genera el cartel para compartir sin perder el gesto en iOS.
     this._shareFile = null;
     buildPosterFile(this._c).then((file) => { this._shareFile = file; });
@@ -208,11 +210,60 @@ export class DetailView extends AppElement {
     this._rafSpin = requestAnimationFrame(loop);
   }
 
-  /** Limpia la animación del odómetro al desmontar. */
+  /**
+   * «Vinilo vivo»: el disco se inclina y una luz especular recorre los surcos.
+   * En escritorio sigue al puntero; en móvil, al giroscopio (pide permiso en
+   * iOS con el primer toque). Respeta prefers-reduced-motion.
+   */
+  _initLive() {
+    const vinyl = this.$('.vinyl');
+    if (!vinyl) return;
+    const reduce = typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce) return;
+
+    // nx, ny en [-1, 1]; actualiza inclinación (transform) y brillo (gradiente).
+    const apply = (nx, ny) => {
+      const cnx = Math.max(-1, Math.min(1, nx));
+      const cny = Math.max(-1, Math.min(1, ny));
+      vinyl.style.setProperty('--ry', (cnx * 12).toFixed(2) + 'deg');
+      vinyl.style.setProperty('--rx', (-cny * 12).toFixed(2) + 'deg');
+      vinyl.style.setProperty('--lx', (50 + cnx * 42).toFixed(1) + '%');
+      vinyl.style.setProperty('--ly', (50 + cny * 42).toFixed(1) + '%');
+      vinyl.classList.add('live');
+    };
+    const rest = () => { vinyl.style.setProperty('--rx', '0deg'); vinyl.style.setProperty('--ry', '0deg'); vinyl.style.setProperty('--lx', '38%'); vinyl.style.setProperty('--ly', '30%'); };
+    rest();
+
+    // Puntero (escritorio): mueve luz e inclinación al pasar por encima.
+    this.on(vinyl, 'pointermove', (e) => {
+      const r = vinyl.getBoundingClientRect();
+      apply((e.clientX - (r.left + r.width / 2)) / (r.width / 2), (e.clientY - (r.top + r.height / 2)) / (r.height / 2));
+    });
+    this.on(vinyl, 'pointerleave', rest);
+
+    // Giroscopio (móvil): pide permiso en iOS con el primer toque.
+    this._onOrient = (e) => {
+      if (e.gamma == null || e.beta == null) return;
+      apply(e.gamma / 45, (e.beta - 45) / 45);
+    };
+    const enableGyro = () => {
+      if (this._gyroReq) return; this._gyroReq = true;
+      const DOE = window.DeviceOrientationEvent;
+      if (DOE && typeof DOE.requestPermission === 'function') {
+        DOE.requestPermission().then((s) => { if (s === 'granted') window.addEventListener('deviceorientation', this._onOrient); }).catch(() => {});
+      } else if (DOE) {
+        window.addEventListener('deviceorientation', this._onOrient);
+      }
+    };
+    this.on(vinyl, 'pointerdown', enableGyro);
+  }
+
+  /** Limpia la animación del odómetro y los listeners al desmontar. */
   disconnectedCallback() {
     super.disconnectedCallback();
     if (this._raf) cancelAnimationFrame(this._raf);
     if (this._rafSpin) cancelAnimationFrame(this._rafSpin);
+    if (this._onOrient) window.removeEventListener('deviceorientation', this._onOrient);
     spinStop();
   }
 
