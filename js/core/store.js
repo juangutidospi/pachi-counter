@@ -474,9 +474,38 @@ export const store = {
   /** @returns {number} Tamaño aproximado en bytes del estado persistido. */
   storeSize() { return JSON.stringify({ v: 1, counters: state.counters }).length; },
 
-  /** @returns {string} JSON exportable del estado. */
+  /** @returns {string} JSON exportable del estado (contadores, colección y ajustes). */
   exportJson() {
-    return JSON.stringify({ v: 1, settings: { tone: state.tone, reminder: state.reminder }, counters: state.counters }, null, 2);
+    return JSON.stringify({
+      v: 1,
+      settings: { tone: state.tone, reminder: state.reminder, sound: state.sound },
+      counters: state.counters,
+      pressings: state.pressings,
+    }, null, 2);
+  },
+
+  /**
+   * Carga datos desde un JSON exportado previamente (reemplaza el estado).
+   * @param {string} text JSON con `counters` (y opcionalmente `pressings`/`settings`).
+   * @returns {{ok:boolean, count?:number, error?:string}} Resultado.
+   */
+  importJson(text) {
+    let data;
+    try { data = JSON.parse(text); } catch (e) { return { ok: false, error: 'parse' }; }
+    if (!data || !Array.isArray(data.counters)) return { ok: false, error: 'shape' };
+    const today = this.today();
+    const counters = data.counters
+      .filter((c) => c && c.name)
+      .map((c, i) => normalize({ ...c, id: c.id || ('c' + Date.now() + '_' + i) }, today));
+    const pressings = Array.isArray(data.pressings) ? data.pressings : [];
+    const s = data.settings || {};
+    commit({
+      counters, pressings,
+      tone: s.tone || state.tone,
+      reminder: s.reminder || state.reminder,
+      sound: s.sound != null ? !!s.sound : state.sound,
+    });
+    return { ok: true, count: counters.length };
   },
 
   /* — demo (viaje en el tiempo, no se persiste) — */
