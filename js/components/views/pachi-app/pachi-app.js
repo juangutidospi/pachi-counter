@@ -125,22 +125,28 @@ export class PachiApp extends AppElement {
     const fr = frame.getBoundingClientRect();
     const to = vinyl.getBoundingClientRect();
     const from = hero.rect;
+    const a = { l: from.left - fr.left, t: from.top - fr.top, w: from.width, h: from.height };
+    const b = { l: to.left - fr.left, t: to.top - fr.top, w: to.width, h: to.height };
     const fly = document.createElement('div');
     Object.assign(fly.style, {
-      position: 'absolute', left: (from.left - fr.left) + 'px', top: (from.top - fr.top) + 'px',
-      width: from.width + 'px', height: from.height + 'px', zIndex: '300', pointerEvents: 'none',
-      overflow: 'hidden', border: '2px solid var(--ink)', borderRadius: '6px', background: 'var(--paper-2, #e7e0cf)',
+      position: 'absolute', left: a.l + 'px', top: a.t + 'px', width: a.w + 'px', height: a.h + 'px',
+      zIndex: '300', pointerEvents: 'none', overflow: 'hidden',
+      border: '2px solid var(--ink)', borderRadius: '6px', background: 'var(--paper-2, #e7e0cf)',
     });
     if (hero.img) { fly.style.backgroundImage = 'url(' + hero.img + ')'; fly.style.backgroundSize = 'cover'; }
     frame.appendChild(fly);
     vinyl.style.opacity = '0';
-    const anim = fly.animate([
-      { left: (from.left - fr.left) + 'px', top: (from.top - fr.top) + 'px', width: from.width + 'px', height: from.height + 'px', borderRadius: '6px' },
-      { left: (to.left - fr.left) + 'px', top: (to.top - fr.top) + 'px', width: to.width + 'px', height: to.height + 'px', borderRadius: '50%' },
-    ], { duration: 520, easing: 'cubic-bezier(.16,1,.3,1)', fill: 'forwards' });
-    const done = () => { fly.remove(); vinyl.style.opacity = ''; };
-    anim.onfinish = done; anim.oncancel = done;
-    setTimeout(done, 700);
+    // El clon vuela y crece hasta el disco (leve overshoot) y se desvanece en el
+    // último tramo; a la vez el vinilo real aparece → fundido cruzado, sin salto.
+    const geo = fly.animate([
+      { left: a.l + 'px', top: a.t + 'px', width: a.w + 'px', height: a.h + 'px', borderRadius: '6px', opacity: 1, offset: 0 },
+      { opacity: 1, offset: .55 },
+      { left: b.l + 'px', top: b.t + 'px', width: b.w + 'px', height: b.h + 'px', borderRadius: '50%', opacity: 0, offset: 1 },
+    ], { duration: 560, easing: 'cubic-bezier(.2,1.06,.3,1)', fill: 'forwards' });
+    const rev = vinyl.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 280, delay: 300, easing: 'ease', fill: 'forwards' });
+    const done = () => { try { fly.remove(); } catch (e) { /* ya quitado */ } try { rev.cancel(); } catch (e) { /* ya */ } vinyl.style.opacity = ''; };
+    geo.onfinish = done; geo.oncancel = done;
+    setTimeout(done, 900);
   }
 
   /**
