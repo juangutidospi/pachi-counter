@@ -8,6 +8,7 @@ import { buildPosterFile, buildCoverFile, shareOrSave } from '../../../core/shar
 import { drawCover } from '../../../core/cover-art.js';
 import { grooveTexture, seedAngle } from '../../../core/groove-seed.js';
 import { spin, spinStop, playChime } from '../../../core/sound.js';
+import { haptic } from '../../../core/haptics.js';
 import { styles } from './detail-view.css.js';
 
 /**
@@ -87,6 +88,11 @@ export class DetailView extends AppElement {
           </svg>
         </div>
         <div class="player-cap" id="cap" aria-live="polite"></div>
+        ${vm.manual ? `
+          <div class="manual-actions">
+            <button class="btn btn-primary plus" id="plus">+1 ${escapeHtml(t('word.day'))}</button>
+            <button class="btn btn-ghost minus" id="minus" aria-label="${t('detail.minus')}">−1</button>
+          </div>` : ''}
         <div class="live-actions">
           <button class="btn btn-secondary" id="play">▶ ${t('detail.play')}</button>
           <button class="btn btn-secondary" id="year">${t('detail.year')}</button>
@@ -179,6 +185,10 @@ export class DetailView extends AppElement {
     this.on(this.$('#note'), 'change', (e) => store.setNote(this._c.id, e.target.value));
     this.on(this.$('#play'), 'click', () => this._play());
     this.on(this.$('#year'), 'click', () => router.go('year'));
+    const plus = this.$('#plus');
+    if (plus) this.on(plus, 'click', () => this._increment());
+    const minus = this.$('#minus');
+    if (minus) this.on(minus, 'click', () => store.decrement(this._c.id));
     this._animateOdometer();
     this._initSpinner();
     this._initLive();
@@ -206,6 +216,15 @@ export class DetailView extends AppElement {
       if (this._coverFile) shareOrSave(this._coverFile, this._c.name).then(done);
       else buildCoverFile(this._c).then((f) => shareOrSave(f, this._c.name).then(done));
     });
+  }
+
+  /** Suma un día a un contador manual (con háptica y celebración si toca). */
+  _increment() {
+    haptic(14);
+    this._vel = Math.max(this._vel || 0, 4); // pequeño impulso al disco
+    store.increment(this._c.id);
+    const pending = store.pendingCelebration();
+    if (pending && !router.celebration) router.openCelebration(pending);
   }
 
   /** «Tocadiscos»: acelera el disco y narra los hitos logrados con un chime. */
@@ -424,6 +443,7 @@ export class DetailView extends AppElement {
       why: c.note || '',
       grooves,
       danger: store.relapseHistory(c).dangerToday,
+      manual: c.mode === 'manual',
       texture: grooveTexture(c.id || c.name, 16, 54, 116),
       seedAngle: seedAngle(c.id || c.name),
       progressPct: (pct * 100).toFixed(1),

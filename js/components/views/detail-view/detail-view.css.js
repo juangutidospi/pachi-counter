@@ -55,6 +55,12 @@ export const styles = css`
   .live-actions { display: flex; gap: var(--space-2); margin-top: var(--space-3); }
   .live-actions .btn { flex: 1; font-size: 11px; padding: 9px 10px; }
 
+  /* contador manual: +1 / corregir −1 */
+  .manual-actions { display: flex; gap: var(--space-2); margin-top: var(--space-4); width: 100%; max-width: 320px; }
+  .manual-actions .plus { flex: 1; font-size: 15px; }
+  .manual-actions .minus { flex: none; color: var(--dim); }
+  .manual-actions .minus:hover { color: var(--paper); background: var(--ink); }
+
   /* carátula generativa */
   .cover-block { margin-top: var(--space-8); }
   .cover-stage { border: var(--border-w) solid var(--ink); box-shadow: var(--shadow-lg); }
