@@ -49,6 +49,11 @@ export class CounterCard extends AppElement {
     if (!card) return;
     this.on(card, 'click', () => {
       haptic(12);
+      // Elemento compartido: la mini-carátula se transforma en el vinilo del
+      // detalle (View Transitions). Se nombra solo la tarjeta pulsada y justo
+      // antes de navegar, para que el nombre 'pc-hero' sea único en el snapshot.
+      const cover = this.$('.cover');
+      if (cover && typeof document !== 'undefined' && document.startViewTransition) cover.style.viewTransitionName = 'pc-hero';
       this.dispatchEvent(new CustomEvent('open', { detail: { id: this._counter.id }, bubbles: true, composed: true }));
     });
     this._drawCover();
