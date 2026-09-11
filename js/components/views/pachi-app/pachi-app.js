@@ -142,7 +142,14 @@ export class PachiApp extends AppElement {
           ${router.toast ? this._toastTpl : ''}
           ${routeChanged ? this._wipeTpl : ''}
         </div>
+        ${this._regTpl}
       </div>`;
+  }
+
+  /** @returns {string} Marcas de registro de imprenta (esquinas superiores). */
+  get _regTpl() {
+    const mark = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2v20M2 12h20"></path><circle cx="12" cy="12" r="5"></circle></svg>';
+    return `<span class="regmark r-tl" aria-hidden="true">${mark}</span><span class="regmark r-tr" aria-hidden="true">${mark}</span>`;
   }
 
   /** @returns {string} Overlay de transición: tres bloques primarios que barren. */
