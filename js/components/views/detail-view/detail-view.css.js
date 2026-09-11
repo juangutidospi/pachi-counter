@@ -13,8 +13,7 @@ export const styles = css`
   .vinyl-wrap { display: grid; place-items: center; margin-top: var(--space-6); perspective: 900px; }
   .vinyl { position: relative; width: min(264px, 74vw); aspect-ratio: 1;
     touch-action: none; cursor: grab; user-select: none; -webkit-user-select: none;
-    transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); transition: transform .18s ease;
-    view-transition-name: pc-hero; }
+    transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); transition: transform .18s ease; }
   .vinyl.dragging { cursor: grabbing; transition: none; }
   .vinyl svg { position: absolute; inset: 0; width: 100%; height: 100%; }
 

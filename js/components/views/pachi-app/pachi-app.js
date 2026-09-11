@@ -99,11 +99,48 @@ export class PachiApp extends AppElement {
     this._navState = cur;
     const reduce = typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches;
     const changed = this._prevRoute != null && this._prevRoute !== router.route;
-    if (changed && !reduce && typeof document !== 'undefined' && document.startViewTransition) {
+    // Morph carátula→vinilo: si hay origen y vamos al detalle, pinta y anima el
+    // vuelo (FLIP con Web Animations, fiable en cualquier navegador). Si no,
+    // usa la transición estándar (View Transitions) o el repintado normal.
+    const hero = router.hero; router.hero = null;
+    if (changed && !reduce && hero && router.route === 'detail') {
+      this._paint();
+      this._flyHero(hero);
+    } else if (changed && !reduce && typeof document !== 'undefined' && document.startViewTransition) {
       document.startViewTransition(() => this._paint());
     } else {
       this._paint();
     }
+  }
+
+  /**
+   * Anima la mini-carátula pulsada hasta el vinilo del detalle (FLIP).
+   * @param {{rect: DOMRect, img: string|null}} hero Origen del morph.
+   */
+  _flyHero(hero) {
+    const frame = this.$('.frame');
+    const view = this.$('.view');
+    const vinyl = view && view.shadowRoot ? view.shadowRoot.querySelector('.vinyl') : null;
+    if (!frame || !vinyl || !hero.rect) return;
+    const fr = frame.getBoundingClientRect();
+    const to = vinyl.getBoundingClientRect();
+    const from = hero.rect;
+    const fly = document.createElement('div');
+    Object.assign(fly.style, {
+      position: 'absolute', left: (from.left - fr.left) + 'px', top: (from.top - fr.top) + 'px',
+      width: from.width + 'px', height: from.height + 'px', zIndex: '300', pointerEvents: 'none',
+      overflow: 'hidden', border: '2px solid var(--ink)', borderRadius: '6px', background: 'var(--paper-2, #e7e0cf)',
+    });
+    if (hero.img) { fly.style.backgroundImage = 'url(' + hero.img + ')'; fly.style.backgroundSize = 'cover'; }
+    frame.appendChild(fly);
+    vinyl.style.opacity = '0';
+    const anim = fly.animate([
+      { left: (from.left - fr.left) + 'px', top: (from.top - fr.top) + 'px', width: from.width + 'px', height: from.height + 'px', borderRadius: '6px' },
+      { left: (to.left - fr.left) + 'px', top: (to.top - fr.top) + 'px', width: to.width + 'px', height: to.height + 'px', borderRadius: '50%' },
+    ], { duration: 520, easing: 'cubic-bezier(.16,1,.3,1)', fill: 'forwards' });
+    const done = () => { fly.remove(); vinyl.style.opacity = ''; };
+    anim.onfinish = done; anim.oncancel = done;
+    setTimeout(done, 700);
   }
 
   /**
