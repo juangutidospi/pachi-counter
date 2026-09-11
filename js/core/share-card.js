@@ -2,6 +2,7 @@ import { store } from './store.js';
 import { t } from './i18n.js';
 import { grooveTexture } from './groove-seed.js';
 import { drawMural, muralData } from './mural-art.js';
+import { drawCover } from './cover-art.js';
 
 /**
  * Genera un cartel (imagen) de una racha y lo comparte por la hoja del sistema
@@ -71,6 +72,23 @@ export async function buildMuralFile() {
     const blob = await new Promise((res) => canvas.toBlob(res, 'image/png'));
     if (!blob) return null;
     return new File([blob], 'pachi-mural.png', { type: 'image/png' });
+  } catch (e) { return null; }
+}
+
+/**
+ * Construye el archivo PNG de la carátula generativa de un contador (cuadrada).
+ * @param {object} counter Contador.
+ * @returns {Promise<File|null>} Archivo PNG o null si falla.
+ */
+export async function buildCoverFile(counter) {
+  try {
+    await ensureFonts();
+    const canvas = document.createElement('canvas');
+    canvas.width = 1080; canvas.height = 1080;
+    drawCover(canvas.getContext('2d'), 1080, 1080, counter, 0);
+    const blob = await new Promise((res) => canvas.toBlob(res, 'image/png'));
+    if (!blob) return null;
+    return new File([blob], 'pachi-caratula.png', { type: 'image/png' });
   } catch (e) { return null; }
 }
 

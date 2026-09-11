@@ -30,6 +30,19 @@ function toHex(v, fallback) {
 }
 
 /**
+ * Resuelve el color de un contador a hex (relleno y color de contraste).
+ * @param {string} colorKey Clave de COUNTER_COLORS (p. ej. 'accent').
+ * @returns {{fill:string, on:string}} Colores hex.
+ */
+export function counterHex(colorKey) {
+  const cc = COUNTER_COLORS[colorKey] || COUNTER_COLORS.accent;
+  return { fill: toHex(cc.value, TOKHEX.blue), on: toHex(cc.on, TOKHEX.paper) };
+}
+
+/** Paleta hex compartida (tokens Bauhaus). */
+export const ARTHEX = HEX;
+
+/**
  * Recopila los datos de dibujo del mural desde el store.
  * @returns {{items:Array, relapses:number, totalDays:number, count:number}}
  */
