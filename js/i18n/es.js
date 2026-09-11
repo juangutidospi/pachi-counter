@@ -100,6 +100,18 @@ export const es = {
     hard: 'Hoy me cuesta',
     reset: 'Recaí, volver a 0',
     remove: 'Eliminar',
+    play: 'Reproducir',
+    playDone: 'Fin de la cara A',
+    year: 'Recorre tu año',
+    coverTitle: 'Carátula',
+    coverNote: 'única de tu disco',
+    coverShare: 'Guardar carátula',
+  },
+  year: {
+    kicker: 'Recorre tu racha',
+    title: 'Vinilo del año',
+    subtitle: 'Arrastra el brazo por los surcos para viajar del día 0 hasta hoy.',
+    hint: 'arrastra el brazo · suena al pasar por un hito',
   },
 
   settings: {

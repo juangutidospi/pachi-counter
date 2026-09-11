@@ -100,6 +100,18 @@ export const en = {
     hard: 'Today is hard',
     reset: 'I relapsed, back to 0',
     remove: 'Delete',
+    play: 'Play',
+    playDone: 'End of side A',
+    year: 'Scrub your year',
+    coverTitle: 'Cover',
+    coverNote: 'unique to your record',
+    coverShare: 'Save cover',
+  },
+  year: {
+    kicker: 'Scrub your streak',
+    title: 'Year on vinyl',
+    subtitle: 'Drag the tonearm across the grooves to travel from day 0 to today.',
+    hint: 'drag the tonearm · it chimes at each goal',
   },
 
   settings: {
