@@ -82,8 +82,8 @@ export class DetailView extends AppElement {
           </div>
           <svg class="tonearm" viewBox="0 0 260 260" aria-hidden="true">
             <g class="arm">
-              <line x1="236" y1="30" x2="150" y2="112" stroke="var(--ink)" stroke-width="5" stroke-linecap="round"></line>
-              <rect x="142" y="103" width="17" height="17" fill="var(--ink)" transform="rotate(44 150 112)"></rect>
+              <line x1="236" y1="30" x2="193" y2="90" stroke="var(--ink)" stroke-width="5" stroke-linecap="round"></line>
+              <rect x="185" y="82" width="16" height="16" fill="var(--ink)" transform="rotate(45 193 90)"></rect>
               <circle cx="236" cy="30" r="10" fill="var(--paper)" stroke="var(--ink)" stroke-width="4"></circle>
             </g>
           </svg>
