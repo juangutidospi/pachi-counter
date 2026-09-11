@@ -136,6 +136,7 @@ export class PachiApp extends AppElement {
     if (hero.img) { fly.style.backgroundImage = 'url(' + hero.img + ')'; fly.style.backgroundSize = 'cover'; }
     frame.appendChild(fly);
     vinyl.style.opacity = '0';
+    vinyl.classList.add('flash-on'); // destello de luz al bajar la púa
     // El clon vuela y crece hasta el disco (leve overshoot) y se desvanece en el
     // último tramo; a la vez el vinilo real aparece → fundido cruzado, sin salto.
     const geo = fly.animate([
