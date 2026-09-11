@@ -88,12 +88,20 @@ export const styles = css`
   .section-head h6 { margin: 0; color: var(--ink); }
   .section-head .note { font-family: var(--font-body); font-size: 11px; color: var(--dim); }
 
-  .ladder { display: flex; flex-direction: column; }
-  .ladder .item { display: flex; align-items: center; gap: var(--space-3); padding: 11px 0; border-bottom: var(--border-w) solid var(--hair); }
-  .ladder .item:first-child { border-top: var(--border-w) solid var(--ink); }
-  .ladder .dot { flex: none; width: 22px; height: 22px; display: grid; place-items: center; font-size: 11px; font-weight: 700; }
-  .ladder .lbl { flex: 1; font-family: var(--font-body); font-weight: 500; font-size: 14px; }
-  .ladder .meta { font-family: var(--font-body); font-size: 11px; color: var(--dim); }
+  .ladder-title { margin: var(--space-8) 0 var(--space-3); color: var(--color-neutral-500); }
+  .ladder { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .mtile {
+    position: relative; aspect-ratio: 1; border: var(--border-w) solid var(--ink); background: var(--paper);
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+  }
+  .mtile .mnum { font-family: var(--font-display); font-weight: 800; font-size: 21px; line-height: 1;
+    letter-spacing: -.02em; color: var(--dim); font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1, "zero" 1; }
+  .mtile .munit { font-family: var(--font-body); font-weight: 600; font-size: 8px; letter-spacing: .12em; text-transform: uppercase; color: var(--dim); }
+  .mtile .chk { position: absolute; top: 4px; right: 6px; font-size: 10px; font-weight: 800; }
+  .mtile.done .mnum { color: inherit; }
+  .mtile.done .munit { color: inherit; opacity: .8; }
+  .mtile.next { box-shadow: inset 0 0 0 3px var(--blue); }
+  .mtile.next .mnum, .mtile.next .munit { color: var(--blue); }
 
   .note-block { margin-top: var(--space-8); }
 

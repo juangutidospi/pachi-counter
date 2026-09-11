@@ -138,16 +138,17 @@ export class DetailView extends AppElement {
       </div>`;
   }
 
-  /** @param {object} vm Modelo de vista. @returns {string} Escalera de hitos. */
+  /** @param {object} vm Modelo de vista. @returns {string} Rejilla compacta de hitos. */
   _ladderTpl(vm) {
     return `
-      <h6 style="margin:var(--space-8) 0 var(--space-3);color:var(--color-neutral-500)">${t('detail.milestonesTitle')}</h6>
+      <h6 class="ladder-title">${t('detail.milestonesTitle')}</h6>
       <div class="ladder">
         ${vm.ladder.map((m) => `
-          <div class="item">
-            <div class="dot" style="background:${m.dotBg};color:${m.dotFg};box-shadow:${m.dotRing}">${m.mark}</div>
-            <div class="lbl" style="color:${m.fg}">${escapeHtml(m.label)}</div>
-            <div class="meta">${escapeHtml(m.meta)}</div>
+          <div class="mtile ${m.done ? 'done' : ''} ${m.isNext ? 'next' : ''}"
+            style="${m.done ? `background:${vm.color};color:${vm.on}` : ''}" title="${escapeHtml(m.title)}">
+            ${m.done ? '<span class="chk" aria-hidden="true">✓</span>' : ''}
+            <span class="mnum">${m.m}</span>
+            <span class="munit">${escapeHtml(m.unit)}</span>
           </div>`).join('')}
       </div>`;
   }
@@ -451,13 +452,11 @@ export class DetailView extends AppElement {
       ladder: ladder.map((m) => {
         const done = m <= days;
         return {
-          label: t('detail.milestoneLabel', { m, word: t(m === 1 ? 'word.day' : 'word.days'), tail: c.tail }),
-          mark: done ? '✓' : '',
-          dotBg: done ? color : 'transparent',
-          dotFg: done ? on : 'transparent',
-          dotRing: done ? 'none' : 'inset 0 0 0 2px var(--ink)',
-          fg: done ? 'var(--ink)' : 'var(--dim)',
-          meta: done ? fmtDate(isoFromDayIndex(start + m)) : t('detail.milestoneLeft', { r: m - days }),
+          m,
+          done,
+          isNext: m === next,
+          unit: t(m === 1 ? 'word.day' : 'word.days'),
+          title: done ? fmtDate(isoFromDayIndex(start + m)) : t('detail.milestoneLeft', { r: m - days }),
         };
       }),
     };
