@@ -9,6 +9,7 @@ import '../detail-view/detail-view.js';
 import '../settings-view/settings-view.js';
 import '../shelf-view/shelf-view.js';
 import '../mural-view/mural-view.js';
+import '../year-view/year-view.js';
 import '../create-sheet/create-sheet.js';
 import '../reset-dialog/reset-dialog.js';
 import '../hard-screen/hard-screen.js';
@@ -23,6 +24,7 @@ const VIEWS = {
   settings: 'settings-view',
   shelf: 'shelf-view',
   mural: 'mural-view',
+  year: 'year-view',
 };
 
 /**
