@@ -35,7 +35,7 @@ export const styles = css`
     box-shadow: 0 0 0 4px var(--paper); view-transition-name: pc-hero;
     animation: pc-hub-pop .6s cubic-bezier(.34,1.56,.64,1) .15s both;
   }
-  .vinyl .label .num { font-family: var(--font-display); font-weight: 800; line-height: .8; letter-spacing: -.04em; font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1, "zero" 1; }
+  .vinyl .label .num { font-family: var(--font-display); font-weight: 800; line-height: .9; letter-spacing: -.005em; font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1, "zero" 1; }
   .vinyl .label .tail { font-family: var(--font-body); font-weight: 600; font-size: 8.5px; letter-spacing: .1em; text-transform: uppercase; margin-top: 5px; opacity: .85; padding: 0 6px; }
 
   /* brazo de tocadiscos: cae sobre el disco al abrir */
@@ -83,6 +83,11 @@ export const styles = css`
   .stat3 .num { font-family: var(--font-display); font-weight: 800; font-size: min(22px, 7cqw); line-height: 1; color: var(--ink); font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1, "zero" 1; white-space: nowrap; }
   .stat3 .lbl { overflow: hidden; text-overflow: ellipsis; }
   .stat3 .lbl { font-family: var(--font-body); font-size: 8.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--dim); font-weight: 600; }
+
+  .edit-row { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3);
+    margin-top: var(--space-4); padding: 10px var(--space-4); border: var(--border-w) solid var(--ink); }
+  .edit-row label { font-family: var(--font-body); font-weight: 600; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--dim); }
+  .edit-row .input { width: auto; max-width: 170px; min-height: 38px; }
 
   .section-head { display: flex; align-items: baseline; justify-content: space-between; margin: var(--space-8) 0 var(--space-3); }
   .section-head h6 { margin: 0; color: var(--ink); }

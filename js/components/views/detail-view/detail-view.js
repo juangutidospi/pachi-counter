@@ -32,6 +32,7 @@ export class DetailView extends AppElement {
         ${vm.danger ? this._dangerTpl(vm) : ''}
         ${this._phraseTpl(vm)}
         ${this._statsTpl(vm)}
+        ${this._editTpl(vm)}
         ${this._ladderTpl(vm)}
         ${this._coverTpl(vm)}
         ${this._noteTpl(vm)}
@@ -128,6 +129,17 @@ export class DetailView extends AppElement {
       </div>`;
   }
 
+  /** @param {object} vm Modelo de vista. @returns {string} Editar inicio (auto) o cuenta (manual). */
+  _editTpl(vm) {
+    return `
+      <div class="edit-row">
+        <label for="edit-input">${vm.manual ? t('detail.editCount') : t('detail.editStart')}</label>
+        ${vm.manual
+          ? `<input class="input" type="number" min="0" max="99999" id="edit-input" value="${vm.days}">`
+          : `<input class="input" type="date" id="edit-input" value="${escapeHtml(vm.startIso)}" max="${escapeHtml(vm.todayIso)}">`}
+      </div>`;
+  }
+
   /** @param {object} vm Modelo de vista. @returns {string} Tres métricas. */
   _statsTpl(vm) {
     return `
@@ -184,6 +196,11 @@ export class DetailView extends AppElement {
     this.on(this.$('#reset'), 'click', () => router.openReset());
     this.on(this.$('#remove'), 'click', () => this._remove());
     this.on(this.$('#note'), 'change', (e) => store.setNote(this._c.id, e.target.value));
+    const edit = this.$('#edit-input');
+    if (edit) this.on(edit, 'change', (e) => {
+      if (this._c.mode === 'manual') store.setCount(this._c.id, parseInt(e.target.value, 10) || 0);
+      else store.setStart(this._c.id, e.target.value);
+    });
     this.on(this.$('#play'), 'click', () => this._play());
     this.on(this.$('#year'), 'click', () => router.go('year'));
     const plus = this.$('#plus');
@@ -445,10 +462,12 @@ export class DetailView extends AppElement {
       grooves,
       danger: store.relapseHistory(c).dangerToday,
       manual: c.mode === 'manual',
+      startIso: c.start,
+      todayIso: isoFromDayIndex(store.today()),
       texture: grooveTexture(c.id || c.name, 16, 54, 116),
       seedAngle: seedAngle(c.id || c.name),
       progressPct: (pct * 100).toFixed(1),
-      labelSize: digits <= 2 ? '46px' : digits === 3 ? '34px' : '26px',
+      labelSize: digits <= 2 ? '40px' : digits === 3 ? '30px' : '23px',
       ladder: ladder.map((m) => {
         const done = m <= days;
         return {
