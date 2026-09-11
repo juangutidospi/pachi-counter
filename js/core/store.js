@@ -330,6 +330,38 @@ export const store = {
   },
 
   /**
+   * Cambia la fecha de inicio de un contador automático (recalcula los días).
+   * No permite fechas futuras (se limita a hoy). Reajusta el hito visto.
+   * @param {string} id Identificador.
+   * @param {string} iso Fecha `YYYY-MM-DD`.
+   */
+  setStart(id, iso) {
+    if (!iso) return;
+    const today = this.today();
+    const start = dayIndex(iso) > today ? isoFromDayIndex(today) : iso;
+    commit({ counters: state.counters.map((c) => {
+      if (c.id !== id || c.mode === 'manual') return c;
+      const days = Math.max(0, today - dayIndex(start));
+      const ms = c.milestones && c.milestones.length ? c.milestones : DEF_MILESTONES;
+      return { ...c, start, best: Math.max(c.best || 0, days), seen: ms.filter((m) => m <= days).pop() || 0, seenDay: today };
+    }) });
+  },
+
+  /**
+   * Fija la cuenta de un contador manual (para correcciones grandes).
+   * @param {string} id Identificador.
+   * @param {number} n Nueva cuenta (>= 0).
+   */
+  setCount(id, n) {
+    const count = Math.max(0, Math.floor(n) || 0);
+    commit({ counters: state.counters.map((c) => {
+      if (c.id !== id || c.mode !== 'manual') return c;
+      const ms = c.milestones && c.milestones.length ? c.milestones : DEF_MILESTONES;
+      return { ...c, count, best: Math.max(c.best || 0, count), seen: ms.filter((m) => m <= count).pop() || 0, seenDay: this.today() };
+    }) });
+  },
+
+  /**
    * Reinicia la racha de un contador a 0, guardando la mejor racha.
    * @param {string} id Identificador.
    * @returns {number} Mejor racha resultante.
