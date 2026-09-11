@@ -101,6 +101,8 @@ export const es = {
     reset: 'Recaí, volver a 0',
     remove: 'Eliminar',
     minus: 'Corregir, restar 1',
+    editStart: 'Fecha de inicio',
+    editCount: 'Cuenta actual',
     play: 'Reproducir',
     playDone: 'Fin de la cara A',
     year: 'Recorre tu año',

@@ -101,6 +101,8 @@ export const en = {
     reset: 'I relapsed, back to 0',
     remove: 'Delete',
     minus: 'Correct, subtract 1',
+    editStart: 'Start date',
+    editCount: 'Current count',
     play: 'Play',
     playDone: 'End of side A',
     year: 'Scrub your year',
