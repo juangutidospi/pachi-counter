@@ -1,5 +1,6 @@
 import { AppElement } from '../../../core/AppElement.js';
 import { store, COUNTER_COLORS, fmtDate } from '../../../core/store.js';
+import { router } from '../../../core/router.js';
 import { t } from '../../../core/i18n.js';
 import { escapeHtml } from '../../../core/escape-html.js';
 import { haptic } from '../../../core/haptics.js';
@@ -49,11 +50,15 @@ export class CounterCard extends AppElement {
     if (!card) return;
     this.on(card, 'click', () => {
       haptic(12);
-      // Elemento compartido: la mini-carátula se transforma en el vinilo del
-      // detalle (View Transitions). Se nombra solo la tarjeta pulsada y justo
-      // antes de navegar, para que el nombre 'pc-hero' sea único en el snapshot.
+      // Morph carátula→vinilo: guarda el origen (posición e imagen de la mini-
+      // carátula) para que el shell lo anime al pintar el detalle.
       const cover = this.$('.cover');
-      if (cover && typeof document !== 'undefined' && document.startViewTransition) cover.style.viewTransitionName = 'pc-hero';
+      const cvr = this.$('.cvr');
+      if (cover) {
+        let img = null;
+        try { img = cvr && cvr.toDataURL ? cvr.toDataURL() : null; } catch (e) { img = null; }
+        router.hero = { rect: cover.getBoundingClientRect(), img };
+      }
       this.dispatchEvent(new CustomEvent('open', { detail: { id: this._counter.id }, bubbles: true, composed: true }));
     });
     this._drawCover();

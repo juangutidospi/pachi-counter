@@ -34,6 +34,13 @@ export const router = {
   get toast() { return toast; },
 
   /**
+   * Origen del morph carátula→vinilo (rect + imagen de la mini-carátula pulsada).
+   * Lo pone la tarjeta al abrirse y lo consume el shell tras pintar el detalle.
+   * @type {{rect: DOMRect, img: string|null}|null}
+   */
+  hero: null,
+
+  /**
    * Navega a una ruta principal (cierra la hoja de creación).
    * @param {string} next Ruta destino.
    * @param {string|null} [id] Id del contador (para `detail`).
