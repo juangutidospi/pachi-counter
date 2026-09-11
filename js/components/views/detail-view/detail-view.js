@@ -54,21 +54,22 @@ export class DetailView extends AppElement {
 
   /** @param {object} vm Modelo de vista. @returns {string} Disco de vinilo personal (líneas sobre papel). */
   _vinylTpl(vm) {
-    // Surcos generativos (únicos por contador) + surcos de hito en color.
+    // Surcos finos claros sobre el disco negro; los de hito logrado, en color.
     const texture = vm.texture.map((g) =>
-      `<circle cx="130" cy="130" r="${g.r}" fill="none" stroke="var(--color-neutral-700)" stroke-width="1" opacity="${g.opacity}"${g.gap ? ' stroke-dasharray="3 6"' : ''}></circle>`
+      `<circle cx="130" cy="130" r="${g.r}" fill="none" stroke="rgba(214,203,182,.10)" stroke-width="1" opacity="${g.opacity}"${g.gap ? ' stroke-dasharray="3 6"' : ''}></circle>`
     ).join('');
     const grooves = vm.grooves.map((g) =>
-      `<circle cx="130" cy="130" r="${g.r}" fill="none" stroke="${g.reached ? vm.color : 'var(--color-neutral-700)'}" stroke-width="${g.reached ? 4 : 1.5}" opacity="${g.reached ? 1 : 0.5}"></circle>`
+      `<circle cx="130" cy="130" r="${g.r}" fill="none" stroke="${g.reached ? vm.color : 'rgba(214,203,182,.30)'}" stroke-width="${g.reached ? 4 : 1.5}" opacity="${g.reached ? 1 : 0.7}"></circle>`
     ).join('');
     return `
       <div class="vinyl-wrap">
         <div class="vinyl">
+          <div class="vinyl-base" aria-hidden="true"></div>
           <svg class="disc" viewBox="0 0 260 260" aria-hidden="true">
-            <circle cx="130" cy="130" r="120" fill="none" stroke="var(--ink)" stroke-width="2"></circle>
+            <circle cx="130" cy="130" r="120" fill="none" stroke="rgba(255,255,255,.10)" stroke-width="1.5"></circle>
             ${texture}
             ${grooves}
-            <line x1="130" y1="12" x2="130" y2="130" stroke="var(--color-neutral-600)" stroke-width="1.5" opacity="0.45"
+            <line x1="130" y1="12" x2="130" y2="130" stroke="rgba(214,203,182,.28)" stroke-width="1.5" opacity="0.6"
               transform="rotate(${vm.seedAngle} 130 130)"></line>
           </svg>
           <svg class="progress" viewBox="0 0 260 260" aria-hidden="true">

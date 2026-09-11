@@ -17,6 +17,12 @@ export const styles = css`
   .vinyl.dragging { cursor: grabbing; transition: none; }
   .vinyl svg { position: absolute; inset: 0; width: 100%; height: 100%; }
 
+  /* Cuerpo del disco: negro con material (luz arriba-izquierda) + sombra. */
+  .vinyl .vinyl-base { position: absolute; inset: 0; border-radius: 50%; z-index: 0;
+    background: radial-gradient(circle at 36% 34%, #26221e 0%, #141210 55%, #050505 100%);
+    border: var(--border-w) solid var(--ink);
+    box-shadow: 0 12px 26px rgba(17,16,16,.34), inset 0 0 34px rgba(0,0,0,.55); }
+
   /* Vinilo vivo: brillo especular que sigue al puntero/giroscopio. */
   .vinyl .glint { position: absolute; inset: 0; border-radius: 50%; overflow: hidden; pointer-events: none;
     mix-blend-mode: screen;
@@ -46,8 +52,11 @@ export const styles = css`
     box-shadow: 0 0 0 4px var(--paper);
     animation: pc-hub-pop .6s cubic-bezier(.34,1.56,.64,1) .15s both;
   }
-  .vinyl .label .num { font-family: var(--font-display); font-weight: 800; line-height: .9; letter-spacing: -.005em; font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1, "zero" 1; }
-  .vinyl .label .tail { font-family: var(--font-body); font-weight: 600; font-size: 8.5px; letter-spacing: .1em; text-transform: uppercase; margin-top: 5px; opacity: .85; padding: 0 6px; }
+  .vinyl .label { isolation: isolate; }
+  .vinyl .label::before { content: ""; position: absolute; inset: 0; border-radius: 50%; z-index: 0; pointer-events: none;
+    background: radial-gradient(ellipse at 42% 26%, rgba(255,255,255,.32), rgba(255,255,255,0) 58%); }
+  .vinyl .label .num { position: relative; z-index: 1; font-family: var(--font-display); font-weight: 800; line-height: .9; letter-spacing: -.005em; font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1, "zero" 1; }
+  .vinyl .label .tail { position: relative; z-index: 1; font-family: var(--font-body); font-weight: 600; font-size: 8.5px; letter-spacing: .1em; text-transform: uppercase; margin-top: 5px; opacity: .85; padding: 0 6px; }
 
   /* brazo de tocadiscos: cae sobre el disco al abrir */
   .vinyl .tonearm { pointer-events: none; }
