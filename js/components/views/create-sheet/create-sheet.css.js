@@ -100,6 +100,7 @@ export const styles = css`
   .ago-row .input { width: 92px; }
   .ago-row .suffix { font-family: var(--font-body); font-size: 13px; color: var(--dim); }
 
+  .mode-hint { font-family: var(--font-body); font-size: 11px; color: var(--dim); margin: 6px 0 0; text-wrap: pretty; }
   .ms-preview { font-family: var(--font-body); font-size: 11px; color: var(--dim); margin-top: 6px; }
   .ms-custom { margin-top: var(--space-3); }
   .why-optional { color: var(--dim); font-weight: 400; }
