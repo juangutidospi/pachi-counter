@@ -50,6 +50,17 @@ export const styles = css`
     .vinyl .disc, .vinyl .prog-arc, .vinyl .label, .vinyl .tonearm .arm { animation: none; }
   }
 
+  /* leyenda del modo reproducir + accesos vivos bajo el vinilo */
+  .player-cap { min-height: 16px; margin-top: var(--space-3); text-align: center; font-family: var(--font-display); font-weight: 700; font-size: 14px; letter-spacing: -.01em; color: var(--ink); text-transform: uppercase; }
+  .live-actions { display: flex; gap: var(--space-2); margin-top: var(--space-3); }
+  .live-actions .btn { flex: 1; font-size: 11px; padding: 9px 10px; }
+
+  /* carátula generativa */
+  .cover-block { margin-top: var(--space-8); }
+  .cover-stage { border: var(--border-w) solid var(--ink); box-shadow: var(--shadow-lg); }
+  .cover-stage canvas { display: block; width: 100%; }
+  .cover-share { margin-top: var(--space-3); gap: 6px; }
+
   .danger { margin-top: var(--space-6); padding: var(--space-3) var(--space-4); border: var(--border-w) solid var(--red); background: color-mix(in srgb, var(--red) 8%, transparent); }
   .danger .danger-kicker { font-family: var(--font-body); font-weight: 700; font-size: 10px; letter-spacing: .16em; text-transform: uppercase; color: var(--red); }
   .danger p { margin: 6px 0 0; font-family: var(--font-display); font-weight: 700; font-size: 16px; line-height: 1.2; color: var(--ink); text-wrap: pretty; text-transform: none; }

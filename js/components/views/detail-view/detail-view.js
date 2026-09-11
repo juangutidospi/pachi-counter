@@ -4,9 +4,10 @@ import { router } from '../../../core/router.js';
 import { t } from '../../../core/i18n.js';
 import { uiIcon } from '../../../core/icons.js';
 import { escapeHtml } from '../../../core/escape-html.js';
-import { buildPosterFile, shareOrSave } from '../../../core/share-card.js';
+import { buildPosterFile, buildCoverFile, shareOrSave } from '../../../core/share-card.js';
+import { drawCover } from '../../../core/cover-art.js';
 import { grooveTexture, seedAngle } from '../../../core/groove-seed.js';
-import { spin, spinStop } from '../../../core/sound.js';
+import { spin, spinStop, playChime } from '../../../core/sound.js';
 import { styles } from './detail-view.css.js';
 
 /**
@@ -31,6 +32,7 @@ export class DetailView extends AppElement {
         ${this._phraseTpl(vm)}
         ${this._statsTpl(vm)}
         ${this._ladderTpl(vm)}
+        ${this._coverTpl(vm)}
         ${this._noteTpl(vm)}
         ${this._actionsTpl}
       </div>`;
@@ -84,6 +86,21 @@ export class DetailView extends AppElement {
             </g>
           </svg>
         </div>
+        <div class="player-cap" id="cap" aria-live="polite"></div>
+        <div class="live-actions">
+          <button class="btn btn-secondary" id="play">▶ ${t('detail.play')}</button>
+          <button class="btn btn-secondary" id="year">${t('detail.year')}</button>
+        </div>
+      </div>`;
+  }
+
+  /** @param {object} vm Modelo de vista. @returns {string} Sección de carátula generativa. */
+  _coverTpl(vm) {
+    return `
+      <div class="cover-block">
+        <div class="section-head" style="margin-top:0"><h6>${t('detail.coverTitle')}</h6><span class="note">${t('detail.coverNote')}</span></div>
+        <div class="cover-stage"><canvas id="cover"></canvas></div>
+        <button class="btn btn-secondary btn-block cover-share" id="cover-share">${uiIcon('share', 15)} ${t('detail.coverShare')}</button>
       </div>`;
   }
 
@@ -160,12 +177,59 @@ export class DetailView extends AppElement {
     this.on(this.$('#reset'), 'click', () => router.openReset());
     this.on(this.$('#remove'), 'click', () => this._remove());
     this.on(this.$('#note'), 'change', (e) => store.setNote(this._c.id, e.target.value));
+    this.on(this.$('#play'), 'click', () => this._play());
+    this.on(this.$('#year'), 'click', () => router.go('year'));
     this._animateOdometer();
     this._initSpinner();
     this._initLive();
+    this._initCover();
     // Pre-genera el cartel para compartir sin perder el gesto en iOS.
     this._shareFile = null;
     buildPosterFile(this._c).then((file) => { this._shareFile = file; });
+  }
+
+  /** Dibuja la carátula generativa y pre-genera su imagen para compartir. */
+  _initCover() {
+    const canvas = this.$('#cover');
+    if (!canvas) return;
+    const dpr = window.devicePixelRatio || 1;
+    const w = canvas.clientWidth || 300;
+    canvas.style.height = w + 'px';
+    canvas.width = Math.round(w * dpr); canvas.height = Math.round(w * dpr);
+    const ctx = canvas.getContext('2d');
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    drawCover(ctx, w, w, this._c, 0);
+    this._coverFile = null;
+    buildCoverFile(this._c).then((f) => { this._coverFile = f; });
+    this.on(this.$('#cover-share'), 'click', () => {
+      const done = (r) => { if (r === 'saved') router.flash(t('toast.imgSaved')); else if (r === 'error') router.flash(t('toast.imgFail')); };
+      if (this._coverFile) shareOrSave(this._coverFile, this._c.name).then(done);
+      else buildCoverFile(this._c).then((f) => shareOrSave(f, this._c.name).then(done));
+    });
+  }
+
+  /** «Tocadiscos»: acelera el disco y narra los hitos logrados con un chime. */
+  _play() {
+    if (this._playing) return;
+    const reached = store.ladderOf(this._c).filter((m) => m <= store.daysOf(this._c));
+    const cap = this.$('#cap');
+    this._playing = true;
+    this._playTimers = [];
+    this._vel = Math.max(this._vel || 0, 9); // acelera el giro (decae solo)
+    const tail = this._c.tail;
+    let i = 0;
+    const step = () => {
+      if (i >= reached.length) {
+        if (cap) cap.textContent = t('detail.playDone');
+        this._playTimers.push(setTimeout(() => { if (cap) cap.textContent = ''; this._playing = false; }, 1600));
+        return;
+      }
+      const m = reached[i++];
+      playChime();
+      if (cap) cap.textContent = t('detail.milestoneLabel', { m, word: t(m === 1 ? 'word.day' : 'word.days'), tail });
+      this._playTimers.push(setTimeout(step, 1100));
+    };
+    step();
   }
 
   /** Física del vinilo: giro lento en reposo + arrastre con inercia (flick). */
@@ -264,6 +328,7 @@ export class DetailView extends AppElement {
     if (this._raf) cancelAnimationFrame(this._raf);
     if (this._rafSpin) cancelAnimationFrame(this._rafSpin);
     if (this._onOrient) window.removeEventListener('deviceorientation', this._onOrient);
+    if (this._playTimers) this._playTimers.forEach(clearTimeout);
     spinStop();
   }
 
