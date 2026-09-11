@@ -21,7 +21,7 @@ export class CreateSheet extends AppElement {
 
   /** @returns {object} Borrador inicial en blanco. */
   _blank() {
-    return { kind: 'quit', name: '', tail: '', icon: 'ban', color: 'accent', pastStart: false, ago: 0, msCustom: false, ms: '1, 3, 7, 21, 30', why: '' };
+    return { kind: 'quit', mode: 'auto', name: '', tail: '', icon: 'ban', color: 'accent', pastStart: false, ago: 0, msCustom: false, ms: '1, 3, 7, 21, 30', why: '' };
   }
 
   /** Compone la hoja modal. */
@@ -53,6 +53,12 @@ export class CreateSheet extends AppElement {
           <div class="field gap6">
             <label>${t('create.kindLabel')}</label>
             <seg-control id="kind"></seg-control>
+          </div>
+
+          <div class="field">
+            <label>${t('create.modeLabel')}</label>
+            <seg-control id="mode"></seg-control>
+            <p class="mode-hint" id="mode-hint">${t('create.modeHint.' + (d.mode || 'auto'))}</p>
           </div>
 
           <div class="field">
@@ -133,6 +139,15 @@ export class CreateSheet extends AppElement {
     kind.options = ['quit', 'build'].map((v) => ({ value: v, label: t('create.kind.' + v) }));
     kind.value = d.kind;
     this.on(kind, 'change', (e) => this._setKind(e.detail.value));
+
+    const mode = this.$('#mode');
+    mode.options = ['auto', 'manual'].map((v) => ({ value: v, label: t('create.mode.' + v) }));
+    mode.value = d.mode || 'auto';
+    this.on(mode, 'change', (e) => {
+      this._draft.mode = e.detail.value;
+      const hint = this.$('#mode-hint');
+      if (hint) hint.textContent = t('create.modeHint.' + e.detail.value);
+    });
 
     const start = this.$('#start');
     start.options = [{ value: 'today', label: t('create.startToday') }, { value: 'past', label: t('create.startPast') }];
@@ -295,7 +310,7 @@ export class CreateSheet extends AppElement {
     const d = this._draft;
     const name = d.name.trim();
     const id = store.create({
-      name, tail: d.tail.trim() || name.toLowerCase(), kind: d.kind, icon: d.icon, color: d.color,
+      name, tail: d.tail.trim() || name.toLowerCase(), kind: d.kind, mode: d.mode, icon: d.icon, color: d.color,
       ago: d.pastStart ? d.ago : 0, milestones: this._milestones(), note: d.why.trim(),
     });
     this._reset();

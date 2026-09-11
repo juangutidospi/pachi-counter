@@ -105,7 +105,7 @@ export class CounterCard extends AppElement {
       color: color.value,
       on: color.on,
       pct: pct.toFixed(3),
-      grew: (c.seenDay || 0) < store.today() && days > 0,
+      grew: c.mode !== 'manual' && (c.seenDay || 0) < store.today() && days > 0,
       goal: next ? (gap === 0 ? t('card.goalHitToday') : t('card.goalDaysTo', { r: gap, next })) : t('card.goalAll'),
     };
   }

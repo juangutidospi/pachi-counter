@@ -11,6 +11,7 @@ export const styles = css`
   .head .kicker { font-family: var(--font-body); font-weight: 700; font-size: 10px; letter-spacing: .16em; text-transform: uppercase; color: var(--red); margin-bottom: 8px; }
   .head .count { font-family: var(--font-mono); font-size: 11px; letter-spacing: .04em; color: var(--dim); margin-top: 8px; }
 
+  .mural { margin-bottom: var(--space-3); gap: 6px; }
   .annual { margin-bottom: var(--space-6); }
 
   .empty { padding: var(--space-8) 0; text-align: center; color: var(--dim); }

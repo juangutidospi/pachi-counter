@@ -132,11 +132,14 @@ function seedCounters() {
 function normalize(c, today) {
   const start = c.start || isoOf(Date.now() - (c.ago || 0) * DAY);
   const milestones = c.milestones && c.milestones.length ? c.milestones : DEF_MILESTONES;
-  const days = Math.max(0, today - dayIndex(start));
+  // Modo: 'auto' (días derivados de la fecha) o 'manual' (cuenta incrementable).
+  const mode = c.mode === 'manual' ? 'manual' : 'auto';
+  const count = Math.max(0, c.count || 0);
+  const days = mode === 'manual' ? count : Math.max(0, today - dayIndex(start));
   return {
     id: c.id, name: c.name, tail: c.tail || c.name.toLowerCase(), kind: c.kind || 'quit',
     icon: c.icon || 'bolt', color: COUNTER_COLORS[c.color] ? c.color : 'accent',
-    start, best: c.best || 0, milestones, note: c.note || '',
+    mode, count, start, best: c.best || 0, milestones, note: c.note || '',
     seen: c.seen == null ? (milestones.filter((m) => m <= days).pop() || 0) : c.seen,
     seenDay: c.seenDay == null ? today : c.seenDay,
   };
@@ -206,7 +209,7 @@ export const store = {
    * @param {object} c Contador.
    * @returns {number} Días (>= 0).
    */
-  daysOf(c) { return Math.max(0, this.today() - dayIndex(c.start)); },
+  daysOf(c) { return c.mode === 'manual' ? Math.max(0, c.count || 0) : Math.max(0, this.today() - dayIndex(c.start)); },
 
   /**
    * Escalera de hitos ordenada de un contador.
@@ -327,6 +330,38 @@ export const store = {
   },
 
   /**
+   * Cambia la fecha de inicio de un contador automático (recalcula los días).
+   * No permite fechas futuras (se limita a hoy). Reajusta el hito visto.
+   * @param {string} id Identificador.
+   * @param {string} iso Fecha `YYYY-MM-DD`.
+   */
+  setStart(id, iso) {
+    if (!iso) return;
+    const today = this.today();
+    const start = dayIndex(iso) > today ? isoFromDayIndex(today) : iso;
+    commit({ counters: state.counters.map((c) => {
+      if (c.id !== id || c.mode === 'manual') return c;
+      const days = Math.max(0, today - dayIndex(start));
+      const ms = c.milestones && c.milestones.length ? c.milestones : DEF_MILESTONES;
+      return { ...c, start, best: Math.max(c.best || 0, days), seen: ms.filter((m) => m <= days).pop() || 0, seenDay: today };
+    }) });
+  },
+
+  /**
+   * Fija la cuenta de un contador manual (para correcciones grandes).
+   * @param {string} id Identificador.
+   * @param {number} n Nueva cuenta (>= 0).
+   */
+  setCount(id, n) {
+    const count = Math.max(0, Math.floor(n) || 0);
+    commit({ counters: state.counters.map((c) => {
+      if (c.id !== id || c.mode !== 'manual') return c;
+      const ms = c.milestones && c.milestones.length ? c.milestones : DEF_MILESTONES;
+      return { ...c, count, best: Math.max(c.best || 0, count), seen: ms.filter((m) => m <= count).pop() || 0, seenDay: this.today() };
+    }) });
+  },
+
+  /**
    * Reinicia la racha de un contador a 0, guardando la mejor racha.
    * @param {string} id Identificador.
    * @returns {number} Mejor racha resultante.
@@ -337,7 +372,7 @@ export const store = {
     const counters = state.counters.map((c) => {
       if (c.id !== id) return c;
       best = Math.max(c.best || 0, this.daysOf(c));
-      return { ...c, best, start: isoFromDayIndex(this.today()), seen: 0, seenDay: this.today() };
+      return { ...c, best, count: 0, start: isoFromDayIndex(this.today()), seen: 0, seenDay: this.today() };
     });
     commit({ counters, pressings: pressing ? [...state.pressings, pressing] : state.pressings });
     return best;
@@ -418,15 +453,41 @@ export const store = {
    */
   create(draft) {
     const id = 'c' + Date.now();
-    const start = isoFromDayIndex(this.today() - draft.ago);
+    const mode = draft.mode === 'manual' ? 'manual' : 'auto';
+    const initial = Math.max(0, draft.ago || 0);
+    // Manual: la cuenta arranca en `initial` y la fecha es hoy (solo referencia).
+    // Auto: la fecha de inicio se retrasa `initial` días.
+    const start = mode === 'manual' ? isoFromDayIndex(this.today()) : isoFromDayIndex(this.today() - initial);
     const counter = {
       id, name: draft.name, tail: draft.tail || draft.name.toLowerCase(), kind: draft.kind,
-      icon: draft.icon, color: draft.color, start, best: draft.ago,
-      milestones: draft.milestones, note: draft.note,
-      seen: draft.milestones.filter((m) => m <= draft.ago).pop() || 0, seenDay: this.today(),
+      icon: draft.icon, color: draft.color, mode, count: mode === 'manual' ? initial : 0,
+      start, best: initial, milestones: draft.milestones, note: draft.note,
+      seen: draft.milestones.filter((m) => m <= initial).pop() || 0, seenDay: this.today(),
     };
     commit({ counters: state.counters.concat([counter]) });
     return id;
+  },
+
+  /**
+   * Incrementa en 1 la cuenta de un contador manual.
+   * @param {string} id Identificador.
+   */
+  increment(id) {
+    commit({ counters: state.counters.map((c) => {
+      if (c.id !== id || c.mode !== 'manual') return c;
+      const count = (c.count || 0) + 1;
+      return { ...c, count, best: Math.max(c.best || 0, count) };
+    }) });
+  },
+
+  /**
+   * Corrige (resta 1) la cuenta de un contador manual, sin bajar de 0.
+   * @param {string} id Identificador.
+   */
+  decrement(id) {
+    commit({ counters: state.counters.map((c) => (
+      c.id === id && c.mode === 'manual' ? { ...c, count: Math.max(0, (c.count || 0) - 1) } : c
+    )) });
   },
 
   /** @param {string} tone Nuevo tono de frases. */
@@ -445,9 +506,38 @@ export const store = {
   /** @returns {number} Tamaño aproximado en bytes del estado persistido. */
   storeSize() { return JSON.stringify({ v: 1, counters: state.counters }).length; },
 
-  /** @returns {string} JSON exportable del estado. */
+  /** @returns {string} JSON exportable del estado (contadores, colección y ajustes). */
   exportJson() {
-    return JSON.stringify({ v: 1, settings: { tone: state.tone, reminder: state.reminder }, counters: state.counters }, null, 2);
+    return JSON.stringify({
+      v: 1,
+      settings: { tone: state.tone, reminder: state.reminder, sound: state.sound },
+      counters: state.counters,
+      pressings: state.pressings,
+    }, null, 2);
+  },
+
+  /**
+   * Carga datos desde un JSON exportado previamente (reemplaza el estado).
+   * @param {string} text JSON con `counters` (y opcionalmente `pressings`/`settings`).
+   * @returns {{ok:boolean, count?:number, error?:string}} Resultado.
+   */
+  importJson(text) {
+    let data;
+    try { data = JSON.parse(text); } catch (e) { return { ok: false, error: 'parse' }; }
+    if (!data || !Array.isArray(data.counters)) return { ok: false, error: 'shape' };
+    const today = this.today();
+    const counters = data.counters
+      .filter((c) => c && c.name)
+      .map((c, i) => normalize({ ...c, id: c.id || ('c' + Date.now() + '_' + i) }, today));
+    const pressings = Array.isArray(data.pressings) ? data.pressings : [];
+    const s = data.settings || {};
+    commit({
+      counters, pressings,
+      tone: s.tone || state.tone,
+      reminder: s.reminder || state.reminder,
+      sound: s.sound != null ? !!s.sound : state.sound,
+    });
+    return { ok: true, count: counters.length };
   },
 
   /* — demo (viaje en el tiempo, no se persiste) — */

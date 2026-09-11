@@ -4,9 +4,11 @@ import { router } from '../../../core/router.js';
 import { t } from '../../../core/i18n.js';
 import { uiIcon } from '../../../core/icons.js';
 import { escapeHtml } from '../../../core/escape-html.js';
-import { buildPosterFile, shareOrSave } from '../../../core/share-card.js';
+import { buildPosterFile, buildCoverFile, shareOrSave } from '../../../core/share-card.js';
+import { drawCover } from '../../../core/cover-art.js';
 import { grooveTexture, seedAngle } from '../../../core/groove-seed.js';
-import { spin, spinStop } from '../../../core/sound.js';
+import { spin, spinStop, playChime } from '../../../core/sound.js';
+import { haptic } from '../../../core/haptics.js';
 import { styles } from './detail-view.css.js';
 
 /**
@@ -30,7 +32,9 @@ export class DetailView extends AppElement {
         ${vm.danger ? this._dangerTpl(vm) : ''}
         ${this._phraseTpl(vm)}
         ${this._statsTpl(vm)}
+        ${this._editTpl(vm)}
         ${this._ladderTpl(vm)}
+        ${this._coverTpl(vm)}
         ${this._noteTpl(vm)}
         ${this._actionsTpl}
       </div>`;
@@ -71,18 +75,39 @@ export class DetailView extends AppElement {
             <circle class="prog-arc" cx="130" cy="130" r="120" fill="none" stroke="${vm.color}" stroke-width="4"
               stroke-linecap="round" pathLength="100" stroke-dasharray="100" stroke-dashoffset="${100 - vm.progressPct}"></circle>
           </svg>
+          <div class="glint" aria-hidden="true"></div>
           <div class="label" style="background:${vm.color};color:${vm.on}">
             <div class="num" id="odo" style="font-size:${vm.labelSize}">${vm.days}</div>
             <div class="tail">${escapeHtml(vm.dayWord)} ${escapeHtml(vm.tail)}</div>
           </div>
           <svg class="tonearm" viewBox="0 0 260 260" aria-hidden="true">
             <g class="arm">
-              <line x1="236" y1="30" x2="150" y2="112" stroke="var(--ink)" stroke-width="5" stroke-linecap="round"></line>
-              <rect x="142" y="103" width="17" height="17" fill="var(--ink)" transform="rotate(44 150 112)"></rect>
+              <line x1="236" y1="30" x2="193" y2="90" stroke="var(--ink)" stroke-width="5" stroke-linecap="round"></line>
+              <rect x="185" y="82" width="16" height="16" fill="var(--ink)" transform="rotate(45 193 90)"></rect>
               <circle cx="236" cy="30" r="10" fill="var(--paper)" stroke="var(--ink)" stroke-width="4"></circle>
             </g>
           </svg>
         </div>
+        <div class="player-cap" id="cap" aria-live="polite"></div>
+        ${vm.manual ? `
+          <div class="manual-actions">
+            <button class="btn btn-primary plus" id="plus">+1 ${escapeHtml(t('word.day'))}</button>
+            <button class="btn btn-ghost minus" id="minus" aria-label="${t('detail.minus')}">−1</button>
+          </div>` : ''}
+        <div class="live-actions">
+          <button class="btn btn-secondary" id="play">▶ ${t('detail.play')}</button>
+          <button class="btn btn-secondary" id="year">${t('detail.year')}</button>
+        </div>
+      </div>`;
+  }
+
+  /** @param {object} vm Modelo de vista. @returns {string} Sección de carátula generativa. */
+  _coverTpl(vm) {
+    return `
+      <div class="cover-block">
+        <div class="section-head" style="margin-top:0"><h6>${t('detail.coverTitle')}</h6><span class="note">${t('detail.coverNote')}</span></div>
+        <div class="cover-stage"><canvas id="cover"></canvas></div>
+        <button class="btn btn-secondary btn-block cover-share" id="cover-share">${uiIcon('share', 15)} ${t('detail.coverShare')}</button>
       </div>`;
   }
 
@@ -104,6 +129,17 @@ export class DetailView extends AppElement {
       </div>`;
   }
 
+  /** @param {object} vm Modelo de vista. @returns {string} Editar inicio (auto) o cuenta (manual). */
+  _editTpl(vm) {
+    return `
+      <div class="edit-row">
+        <label for="edit-input">${vm.manual ? t('detail.editCount') : t('detail.editStart')}</label>
+        ${vm.manual
+          ? `<input class="input" type="number" min="0" max="99999" id="edit-input" value="${vm.days}">`
+          : `<input class="input" type="date" id="edit-input" value="${escapeHtml(vm.startIso)}" max="${escapeHtml(vm.todayIso)}">`}
+      </div>`;
+  }
+
   /** @param {object} vm Modelo de vista. @returns {string} Tres métricas. */
   _statsTpl(vm) {
     return `
@@ -114,16 +150,17 @@ export class DetailView extends AppElement {
       </div>`;
   }
 
-  /** @param {object} vm Modelo de vista. @returns {string} Escalera de hitos. */
+  /** @param {object} vm Modelo de vista. @returns {string} Rejilla compacta de hitos. */
   _ladderTpl(vm) {
     return `
-      <h6 style="margin:var(--space-8) 0 var(--space-3);color:var(--color-neutral-500)">${t('detail.milestonesTitle')}</h6>
+      <h6 class="ladder-title">${t('detail.milestonesTitle')}</h6>
       <div class="ladder">
         ${vm.ladder.map((m) => `
-          <div class="item">
-            <div class="dot" style="background:${m.dotBg};color:${m.dotFg};box-shadow:${m.dotRing}">${m.mark}</div>
-            <div class="lbl" style="color:${m.fg}">${escapeHtml(m.label)}</div>
-            <div class="meta">${escapeHtml(m.meta)}</div>
+          <div class="mtile ${m.done ? 'done' : ''} ${m.isNext ? 'next' : ''}"
+            style="${m.done ? `background:${vm.color};color:${vm.on}` : ''}" title="${escapeHtml(m.title)}">
+            ${m.done ? '<span class="chk" aria-hidden="true">✓</span>' : ''}
+            <span class="mnum">${m.m}</span>
+            <span class="munit">${escapeHtml(m.unit)}</span>
           </div>`).join('')}
       </div>`;
   }
@@ -159,11 +196,77 @@ export class DetailView extends AppElement {
     this.on(this.$('#reset'), 'click', () => router.openReset());
     this.on(this.$('#remove'), 'click', () => this._remove());
     this.on(this.$('#note'), 'change', (e) => store.setNote(this._c.id, e.target.value));
+    const edit = this.$('#edit-input');
+    if (edit) this.on(edit, 'change', (e) => {
+      if (this._c.mode === 'manual') store.setCount(this._c.id, parseInt(e.target.value, 10) || 0);
+      else store.setStart(this._c.id, e.target.value);
+    });
+    this.on(this.$('#play'), 'click', () => this._play());
+    this.on(this.$('#year'), 'click', () => router.go('year'));
+    const plus = this.$('#plus');
+    if (plus) this.on(plus, 'click', () => this._increment());
+    const minus = this.$('#minus');
+    if (minus) this.on(minus, 'click', () => store.decrement(this._c.id));
     this._animateOdometer();
     this._initSpinner();
+    this._initLive();
+    this._initCover();
     // Pre-genera el cartel para compartir sin perder el gesto en iOS.
     this._shareFile = null;
     buildPosterFile(this._c).then((file) => { this._shareFile = file; });
+  }
+
+  /** Dibuja la carátula generativa y pre-genera su imagen para compartir. */
+  _initCover() {
+    const canvas = this.$('#cover');
+    if (!canvas) return;
+    const dpr = window.devicePixelRatio || 1;
+    const w = canvas.clientWidth || 300;
+    canvas.style.height = w + 'px';
+    canvas.width = Math.round(w * dpr); canvas.height = Math.round(w * dpr);
+    const ctx = canvas.getContext('2d');
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    drawCover(ctx, w, w, this._c, 0);
+    this._coverFile = null;
+    buildCoverFile(this._c).then((f) => { this._coverFile = f; });
+    this.on(this.$('#cover-share'), 'click', () => {
+      const done = (r) => { if (r === 'saved') router.flash(t('toast.imgSaved')); else if (r === 'error') router.flash(t('toast.imgFail')); };
+      if (this._coverFile) shareOrSave(this._coverFile, this._c.name).then(done);
+      else buildCoverFile(this._c).then((f) => shareOrSave(f, this._c.name).then(done));
+    });
+  }
+
+  /** Suma un día a un contador manual (con háptica y celebración si toca). */
+  _increment() {
+    haptic(14);
+    this._vel = Math.max(this._vel || 0, 4); // pequeño impulso al disco
+    store.increment(this._c.id);
+    const pending = store.pendingCelebration();
+    if (pending && !router.celebration) router.openCelebration(pending);
+  }
+
+  /** «Tocadiscos»: acelera el disco y narra los hitos logrados con un chime. */
+  _play() {
+    if (this._playing) return;
+    const reached = store.ladderOf(this._c).filter((m) => m <= store.daysOf(this._c));
+    const cap = this.$('#cap');
+    this._playing = true;
+    this._playTimers = [];
+    this._vel = Math.max(this._vel || 0, 9); // acelera el giro (decae solo)
+    const tail = this._c.tail;
+    let i = 0;
+    const step = () => {
+      if (i >= reached.length) {
+        if (cap) cap.textContent = t('detail.playDone');
+        this._playTimers.push(setTimeout(() => { if (cap) cap.textContent = ''; this._playing = false; }, 1600));
+        return;
+      }
+      const m = reached[i++];
+      playChime();
+      if (cap) cap.textContent = t('detail.milestoneLabel', { m, word: t(m === 1 ? 'word.day' : 'word.days'), tail });
+      this._playTimers.push(setTimeout(step, 1100));
+    };
+    step();
   }
 
   /** Física del vinilo: giro lento en reposo + arrastre con inercia (flick). */
@@ -208,11 +311,61 @@ export class DetailView extends AppElement {
     this._rafSpin = requestAnimationFrame(loop);
   }
 
-  /** Limpia la animación del odómetro al desmontar. */
+  /**
+   * «Vinilo vivo»: el disco se inclina y una luz especular recorre los surcos.
+   * En escritorio sigue al puntero; en móvil, al giroscopio (pide permiso en
+   * iOS con el primer toque). Respeta prefers-reduced-motion.
+   */
+  _initLive() {
+    const vinyl = this.$('.vinyl');
+    if (!vinyl) return;
+    const reduce = typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce) return;
+
+    // nx, ny en [-1, 1]; actualiza inclinación (transform) y brillo (gradiente).
+    const apply = (nx, ny) => {
+      const cnx = Math.max(-1, Math.min(1, nx));
+      const cny = Math.max(-1, Math.min(1, ny));
+      vinyl.style.setProperty('--ry', (cnx * 12).toFixed(2) + 'deg');
+      vinyl.style.setProperty('--rx', (-cny * 12).toFixed(2) + 'deg');
+      vinyl.style.setProperty('--lx', (50 + cnx * 42).toFixed(1) + '%');
+      vinyl.style.setProperty('--ly', (50 + cny * 42).toFixed(1) + '%');
+      vinyl.classList.add('live');
+    };
+    const rest = () => { vinyl.style.setProperty('--rx', '0deg'); vinyl.style.setProperty('--ry', '0deg'); vinyl.style.setProperty('--lx', '38%'); vinyl.style.setProperty('--ly', '30%'); };
+    rest();
+
+    // Puntero (escritorio): mueve luz e inclinación al pasar por encima.
+    this.on(vinyl, 'pointermove', (e) => {
+      const r = vinyl.getBoundingClientRect();
+      apply((e.clientX - (r.left + r.width / 2)) / (r.width / 2), (e.clientY - (r.top + r.height / 2)) / (r.height / 2));
+    });
+    this.on(vinyl, 'pointerleave', rest);
+
+    // Giroscopio (móvil): pide permiso en iOS con el primer toque.
+    this._onOrient = (e) => {
+      if (e.gamma == null || e.beta == null) return;
+      apply(e.gamma / 45, (e.beta - 45) / 45);
+    };
+    const enableGyro = () => {
+      if (this._gyroReq) return; this._gyroReq = true;
+      const DOE = window.DeviceOrientationEvent;
+      if (DOE && typeof DOE.requestPermission === 'function') {
+        DOE.requestPermission().then((s) => { if (s === 'granted') window.addEventListener('deviceorientation', this._onOrient); }).catch(() => {});
+      } else if (DOE) {
+        window.addEventListener('deviceorientation', this._onOrient);
+      }
+    };
+    this.on(vinyl, 'pointerdown', enableGyro);
+  }
+
+  /** Limpia la animación del odómetro y los listeners al desmontar. */
   disconnectedCallback() {
     super.disconnectedCallback();
     if (this._raf) cancelAnimationFrame(this._raf);
     if (this._rafSpin) cancelAnimationFrame(this._rafSpin);
+    if (this._onOrient) window.removeEventListener('deviceorientation', this._onOrient);
+    if (this._playTimers) this._playTimers.forEach(clearTimeout);
     spinStop();
   }
 
@@ -308,20 +461,21 @@ export class DetailView extends AppElement {
       why: c.note || '',
       grooves,
       danger: store.relapseHistory(c).dangerToday,
+      manual: c.mode === 'manual',
+      startIso: c.start,
+      todayIso: isoFromDayIndex(store.today()),
       texture: grooveTexture(c.id || c.name, 16, 54, 116),
       seedAngle: seedAngle(c.id || c.name),
       progressPct: (pct * 100).toFixed(1),
-      labelSize: digits <= 2 ? '46px' : digits === 3 ? '34px' : '26px',
+      labelSize: digits <= 2 ? '40px' : digits === 3 ? '30px' : '23px',
       ladder: ladder.map((m) => {
         const done = m <= days;
         return {
-          label: t('detail.milestoneLabel', { m, word: t(m === 1 ? 'word.day' : 'word.days'), tail: c.tail }),
-          mark: done ? '✓' : '',
-          dotBg: done ? color : 'transparent',
-          dotFg: done ? on : 'transparent',
-          dotRing: done ? 'none' : 'inset 0 0 0 2px var(--ink)',
-          fg: done ? 'var(--ink)' : 'var(--dim)',
-          meta: done ? fmtDate(isoFromDayIndex(start + m)) : t('detail.milestoneLeft', { r: m - days }),
+          m,
+          done,
+          isNext: m === next,
+          unit: t(m === 1 ? 'word.day' : 'word.days'),
+          title: done ? fmtDate(isoFromDayIndex(start + m)) : t('detail.milestoneLeft', { r: m - days }),
         };
       }),
     };

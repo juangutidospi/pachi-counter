@@ -52,7 +52,17 @@ export class SettingsView extends AppElement {
           <div class="row"><span class="k">${t('settings.size')}</span><span class="v">${t('settings.bytes', { n: store.storeSize() })}</span></div>
           <div class="actions">
             <button class="btn btn-secondary export" id="export">${t('settings.export')}</button>
+            <button class="btn btn-secondary import" id="import">${t('settings.import')}</button>
             <button class="btn btn-ghost wipe" id="wipe">${t('settings.wipe')}</button>
+          </div>
+          <div class="import-panel hide" id="import-panel">
+            <textarea class="input" id="import-text" placeholder="${t('settings.importPh')}"></textarea>
+            <div class="import-row">
+              <label class="btn btn-ghost file-btn">${t('settings.importFile')}<input type="file" accept="application/json,.json" id="import-file" hidden></label>
+              <span class="spacer"></span>
+              <button class="btn btn-ghost" id="import-cancel">${t('settings.importCancel')}</button>
+              <button class="btn btn-primary" id="import-load">${t('settings.importLoad')}</button>
+            </div>
           </div>
         </div>
 
@@ -89,6 +99,28 @@ export class SettingsView extends AppElement {
     this.on(this.$('#reminder'), 'change', (e) => store.setReminder(e.target.value));
     this.on(this.$('#export'), 'click', () => this._export());
     this.on(this.$('#wipe'), 'click', () => this._wipe());
+
+    const panel = this.$('#import-panel');
+    this.on(this.$('#import'), 'click', () => { panel.classList.toggle('hide'); if (!panel.classList.contains('hide')) this.$('#import-text').focus(); });
+    this.on(this.$('#import-cancel'), 'click', () => panel.classList.add('hide'));
+    this.on(this.$('#import-file'), 'change', (e) => this._readFile(e.target.files && e.target.files[0]));
+    this.on(this.$('#import-load'), 'click', () => this._import());
+  }
+
+  /** Vuelca el contenido de un archivo en el área de texto. */
+  _readFile(file) {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => { const el = this.$('#import-text'); if (el) el.value = String(reader.result || ''); };
+    reader.readAsText(file);
+  }
+
+  /** Carga los datos pegados/elegidos y navega a home si es válido. */
+  _import() {
+    const text = (this.$('#import-text') || {}).value || '';
+    const res = store.importJson(text);
+    if (res.ok) { router.go('home'); router.flash(t('toast.importOk', { n: res.count })); }
+    else router.flash(t('toast.importFail'));
   }
 
   /** Copia el JSON de datos al portapapeles. */

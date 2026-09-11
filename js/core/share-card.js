@@ -1,6 +1,8 @@
 import { store } from './store.js';
 import { t } from './i18n.js';
 import { grooveTexture } from './groove-seed.js';
+import { drawMural, muralData } from './mural-art.js';
+import { drawCover } from './cover-art.js';
 
 /**
  * Genera un cartel (imagen) de una racha y lo comparte por la hoja del sistema
@@ -53,6 +55,40 @@ export async function buildAnnualFile() {
     const blob = await new Promise((res) => canvas.toBlob(res, 'image/png'));
     if (!blob) return null;
     return new File([blob], 'pachi-prensa-anual.png', { type: 'image/png' });
+  } catch (e) { return null; }
+}
+
+/**
+ * Construye el archivo PNG del mural generativo (composición de todos los
+ * contadores) para compartirlo o guardarlo como póster/fondo.
+ * @returns {Promise<File|null>} Archivo PNG o null si falla.
+ */
+export async function buildMuralFile() {
+  try {
+    await ensureFonts();
+    const canvas = document.createElement('canvas');
+    canvas.width = W; canvas.height = H;
+    drawMural(canvas.getContext('2d'), W, H, 0, muralData());
+    const blob = await new Promise((res) => canvas.toBlob(res, 'image/png'));
+    if (!blob) return null;
+    return new File([blob], 'pachi-mural.png', { type: 'image/png' });
+  } catch (e) { return null; }
+}
+
+/**
+ * Construye el archivo PNG de la carátula generativa de un contador (cuadrada).
+ * @param {object} counter Contador.
+ * @returns {Promise<File|null>} Archivo PNG o null si falla.
+ */
+export async function buildCoverFile(counter) {
+  try {
+    await ensureFonts();
+    const canvas = document.createElement('canvas');
+    canvas.width = 1080; canvas.height = 1080;
+    drawCover(canvas.getContext('2d'), 1080, 1080, counter, 0);
+    const blob = await new Promise((res) => canvas.toBlob(res, 'image/png'));
+    if (!blob) return null;
+    return new File([blob], 'pachi-caratula.png', { type: 'image/png' });
   } catch (e) { return null; }
 }
 

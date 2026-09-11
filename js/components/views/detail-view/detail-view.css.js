@@ -10,11 +10,21 @@ export const styles = css`
   .top .right { display: flex; align-items: center; gap: var(--space-2); }
 
   /* — disco de vinilo personal — */
-  .vinyl-wrap { display: grid; place-items: center; margin-top: var(--space-6); }
+  .vinyl-wrap { display: grid; place-items: center; margin-top: var(--space-6); perspective: 900px; }
   .vinyl { position: relative; width: min(264px, 74vw); aspect-ratio: 1;
-    touch-action: none; cursor: grab; user-select: none; -webkit-user-select: none; }
-  .vinyl.dragging { cursor: grabbing; }
+    touch-action: none; cursor: grab; user-select: none; -webkit-user-select: none;
+    transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); transition: transform .18s ease; }
+  .vinyl.dragging { cursor: grabbing; transition: none; }
   .vinyl svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+  /* Vinilo vivo: brillo especular que sigue al puntero/giroscopio. */
+  .vinyl .glint { position: absolute; inset: 0; border-radius: 50%; overflow: hidden; pointer-events: none;
+    mix-blend-mode: screen;
+    background: radial-gradient(circle at var(--lx, 38%) var(--ly, 30%),
+      rgba(255,255,255,.55), rgba(255,255,255,.10) 30%, rgba(255,255,255,0) 55%); }
+  @media (prefers-reduced-motion: reduce) {
+    .vinyl { transform: none; transition: none; }
+  }
   .vinyl .disc { transform-origin: center; will-change: transform; }
   .vinyl .progress { transform: rotate(-90deg); }
   .vinyl .prog-arc { transition: stroke-dashoffset .8s cubic-bezier(.16,1,.3,1);
@@ -25,7 +35,7 @@ export const styles = css`
     box-shadow: 0 0 0 4px var(--paper); view-transition-name: pc-hero;
     animation: pc-hub-pop .6s cubic-bezier(.34,1.56,.64,1) .15s both;
   }
-  .vinyl .label .num { font-family: var(--font-display); font-weight: 800; line-height: .8; letter-spacing: -.04em; font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1, "zero" 1; }
+  .vinyl .label .num { font-family: var(--font-display); font-weight: 800; line-height: .9; letter-spacing: -.005em; font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1, "zero" 1; }
   .vinyl .label .tail { font-family: var(--font-body); font-weight: 600; font-size: 8.5px; letter-spacing: .1em; text-transform: uppercase; margin-top: 5px; opacity: .85; padding: 0 6px; }
 
   /* brazo de tocadiscos: cae sobre el disco al abrir */
@@ -39,6 +49,23 @@ export const styles = css`
   @media (prefers-reduced-motion: reduce) {
     .vinyl .disc, .vinyl .prog-arc, .vinyl .label, .vinyl .tonearm .arm { animation: none; }
   }
+
+  /* leyenda del modo reproducir + accesos vivos bajo el vinilo */
+  .player-cap { min-height: 16px; margin-top: var(--space-3); text-align: center; font-family: var(--font-display); font-weight: 700; font-size: 14px; letter-spacing: -.01em; color: var(--ink); text-transform: uppercase; }
+  .live-actions { display: flex; gap: var(--space-2); margin-top: var(--space-3); }
+  .live-actions .btn { flex: 1; font-size: 11px; padding: 9px 10px; }
+
+  /* contador manual: +1 / corregir −1 */
+  .manual-actions { display: flex; gap: var(--space-2); margin-top: var(--space-4); width: 100%; max-width: 320px; }
+  .manual-actions .plus { flex: 1; font-size: 15px; }
+  .manual-actions .minus { flex: none; color: var(--dim); }
+  .manual-actions .minus:hover { color: var(--paper); background: var(--ink); }
+
+  /* carátula generativa */
+  .cover-block { margin-top: var(--space-8); }
+  .cover-stage { border: var(--border-w) solid var(--ink); box-shadow: var(--shadow-lg); }
+  .cover-stage canvas { display: block; width: 100%; }
+  .cover-share { margin-top: var(--space-3); gap: 6px; }
 
   .danger { margin-top: var(--space-6); padding: var(--space-3) var(--space-4); border: var(--border-w) solid var(--red); background: color-mix(in srgb, var(--red) 8%, transparent); }
   .danger .danger-kicker { font-family: var(--font-body); font-weight: 700; font-size: 10px; letter-spacing: .16em; text-transform: uppercase; color: var(--red); }
@@ -57,16 +84,29 @@ export const styles = css`
   .stat3 .lbl { overflow: hidden; text-overflow: ellipsis; }
   .stat3 .lbl { font-family: var(--font-body); font-size: 8.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--dim); font-weight: 600; }
 
+  .edit-row { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3);
+    margin-top: var(--space-4); padding: 10px var(--space-4); border: var(--border-w) solid var(--ink); }
+  .edit-row label { font-family: var(--font-body); font-weight: 600; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--dim); }
+  .edit-row .input { width: auto; max-width: 170px; min-height: 38px; }
+
   .section-head { display: flex; align-items: baseline; justify-content: space-between; margin: var(--space-8) 0 var(--space-3); }
   .section-head h6 { margin: 0; color: var(--ink); }
   .section-head .note { font-family: var(--font-body); font-size: 11px; color: var(--dim); }
 
-  .ladder { display: flex; flex-direction: column; }
-  .ladder .item { display: flex; align-items: center; gap: var(--space-3); padding: 11px 0; border-bottom: var(--border-w) solid var(--hair); }
-  .ladder .item:first-child { border-top: var(--border-w) solid var(--ink); }
-  .ladder .dot { flex: none; width: 22px; height: 22px; display: grid; place-items: center; font-size: 11px; font-weight: 700; }
-  .ladder .lbl { flex: 1; font-family: var(--font-body); font-weight: 500; font-size: 14px; }
-  .ladder .meta { font-family: var(--font-body); font-size: 11px; color: var(--dim); }
+  .ladder-title { margin: var(--space-8) 0 var(--space-3); color: var(--color-neutral-500); }
+  .ladder { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .mtile {
+    position: relative; aspect-ratio: 1; border: var(--border-w) solid var(--ink); background: var(--paper);
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+  }
+  .mtile .mnum { font-family: var(--font-display); font-weight: 800; font-size: 21px; line-height: 1;
+    letter-spacing: -.02em; color: var(--dim); font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1, "zero" 1; }
+  .mtile .munit { font-family: var(--font-body); font-weight: 600; font-size: 8px; letter-spacing: .12em; text-transform: uppercase; color: var(--dim); }
+  .mtile .chk { position: absolute; top: 4px; right: 6px; font-size: 10px; font-weight: 800; }
+  .mtile.done .mnum { color: inherit; }
+  .mtile.done .munit { color: inherit; opacity: .8; }
+  .mtile.next { box-shadow: inset 0 0 0 3px var(--blue); }
+  .mtile.next .mnum, .mtile.next .munit { color: var(--blue); }
 
   .note-block { margin-top: var(--space-8); }
 
