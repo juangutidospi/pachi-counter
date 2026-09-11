@@ -13,7 +13,8 @@ export const styles = css`
   .vinyl-wrap { display: grid; place-items: center; margin-top: var(--space-6); perspective: 900px; }
   .vinyl { position: relative; width: min(264px, 74vw); aspect-ratio: 1;
     touch-action: none; cursor: grab; user-select: none; -webkit-user-select: none;
-    transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); transition: transform .18s ease; }
+    transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); transition: transform .18s ease;
+    view-transition-name: pc-hero; }
   .vinyl.dragging { cursor: grabbing; transition: none; }
   .vinyl svg { position: absolute; inset: 0; width: 100%; height: 100%; }
 
@@ -32,7 +33,7 @@ export const styles = css`
   .vinyl .label {
     position: absolute; inset: 0; margin: auto; width: 39%; aspect-ratio: 1; border-radius: 50%;
     display: grid; place-content: center; text-align: center; border: var(--border-w) solid var(--ink);
-    box-shadow: 0 0 0 4px var(--paper); view-transition-name: pc-hero;
+    box-shadow: 0 0 0 4px var(--paper);
     animation: pc-hub-pop .6s cubic-bezier(.34,1.56,.64,1) .15s both;
   }
   .vinyl .label .num { font-family: var(--font-display); font-weight: 800; line-height: .9; letter-spacing: -.005em; font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1, "zero" 1; }
