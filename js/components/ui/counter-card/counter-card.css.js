@@ -13,13 +13,16 @@ export const styles = css`
   .card:hover { background: color-mix(in srgb, var(--ink) 6%, transparent); }
   .card:active { transform: scale(.975); }
 
+  /* Mini-carátula (crate) con el número como chip en la esquina. */
+  .cover { flex: none; width: 56px; height: 56px; position: relative; }
+  .cover .cvr { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
   .disc {
-    flex: none; width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center;
-    font-family: var(--font-display); font-weight: 800; line-height: 1; letter-spacing: -.03em;
+    position: absolute; left: 0; bottom: 0; height: 22px; min-width: 22px; padding: 0 6px;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-family: var(--font-display); font-weight: 800; font-size: 13px; line-height: 1; letter-spacing: -.02em;
     font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1, "zero" 1;
     border: var(--border-w) solid var(--ink);
   }
-  .disc small { display: none; }
 
   .info { flex: 1; min-width: 0; }
   .name-line { display: flex; align-items: center; gap: 8px; min-width: 0; }

@@ -22,6 +22,18 @@ export const styles = css`
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
     background-size: 160px 160px;
   }
+  /* Semitono (halftone): retícula de puntos de tinta muy tenue = tacto impreso. */
+  .frame::before {
+    content: ""; position: absolute; inset: 0; z-index: 199; pointer-events: none;
+    opacity: 0.05; mix-blend-mode: multiply;
+    background-image: radial-gradient(var(--ink) 0.5px, transparent 0.7px);
+    background-size: 4px 4px;
+  }
+  /* Marcas de registro de imprenta en las esquinas superiores (detalle editorial). */
+  .frame > .regmark { position: absolute; z-index: 205; width: 13px; height: 13px; color: var(--ink); opacity: .4; pointer-events: none; }
+  .frame > .regmark.r-tl { top: 9px; left: 9px; }
+  .frame > .regmark.r-tr { top: 9px; right: 9px; }
+  .frame > .regmark svg { width: 100%; height: 100%; display: block; }
   @media (max-width: 460px) {
     :host { padding: 0; width: 100%; }
     /* 100dvh = altura visible real en móvil (evita el desbordamiento por la

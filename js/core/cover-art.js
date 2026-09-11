@@ -11,6 +11,41 @@ import { counterHex, ARTHEX } from './mural-art.js';
 const PALETTE = ['#2340d8', '#e5342a', '#f4c020', '#1f9d57', '#6a3de8', '#0c9aa2', '#d62f86', '#ef6c14'];
 
 /**
+ * Miniatura de carátula (para la home tipo «crate»): solo el arte generativo,
+ * sin barra de título ni número (esos van en la tarjeta).
+ * @param {CanvasRenderingContext2D} ctx Contexto.
+ * @param {number} W Ancho. @param {number} H Alto.
+ * @param {object} c Contador.
+ */
+export function drawMiniCover(ctx, W, H, c) {
+  const S = W / 56;
+  const { fill } = counterHex(c.color);
+  const days = store.daysOf(c);
+  const reached = store.ladderOf(c).filter((m) => m <= days).length;
+  const r = rng(seedFrom(c.id || c.name));
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = ARTHEX.paper2; ctx.fillRect(0, 0, W, H);
+  ctx.save(); ctx.beginPath(); ctx.rect(0, 0, W, H); ctx.clip();
+  ctx.fillStyle = fill; ctx.strokeStyle = ARTHEX.ink; ctx.lineWidth = 1.6 * S;
+  ctx.beginPath(); ctx.arc(W * (0.3 + r() * 0.12), H * (0.32 + r() * 0.12), Math.min(W, H) * 0.34, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+  const count = Math.min(1 + reached, 4);
+  for (let i = 0; i < count; i++) {
+    const kind = (r() * 4) | 0;
+    const col = PALETTE[(r() * PALETTE.length) | 0];
+    const cx = W * (0.15 + r() * 0.7), cy = H * (0.15 + r() * 0.7), s = Math.min(W, H) * (0.1 + r() * 0.16);
+    ctx.save(); ctx.translate(cx, cy); ctx.rotate((r() - 0.5) * 1.2);
+    ctx.fillStyle = col; ctx.strokeStyle = ARTHEX.ink; ctx.lineWidth = 1.4 * S;
+    if (kind === 0) { ctx.beginPath(); ctx.arc(0, 0, s, 0, Math.PI * 2); ctx.fill(); ctx.stroke(); }
+    else if (kind === 1) { ctx.beginPath(); ctx.arc(0, 0, s, Math.PI, 2 * Math.PI); ctx.closePath(); ctx.fill(); ctx.stroke(); }
+    else if (kind === 2) { ctx.fillRect(-s, -s * 0.4, s * 2, s * 0.8); ctx.strokeRect(-s, -s * 0.4, s * 2, s * 0.8); }
+    else { ctx.beginPath(); ctx.moveTo(-s, s); ctx.lineTo(0, -s); ctx.lineTo(s, s); ctx.closePath(); ctx.fill(); ctx.stroke(); }
+    ctx.restore();
+  }
+  ctx.restore();
+  ctx.strokeStyle = ARTHEX.ink; ctx.lineWidth = 2 * S; ctx.strokeRect(0, 0, W, H);
+}
+
+/**
  * Dibuja la carátula del contador en un contexto 2D (cuadrado).
  * @param {CanvasRenderingContext2D} ctx Contexto.
  * @param {number} W Ancho. @param {number} H Alto.

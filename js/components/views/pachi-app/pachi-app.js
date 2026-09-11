@@ -99,11 +99,55 @@ export class PachiApp extends AppElement {
     this._navState = cur;
     const reduce = typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches;
     const changed = this._prevRoute != null && this._prevRoute !== router.route;
-    if (changed && !reduce && typeof document !== 'undefined' && document.startViewTransition) {
+    // Morph carátula→vinilo: si hay origen y vamos al detalle, pinta y anima el
+    // vuelo (FLIP con Web Animations, fiable en cualquier navegador). Si no,
+    // usa la transición estándar (View Transitions) o el repintado normal.
+    const hero = router.hero; router.hero = null;
+    if (changed && !reduce && hero && router.route === 'detail') {
+      this._paint();
+      this._flyHero(hero);
+    } else if (changed && !reduce && typeof document !== 'undefined' && document.startViewTransition) {
       document.startViewTransition(() => this._paint());
     } else {
       this._paint();
     }
+  }
+
+  /**
+   * Anima la mini-carátula pulsada hasta el vinilo del detalle (FLIP).
+   * @param {{rect: DOMRect, img: string|null}} hero Origen del morph.
+   */
+  _flyHero(hero) {
+    const frame = this.$('.frame');
+    const view = this.$('.view');
+    const vinyl = view && view.shadowRoot ? view.shadowRoot.querySelector('.vinyl') : null;
+    if (!frame || !vinyl || !hero.rect) return;
+    const fr = frame.getBoundingClientRect();
+    const to = vinyl.getBoundingClientRect();
+    const from = hero.rect;
+    const a = { l: from.left - fr.left, t: from.top - fr.top, w: from.width, h: from.height };
+    const b = { l: to.left - fr.left, t: to.top - fr.top, w: to.width, h: to.height };
+    const fly = document.createElement('div');
+    Object.assign(fly.style, {
+      position: 'absolute', left: a.l + 'px', top: a.t + 'px', width: a.w + 'px', height: a.h + 'px',
+      zIndex: '300', pointerEvents: 'none', overflow: 'hidden',
+      border: '2px solid var(--ink)', borderRadius: '6px', background: 'var(--paper-2, #e7e0cf)',
+    });
+    if (hero.img) { fly.style.backgroundImage = 'url(' + hero.img + ')'; fly.style.backgroundSize = 'cover'; }
+    frame.appendChild(fly);
+    vinyl.style.opacity = '0';
+    vinyl.classList.add('flash-on'); // destello de luz al bajar la púa
+    // El clon vuela y crece hasta el disco (leve overshoot) y se desvanece en el
+    // último tramo; a la vez el vinilo real aparece → fundido cruzado, sin salto.
+    const geo = fly.animate([
+      { left: a.l + 'px', top: a.t + 'px', width: a.w + 'px', height: a.h + 'px', borderRadius: '6px', opacity: 1, offset: 0 },
+      { opacity: 1, offset: .55 },
+      { left: b.l + 'px', top: b.t + 'px', width: b.w + 'px', height: b.h + 'px', borderRadius: '50%', opacity: 0, offset: 1 },
+    ], { duration: 560, easing: 'cubic-bezier(.2,1.06,.3,1)', fill: 'forwards' });
+    const rev = vinyl.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 280, delay: 300, easing: 'ease', fill: 'forwards' });
+    const done = () => { try { fly.remove(); } catch (e) { /* ya quitado */ } try { rev.cancel(); } catch (e) { /* ya */ } vinyl.style.opacity = ''; };
+    geo.onfinish = done; geo.oncancel = done;
+    setTimeout(done, 900);
   }
 
   /**
@@ -142,7 +186,14 @@ export class PachiApp extends AppElement {
           ${router.toast ? this._toastTpl : ''}
           ${routeChanged ? this._wipeTpl : ''}
         </div>
+        ${this._regTpl}
       </div>`;
+  }
+
+  /** @returns {string} Marcas de registro de imprenta (esquinas superiores). */
+  get _regTpl() {
+    const mark = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2v20M2 12h20"></path><circle cx="12" cy="12" r="5"></circle></svg>';
+    return `<span class="regmark r-tl" aria-hidden="true">${mark}</span><span class="regmark r-tr" aria-hidden="true">${mark}</span>`;
   }
 
   /** @returns {string} Overlay de transición: tres bloques primarios que barren. */

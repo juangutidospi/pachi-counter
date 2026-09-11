@@ -76,6 +76,7 @@ export class DetailView extends AppElement {
               stroke-linecap="round" pathLength="100" stroke-dasharray="100" stroke-dashoffset="${100 - vm.progressPct}"></circle>
           </svg>
           <div class="glint" aria-hidden="true"></div>
+          <div class="flash" aria-hidden="true"></div>
           <div class="label" style="background:${vm.color};color:${vm.on}">
             <div class="num" id="odo" style="font-size:${vm.labelSize}">${vm.days}</div>
             <div class="tail">${escapeHtml(vm.dayWord)} ${escapeHtml(vm.tail)}</div>

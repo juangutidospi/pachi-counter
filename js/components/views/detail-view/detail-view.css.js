@@ -22,8 +22,19 @@ export const styles = css`
     mix-blend-mode: screen;
     background: radial-gradient(circle at var(--lx, 38%) var(--ly, 30%),
       rgba(255,255,255,.55), rgba(255,255,255,.10) 30%, rgba(255,255,255,0) 55%); }
+  /* Destello: un barrido de luz cruza el disco al bajar la púa (solo al abrir). */
+  .vinyl .flash { position: absolute; inset: 0; border-radius: 50%; overflow: hidden; pointer-events: none;
+    z-index: 3; opacity: 0; mix-blend-mode: screen;
+    background: linear-gradient(120deg, transparent 36%, rgba(255,255,255,.92) 50%, transparent 64%); }
+  .vinyl.flash-on .flash { animation: pc-flash .9s cubic-bezier(.2,.8,.2,1) .9s both; }
+  @keyframes pc-flash {
+    0% { opacity: 0; transform: translateX(-75%); }
+    18% { opacity: .95; }
+    100% { opacity: 0; transform: translateX(75%); }
+  }
   @media (prefers-reduced-motion: reduce) {
     .vinyl { transform: none; transition: none; }
+    .vinyl.flash-on .flash { animation: none; }
   }
   .vinyl .disc { transform-origin: center; will-change: transform; }
   .vinyl .progress { transform: rotate(-90deg); }
@@ -32,7 +43,7 @@ export const styles = css`
   .vinyl .label {
     position: absolute; inset: 0; margin: auto; width: 39%; aspect-ratio: 1; border-radius: 50%;
     display: grid; place-content: center; text-align: center; border: var(--border-w) solid var(--ink);
-    box-shadow: 0 0 0 4px var(--paper); view-transition-name: pc-hero;
+    box-shadow: 0 0 0 4px var(--paper);
     animation: pc-hub-pop .6s cubic-bezier(.34,1.56,.64,1) .15s both;
   }
   .vinyl .label .num { font-family: var(--font-display); font-weight: 800; line-height: .9; letter-spacing: -.005em; font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1, "zero" 1; }
