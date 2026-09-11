@@ -21,10 +21,17 @@ export const styles = css`
   .data .row .k { color: var(--dim); }
   .data .row .v { color: var(--ink); font-weight: 600; }
   .data .row .mono { font-family: var(--font-mono); font-weight: 600; font-size: 12px; color: var(--blue); }
-  .data .actions { display: flex; gap: var(--space-2); margin-top: var(--space-2); }
-  .data .actions .export { flex: 1; }
+  .data .actions { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-2); }
+  .data .actions .export, .data .actions .import { flex: 1; min-width: 120px; }
   .data .actions .wipe { color: var(--red); }
   .data .actions .wipe:hover { color: var(--paper); background: var(--red); }
+
+  .data .import-panel { display: flex; flex-direction: column; gap: var(--space-2); margin-top: var(--space-3); }
+  .data .import-panel.hide { display: none; }
+  .data .import-panel textarea { min-height: 96px; font-family: var(--font-mono); font-size: 12px; resize: vertical; }
+  .data .import-row { display: flex; align-items: center; gap: var(--space-2); }
+  .data .import-row .spacer { flex: 1; }
+  .data .import-row .file-btn { cursor: pointer; }
 
   .tools-note { font-family: var(--font-body); font-size: 12px; margin: calc(var(--space-2) * -1) 0 var(--space-3); color: var(--dim); }
   .footer { font-family: var(--font-body); font-size: 11px; margin-top: var(--space-8); text-align: center; color: var(--dim); }
