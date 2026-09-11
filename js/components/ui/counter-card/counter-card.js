@@ -3,6 +3,7 @@ import { store, COUNTER_COLORS, fmtDate } from '../../../core/store.js';
 import { t } from '../../../core/i18n.js';
 import { escapeHtml } from '../../../core/escape-html.js';
 import { haptic } from '../../../core/haptics.js';
+import { drawMiniCover } from '../../../core/cover-art.js';
 import { styles } from './counter-card.css.js';
 
 /**
@@ -27,7 +28,10 @@ export class CounterCard extends AppElement {
     const vm = this._viewModel(c);
     this.shadowRoot.innerHTML = `
       <button class="card" type="button">
-        <div class="disc" style="background:${vm.color};color:${vm.on};font-size:${vm.discSize}">${vm.days}</div>
+        <div class="cover">
+          <canvas class="cvr" aria-hidden="true"></canvas>
+          <span class="disc" style="background:${vm.color};color:${vm.on}">${vm.days}</span>
+        </div>
         <div class="info">
           <div class="name-line">
             <div class="name">${escapeHtml(c.name)}</div>
@@ -47,7 +51,20 @@ export class CounterCard extends AppElement {
       haptic(12);
       this.dispatchEvent(new CustomEvent('open', { detail: { id: this._counter.id }, bubbles: true, composed: true }));
     });
+    this._drawCover();
     this._animateNumber();
+  }
+
+  /** Dibuja la mini-carátula generativa del contador en el lienzo de la tarjeta. */
+  _drawCover() {
+    const cv = this.$('.cvr');
+    if (!cv || !this._counter) return;
+    const dpr = window.devicePixelRatio || 1;
+    const w = 56;
+    cv.width = Math.round(w * dpr); cv.height = Math.round(w * dpr);
+    const ctx = cv.getContext('2d');
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    drawMiniCover(ctx, w, w, this._counter);
   }
 
   /** Cancela la cuenta ascendente al desmontar. */
