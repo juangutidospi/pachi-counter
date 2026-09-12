@@ -21,6 +21,14 @@ export const COUNTER_COLORS = {
   violet: { key: 'violet', value: 'var(--violet)', on: 'var(--paper)' },
   magenta: { key: 'magenta', value: 'var(--magenta)', on: 'var(--paper)' },
   orange: { key: 'orange', value: 'var(--orange)', on: 'var(--ink)' },
+  coral: { key: 'coral', value: 'var(--coral)', on: 'var(--paper)' },
+  rose: { key: 'rose', value: 'var(--rose)', on: 'var(--paper)' },
+  plum: { key: 'plum', value: 'var(--plum)', on: 'var(--paper)' },
+  terra: { key: 'terra', value: 'var(--terra)', on: 'var(--paper)' },
+  lime: { key: 'lime', value: 'var(--lime)', on: 'var(--ink)' },
+  cyan: { key: 'cyan', value: 'var(--cyan)', on: 'var(--paper)' },
+  indigo: { key: 'indigo', value: 'var(--indigo)', on: 'var(--paper)' },
+  slate: { key: 'slate', value: 'var(--slate)', on: 'var(--paper)' },
   deep: { key: 'deep', value: 'var(--ink)', on: 'var(--paper)' },
 };
 

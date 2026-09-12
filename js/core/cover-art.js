@@ -8,7 +8,7 @@ import { counterHex, ARTHEX } from './mural-art.js';
  * Se usa en el detalle (sección «Carátula») y en la imagen compartible.
  */
 
-const PALETTE = ['#2340d8', '#e5342a', '#f4c020', '#1f9d57', '#6a3de8', '#0c9aa2', '#d62f86', '#ef6c14'];
+const PALETTE = ['#2340d8', '#e5342a', '#f4c020', '#1f9d57', '#6a3de8', '#0c9aa2', '#d62f86', '#ef6c14', '#e8543a', '#d94f86', '#7c2150', '#b0531f', '#8fae1a', '#12a5c4', '#3730a3', '#445f7a'];
 
 /**
  * Grano de tinta: puntos deterministas que rompen el plano digital (risograph).

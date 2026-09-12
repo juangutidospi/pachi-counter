@@ -11,7 +11,7 @@ import { drawCover } from './cover-art.js';
  */
 
 /** Paleta concreta (hex) para el canvas, equivalente a los tokens. */
-const HEX = { paper: '#efe9dc', ink: '#111010', dim: '#6b6459', groove: '#c3baa4', blue: '#2340d8', red: '#e5342a', yellow: '#f4c020', green: '#1f9d57', teal: '#0c9aa2', violet: '#6a3de8', magenta: '#d62f86', orange: '#ef6c14' };
+const HEX = { paper: '#efe9dc', ink: '#111010', dim: '#6b6459', groove: '#c3baa4', blue: '#2340d8', red: '#e5342a', yellow: '#f4c020', green: '#1f9d57', teal: '#0c9aa2', violet: '#6a3de8', magenta: '#d62f86', orange: '#ef6c14', coral: '#e8543a', rose: '#d94f86', plum: '#7c2150', terra: '#b0531f', lime: '#8fae1a', cyan: '#12a5c4', indigo: '#3730a3', slate: '#445f7a' };
 /** color de contador → relleno y color de texto sobre él. */
 const COLOR = {
   accent: { fill: HEX.blue, on: HEX.paper },
@@ -22,6 +22,14 @@ const COLOR = {
   violet: { fill: HEX.violet, on: HEX.paper },
   magenta: { fill: HEX.magenta, on: HEX.paper },
   orange: { fill: HEX.orange, on: HEX.ink },
+  coral: { fill: HEX.coral, on: HEX.paper },
+  rose: { fill: HEX.rose, on: HEX.paper },
+  plum: { fill: HEX.plum, on: HEX.paper },
+  terra: { fill: HEX.terra, on: HEX.paper },
+  lime: { fill: HEX.lime, on: HEX.ink },
+  cyan: { fill: HEX.cyan, on: HEX.paper },
+  indigo: { fill: HEX.indigo, on: HEX.paper },
+  slate: { fill: HEX.slate, on: HEX.paper },
   deep: { fill: HEX.ink, on: HEX.paper },
 };
 

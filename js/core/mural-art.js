@@ -14,7 +14,10 @@ import { seedFrom, rng } from './groove-seed.js';
 /** Tokens de color resueltos a hex (el canvas no entiende var(--…)). */
 const TOKHEX = {
   blue: '#2340d8', red: '#e5342a', yellow: '#f4c020', green: '#1f9d57', teal: '#0c9aa2',
-  violet: '#6a3de8', magenta: '#d62f86', orange: '#ef6c14', ink: '#111010', paper: '#efe9dc',
+  violet: '#6a3de8', magenta: '#d62f86', orange: '#ef6c14',
+  coral: '#e8543a', rose: '#d94f86', plum: '#7c2150', terra: '#b0531f',
+  lime: '#8fae1a', cyan: '#12a5c4', indigo: '#3730a3', slate: '#445f7a',
+  ink: '#111010', paper: '#efe9dc',
 };
 const HEX = { paper: '#efe9dc', paper2: '#e7e0cf', ink: '#111010', dim: '#6b6459', hair: 'rgba(17,16,16,.07)', groove: '#c3baa4' };
 
