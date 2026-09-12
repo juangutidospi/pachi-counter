@@ -28,7 +28,7 @@ export const styles = css`
   .stat .num { font-family: var(--font-display); font-weight: 800; font-size: min(23px, 8cqw); line-height: 1; letter-spacing: -.03em; color: var(--ink); font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1, "zero" 1; }
   .stat .lbl { font-family: var(--font-body); font-size: 8.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--dim); margin-top: 5px; font-weight: 600; }
 
-  .focus { margin-top: 14px; padding-left: 12px; border-left: 5px solid var(--red); }
+  .focus { margin-top: 14px; }
   .focus .kicker { font-family: var(--font-body); font-size: 9.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--blue); font-weight: 700; }
   .focus p { margin: 6px 0 0; font-family: var(--font-display); font-weight: 700; font-size: 15.5px; line-height: 1.25; color: var(--ink); text-wrap: pretty; }
 
