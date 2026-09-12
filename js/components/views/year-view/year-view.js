@@ -103,10 +103,22 @@ export class YearView extends AppElement {
     const cx = W / 2, cy = W / 2, R = W * 0.44;
     ctx.clearRect(0, 0, W, W);
     ctx.fillStyle = ARTHEX.paper; ctx.fillRect(0, 0, W, W);
-    // disco
-    ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI * 2); ctx.fillStyle = '#161514'; ctx.fill();
+    // sombra suave bajo el disco
+    ctx.save(); const sh = ctx.createRadialGradient(cx, cy + R * 0.12, R * 0.6, cx, cy + R * 0.14, R * 1.1);
+    sh.addColorStop(0, 'rgba(17,16,16,.34)'); sh.addColorStop(1, 'rgba(17,16,16,0)');
+    ctx.fillStyle = sh; ctx.beginPath(); ctx.arc(cx, cy + R * 0.1, R * 1.08, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+    // disco: cuerpo negro con material (luz arriba-izquierda)
+    const body = ctx.createRadialGradient(cx - R * 0.35, cy - R * 0.35, R * 0.1, cx, cy, R);
+    body.addColorStop(0, '#26221e'); body.addColorStop(.55, '#141210'); body.addColorStop(1, '#050505');
+    ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI * 2); ctx.fillStyle = body; ctx.fill();
     ctx.lineWidth = 2; ctx.strokeStyle = ARTHEX.ink; ctx.stroke();
-    for (let r = R - 8; r > R * 0.42; r -= 6) { ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.strokeStyle = 'rgba(195,186,164,.26)'; ctx.lineWidth = 1; ctx.stroke(); }
+    // surcos finos claros
+    for (let r = R - 6; r > R * 0.4; r -= 3.6) { ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.strokeStyle = 'rgba(120,112,96,.16)'; ctx.lineWidth = 1; ctx.stroke(); }
+    // brillo especular recortado al disco
+    ctx.save(); ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI * 2); ctx.clip();
+    const sp = ctx.createLinearGradient(cx - R, cy - R, cx + R * 0.3, cy + R * 0.5);
+    sp.addColorStop(0, 'rgba(255,255,255,0)'); sp.addColorStop(.47, 'rgba(255,255,255,.02)'); sp.addColorStop(.5, 'rgba(255,255,255,.22)'); sp.addColorStop(.55, 'rgba(255,255,255,.04)'); sp.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = sp; ctx.fillRect(cx - R, cy - R, R * 2, R * 2); ctx.restore();
     // arco de progreso (0 → u) en color
     const a0 = SWEEP_START * Math.PI / 180;
     const a1 = (SWEEP_START + this._u * SWEEP) * Math.PI / 180;
@@ -120,8 +132,12 @@ export class YearView extends AppElement {
       ctx.fillStyle = reached ? m.col : ARTHEX.groove; ctx.strokeStyle = ARTHEX.ink; ctx.lineWidth = 2;
       ctx.fillRect(-3, -10, 6, 20); ctx.strokeRect(-3, -10, 6, 20); ctx.restore();
     });
-    // etiqueta central
-    ctx.beginPath(); ctx.arc(cx, cy, R * 0.34, 0, Math.PI * 2); ctx.fillStyle = m.col; ctx.fill(); ctx.lineWidth = 2; ctx.strokeStyle = ARTHEX.ink; ctx.stroke();
+    // etiqueta central con lustre
+    const LR = R * 0.34;
+    ctx.beginPath(); ctx.arc(cx, cy, LR, 0, Math.PI * 2); ctx.fillStyle = m.col; ctx.fill();
+    ctx.save(); ctx.beginPath(); ctx.arc(cx, cy, LR, 0, Math.PI * 2); ctx.clip();
+    ctx.fillStyle = 'rgba(255,255,255,.20)'; ctx.beginPath(); ctx.ellipse(cx, cy - LR * 0.4, LR * 0.7, LR * 0.32, 0, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+    ctx.lineWidth = 2; ctx.strokeStyle = ARTHEX.ink; ctx.beginPath(); ctx.arc(cx, cy, LR, 0, Math.PI * 2); ctx.stroke();
     const day = Math.round(this._u * m.end);
     const on = counterHex(this._c.color).on;
     ctx.fillStyle = on; ctx.textAlign = 'center';
