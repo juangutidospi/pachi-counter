@@ -91,6 +91,14 @@ export const styles = css`
   .danger .danger-kicker { font-family: var(--font-body); font-weight: 700; font-size: 10px; letter-spacing: .16em; text-transform: uppercase; color: var(--red); }
   .danger p { margin: 6px 0 0; font-family: var(--font-display); font-weight: 700; font-size: 16px; line-height: 1.2; color: var(--ink); text-wrap: pretty; text-transform: none; }
 
+  /* Contador de tiempo en vivo (estilo cronómetro) */
+  .live { margin-top: var(--space-6); text-align: center; }
+  .live-kicker { font-family: var(--font-mono); font-size: 10px; letter-spacing: .2em; text-transform: uppercase; color: var(--blue); font-weight: 700; }
+  .live-row { display: flex; align-items: baseline; justify-content: center; gap: 12px; margin-top: 6px; flex-wrap: wrap; }
+  .live-days { font-family: var(--font-body); font-weight: 600; font-size: 15px; color: var(--dim); }
+  .live-days b { font-family: var(--font-display); font-weight: 800; font-size: 28px; letter-spacing: -.02em; color: var(--ink); font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1, "zero" 1; }
+  .live-clock { font-family: var(--font-mono); font-weight: 700; font-size: 28px; letter-spacing: .01em; color: var(--ink); font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1; }
+
   .phrase { margin-top: var(--space-6); }
   .phrase .kicker { font-family: var(--font-body); font-weight: 700; font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--blue); }
   .phrase p { margin: 8px 0 0; font-family: var(--font-display); font-weight: 700; font-size: 19px; line-height: 1.25; color: var(--ink); text-wrap: pretty; }

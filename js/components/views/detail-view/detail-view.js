@@ -29,6 +29,7 @@ export class DetailView extends AppElement {
       <div class="detail">
         ${this._topTpl(vm)}
         ${this._vinylTpl(vm)}
+        ${vm.manual ? '' : this._liveTpl(vm)}
         ${vm.danger ? this._dangerTpl(vm) : ''}
         ${this._phraseTpl(vm)}
         ${this._statsTpl(vm)}
@@ -110,6 +111,18 @@ export class DetailView extends AppElement {
         <div class="section-head" style="margin-top:0"><h6>${t('detail.coverTitle')}</h6><span class="note">${t('detail.coverNote')}</span></div>
         <div class="cover-stage"><canvas id="cover"></canvas></div>
         <button class="btn btn-secondary btn-block cover-share" id="cover-share">${uiIcon('share', 15)} ${t('detail.coverShare')}</button>
+      </div>`;
+  }
+
+  /** @param {object} vm Modelo de vista. @returns {string} Contador de tiempo en vivo. */
+  _liveTpl(vm) {
+    return `
+      <div class="live" id="live">
+        <div class="live-kicker">${t('detail.liveLabel')}</div>
+        <div class="live-row">
+          <span class="live-days"><b id="live-days">${vm.days}</b> ${escapeHtml(vm.dayWord)}</span>
+          <span class="live-clock" id="live-clock">00:00:00</span>
+        </div>
       </div>`;
   }
 
@@ -212,6 +225,7 @@ export class DetailView extends AppElement {
     this._animateOdometer();
     this._initSpinner();
     this._initLive();
+    this._startLiveClock();
     this._initCover();
     // Pre-genera el cartel para compartir sin perder el gesto en iOS.
     this._shareFile = null;
@@ -269,6 +283,29 @@ export class DetailView extends AppElement {
       this._playTimers.push(setTimeout(step, 1100));
     };
     step();
+  }
+
+  /**
+   * Contador de tiempo en vivo (días + HH:MM:SS) desde el inicio de la racha,
+   * refrescado cada segundo. Solo para contadores automáticos (por fecha).
+   */
+  _startLiveClock() {
+    if (!this._c || this._c.mode === 'manual') return;
+    const start = new Date(this._c.start + 'T00:00:00').getTime();
+    if (isNaN(start)) return;
+    const pad = (n) => String(n).padStart(2, '0');
+    const tick = () => {
+      const clock = this.$('#live-clock');
+      if (!clock) { if (this._liveTimer) { clearInterval(this._liveTimer); this._liveTimer = null; } return; }
+      let ms = Date.now() - start; if (ms < 0) ms = 0;
+      const days = Math.floor(ms / 86400000);
+      const rem = ms % 86400000;
+      clock.textContent = `${pad(Math.floor(rem / 3600000))}:${pad(Math.floor((rem % 3600000) / 60000))}:${pad(Math.floor((rem % 60000) / 1000))}`;
+      const d = this.$('#live-days');
+      if (d) d.textContent = String(days);
+    };
+    tick();
+    this._liveTimer = setInterval(tick, 1000);
   }
 
   /** Física del vinilo: giro lento en reposo + arrastre con inercia (flick). */
@@ -368,6 +405,7 @@ export class DetailView extends AppElement {
     if (this._rafSpin) cancelAnimationFrame(this._rafSpin);
     if (this._onOrient) window.removeEventListener('deviceorientation', this._onOrient);
     if (this._playTimers) this._playTimers.forEach(clearTimeout);
+    if (this._liveTimer) clearInterval(this._liveTimer);
     spinStop();
   }
 

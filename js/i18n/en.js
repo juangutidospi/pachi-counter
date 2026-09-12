@@ -101,6 +101,7 @@ export const en = {
     reset: 'I relapsed, back to 0',
     remove: 'Delete',
     minus: 'Correct, subtract 1',
+    liveLabel: 'Running',
     editStart: 'Start date',
     editCount: 'Current count',
     play: 'Play',
