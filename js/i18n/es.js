@@ -166,7 +166,7 @@ export const es = {
     lookLabel: 'Aspecto',
     iconLabel: 'Icono',
     colorLabel: 'Acento',
-    color: { accent: 'Azul', accent2: 'Rojo', light: 'Amarillo', green: 'Verde', teal: 'Turquesa', violet: 'Violeta', magenta: 'Rosa', orange: 'Naranja', deep: 'Negro' },
+    color: { accent: 'Azul', accent2: 'Rojo', light: 'Amarillo', green: 'Verde', teal: 'Turquesa', violet: 'Violeta', magenta: 'Rosa', orange: 'Naranja', coral: 'Coral', rose: 'Frambuesa', plum: 'Ciruela', terra: 'Terracota', lime: 'Lima', cyan: 'Cian', indigo: 'Índigo', slate: 'Pizarra', deep: 'Negro' },
     startLabel: 'Fecha de inicio',
     startToday: 'Hoy',
     startPast: 'Ya llevo días',

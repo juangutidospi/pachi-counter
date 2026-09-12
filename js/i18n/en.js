@@ -166,7 +166,7 @@ export const en = {
     lookLabel: 'Appearance',
     iconLabel: 'Icon',
     colorLabel: 'Accent',
-    color: { accent: 'Blue', accent2: 'Red', light: 'Yellow', green: 'Green', teal: 'Teal', violet: 'Violet', magenta: 'Pink', orange: 'Orange', deep: 'Black' },
+    color: { accent: 'Blue', accent2: 'Red', light: 'Yellow', green: 'Green', teal: 'Teal', violet: 'Violet', magenta: 'Pink', orange: 'Orange', coral: 'Coral', rose: 'Raspberry', plum: 'Plum', terra: 'Terracotta', lime: 'Lime', cyan: 'Cyan', indigo: 'Indigo', slate: 'Slate', deep: 'Black' },
     startLabel: 'Start date',
     startToday: 'Today',
     startPast: 'I already have days',
