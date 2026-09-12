@@ -19,14 +19,15 @@ export const styles = css`
 
   /* Aspa de cierre, fija arriba a la derecha (no se va con el scroll). */
   .close {
-    position: absolute; top: var(--space-4); right: var(--space-6); z-index: 2;
-    width: 34px; height: 34px; display: grid; place-items: center; cursor: pointer;
+    position: absolute; top: 14px; right: var(--space-6); z-index: 6;
+    width: 38px; height: 38px; display: grid; place-items: center; cursor: pointer;
     background: var(--paper); color: var(--ink);
-    border: var(--border-w) solid var(--ink); border-radius: 0;
+    border: var(--border-w) solid var(--ink); border-radius: 50%;
+    box-shadow: 0 2px 7px rgba(17,16,16,.22);
     transition: background .12s ease, color .12s ease, transform .18s cubic-bezier(.34,1.56,.64,1);
   }
   .close:hover { background: var(--ink); color: var(--paper); }
-  .close:active { transform: scale(.9); }
+  .close:active { transform: scale(.88); }
   .close svg { display: block; }
   /* Revelado circular que crece desde el botón «+» (abajo-centro) hacia arriba. */
   .sheet.enter { animation: pc-sheet-pop 1.2s cubic-bezier(.16,1,.3,1) both; transform-origin: bottom center; }
@@ -81,8 +82,39 @@ export const styles = css`
 
   .field { margin-top: var(--space-4); }
   .field.gap6 { margin-top: var(--space-6); }
-  .tail-row { display: flex; align-items: center; gap: var(--space-2); }
-  .tail-row .prefix { font-family: var(--font-body); font-size: 13px; color: var(--dim); flex: none; }
+
+  /* Inputs premium: pozo con relieve (letterpress) + foco con halo. */
+  .sheet .input {
+    min-height: 48px; padding: 13px 15px; font-size: 15px; border-radius: 3px;
+    background: linear-gradient(180deg, color-mix(in srgb, var(--ink) 7%, var(--paper)) 0%, var(--paper) 62%);
+    border: var(--border-w) solid var(--ink);
+    box-shadow: inset 0 2px 4px rgba(17,16,16,.12);
+    transition: box-shadow .15s ease, border-color .15s ease;
+  }
+  .sheet textarea.input { min-height: 88px; }
+  .sheet .input::placeholder { color: color-mix(in srgb, var(--ink) 42%, transparent); }
+  .sheet .input:focus, .sheet .input:focus-visible {
+    border-color: var(--blue); outline: none;
+    box-shadow: inset 0 2px 4px rgba(17,16,16,.06), 0 0 0 3px color-mix(in srgb, var(--blue) 22%, transparent);
+  }
+
+  /* «0 días · …» como un único control con segmento prefijo. */
+  .tail-row {
+    display: flex; align-items: stretch; overflow: hidden; border-radius: 3px;
+    border: var(--border-w) solid var(--ink);
+    background: linear-gradient(180deg, color-mix(in srgb, var(--ink) 7%, var(--paper)) 0%, var(--paper) 62%);
+    box-shadow: inset 0 2px 4px rgba(17,16,16,.12);
+    transition: box-shadow .15s ease, border-color .15s ease;
+  }
+  .tail-row .prefix {
+    display: flex; align-items: center; flex: none; padding: 0 13px;
+    background: color-mix(in srgb, var(--ink) 9%, transparent); border-right: var(--border-w) solid var(--ink);
+    font-family: var(--font-body); font-weight: 700; font-size: 12px; letter-spacing: .04em; color: var(--dim); white-space: nowrap;
+  }
+  .tail-row .input { flex: 1; min-width: 0; min-height: 48px; border: 0; background: transparent; box-shadow: none; border-radius: 0; }
+  .tail-row .input:focus, .tail-row .input:focus-visible { border: 0; box-shadow: none; }
+  .tail-row:focus-within { border-color: var(--blue);
+    box-shadow: inset 0 2px 4px rgba(17,16,16,.06), 0 0 0 3px color-mix(in srgb, var(--blue) 22%, transparent); }
 
   /* — Aspecto: color + icono como fichas redondas (menos bloque, más compacto) — */
   .look .swatches { display: flex; flex-wrap: wrap; gap: 9px; }
