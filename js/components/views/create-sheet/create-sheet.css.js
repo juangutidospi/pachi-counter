@@ -74,33 +74,33 @@ export const styles = css`
   .tail-row { display: flex; align-items: center; gap: var(--space-2); }
   .tail-row .prefix { font-family: var(--font-body); font-size: 13px; color: var(--dim); flex: none; }
 
-  /* — Aspecto: color (swatches) + icono (rejilla) — chips con relieve/esmalte — */
-  .look .swatches { display: grid; grid-template-columns: repeat(9, 1fr); gap: 8px; }
+  /* — Aspecto: color + icono como fichas redondas (menos bloque, más compacto) — */
+  .look .swatches { display: flex; flex-wrap: wrap; gap: 9px; }
   .swatch {
-    position: relative; width: 100%; aspect-ratio: 1 / 1; cursor: pointer; padding: 0;
-    border: var(--border-w) solid var(--ink); border-radius: 0;
-    box-shadow: inset 0 2px 0 rgba(255,255,255,.30), inset 0 -4px 7px rgba(0,0,0,.18);
+    flex: none; width: 30px; height: 30px; cursor: pointer; padding: 0;
+    border: var(--border-w) solid var(--ink); border-radius: 50%;
+    box-shadow: inset 0 2px 0 rgba(255,255,255,.35), inset 0 -3px 6px rgba(0,0,0,.20);
     transition: transform .16s cubic-bezier(.34,1.56,.64,1), box-shadow .14s ease;
   }
   .swatch:hover { transform: translateY(-2px); }
-  .swatch:active { transform: translateY(0) scale(.94); }
+  .swatch:active { transform: scale(.9); }
   .swatch.active { transform: translateY(-2px);
-    box-shadow: inset 0 2px 0 rgba(255,255,255,.30), 0 0 0 2px var(--paper), 0 0 0 4px var(--ink), 3px 4px 0 rgba(17,16,16,.28); }
+    box-shadow: inset 0 2px 0 rgba(255,255,255,.35), 0 0 0 2px var(--paper), 0 0 0 4px var(--ink), 2px 3px 0 rgba(17,16,16,.28); }
 
-  .look .icons { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-top: 12px; }
+  .look .icons { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-top: 12px; }
   .icon-btn {
-    position: relative; width: 100%; aspect-ratio: 1 / 1; display: grid; place-items: center; cursor: pointer;
-    color: var(--ink); border: var(--border-w) solid var(--ink); border-radius: 0;
+    width: 100%; aspect-ratio: 1 / 1; display: grid; place-items: center; cursor: pointer;
+    color: var(--ink); border: var(--border-w) solid var(--ink); border-radius: 50%;
     background: linear-gradient(180deg, var(--paper) 0%, var(--paper-2) 100%);
-    box-shadow: inset 0 1px 0 rgba(255,255,255,.55), inset 0 -3px 6px rgba(17,16,16,.06);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.55), inset 0 -2px 5px rgba(17,16,16,.06);
     transition: transform .16s cubic-bezier(.34,1.56,.64,1), box-shadow .14s ease, background .12s ease, color .12s ease;
   }
-  .icon-btn:hover { transform: translateY(-2px); box-shadow: inset 0 1px 0 rgba(255,255,255,.55), 3px 4px 0 rgba(17,16,16,.18); }
-  .icon-btn:active { transform: translateY(0) scale(.92); }
+  .icon-btn:hover { transform: translateY(-2px); box-shadow: inset 0 1px 0 rgba(255,255,255,.55), 2px 3px 0 rgba(17,16,16,.18); }
+  .icon-btn:active { transform: scale(.9); }
   .icon-btn.active {
     color: var(--on, var(--paper)); border-color: var(--ink); transform: translateY(-2px);
     background: var(--acc, var(--ink));
-    box-shadow: inset 0 2px 0 rgba(255,255,255,.24), inset 0 -6px 11px rgba(0,0,0,.22), 3px 4px 0 rgba(17,16,16,.28);
+    box-shadow: inset 0 2px 0 rgba(255,255,255,.24), inset 0 -4px 9px rgba(0,0,0,.22), 2px 3px 0 rgba(17,16,16,.28);
   }
 
   .hide { display: none !important; }
