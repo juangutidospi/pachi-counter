@@ -29,7 +29,7 @@ export const styles = css`
   .close:active { transform: scale(.9); }
   .close svg { display: block; }
   /* Revelado circular que crece desde el botón «+» (abajo-centro) hacia arriba. */
-  .sheet.enter { animation: pc-sheet-pop .85s cubic-bezier(.16,1,.3,1) both; transform-origin: bottom center; }
+  .sheet.enter { animation: pc-sheet-pop 1.2s cubic-bezier(.16,1,.3,1) both; transform-origin: bottom center; }
   @keyframes pc-sheet-pop {
     from { clip-path: circle(0% at 50% 106%); opacity: .95; transform: translateY(30px) scale(.95); }
     to   { clip-path: circle(175% at 50% 106%); opacity: 1; transform: translateY(0) scale(1); }
@@ -48,13 +48,14 @@ export const styles = css`
     .scrim { animation: none; }
     .sheet.enter { animation: pc-fade .2s ease both; }
   }
-  .grabber { width: 44px; height: 4px; background: var(--ink); margin: 0 auto var(--space-6); }
+  .grabber { position: absolute; top: 9px; left: 50%; transform: translateX(-50%); width: 44px; height: 4px;
+    border-radius: 2px; background: color-mix(in srgb, var(--ink) 45%, transparent); }
 
   /* — Hero: franja con tinte del color elegido + disco esmaltado — */
   .head {
     position: relative; display: flex; align-items: center; gap: 15px;
     margin: calc(-1 * var(--space-4)) calc(-1 * var(--space-6)) var(--space-6);
-    padding: 22px 48px 18px var(--space-6);
+    padding: 28px 48px 18px var(--space-6);
     background: linear-gradient(180deg, color-mix(in srgb, var(--acc, var(--blue)) 16%, var(--paper)) 0%, var(--paper) 100%);
     border-bottom: var(--border-w) solid var(--ink);
   }
