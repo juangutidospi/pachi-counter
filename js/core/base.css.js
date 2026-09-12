@@ -61,14 +61,19 @@ export const base = css`
     letter-spacing: .1em; text-transform: uppercase; margin-bottom: 6px; color: var(--ink);
   }
   .input {
-    width: 100%; min-height: 42px; padding: 9px 12px; font: inherit;
-    font-size: 14px; color: var(--ink); caret-color: var(--blue);
-    background: var(--paper);
-    border: var(--border-w) solid var(--ink); border-radius: 0;
+    width: 100%; min-height: 46px; padding: 12px 14px; font: inherit;
+    font-size: 15px; color: var(--ink); caret-color: var(--blue); border-radius: 3px;
+    background: linear-gradient(180deg, color-mix(in srgb, var(--ink) 7%, var(--paper)) 0%, var(--paper) 62%);
+    border: var(--border-w) solid var(--ink);
+    box-shadow: inset 0 2px 4px rgba(17, 16, 16, 0.12);
+    transition: box-shadow .15s ease, border-color .15s ease;
   }
-  .input::placeholder { color: var(--dim); }
-  .input:focus-visible { border-color: var(--blue); outline: none; box-shadow: inset 0 0 0 1px var(--blue); }
-  textarea.input { min-height: 84px; resize: vertical; }
+  .input::placeholder { color: color-mix(in srgb, var(--ink) 42%, transparent); }
+  .input:focus-visible, .input:focus {
+    border-color: var(--blue); outline: none;
+    box-shadow: inset 0 2px 4px rgba(17, 16, 16, 0.06), 0 0 0 3px color-mix(in srgb, var(--blue) 22%, transparent);
+  }
+  textarea.input { min-height: 88px; resize: vertical; }
 
   /* — segmentos — */
   .seg {

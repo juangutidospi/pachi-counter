@@ -83,21 +83,6 @@ export const styles = css`
   .field { margin-top: var(--space-4); }
   .field.gap6 { margin-top: var(--space-6); }
 
-  /* Inputs premium: pozo con relieve (letterpress) + foco con halo. */
-  .sheet .input {
-    min-height: 48px; padding: 13px 15px; font-size: 15px; border-radius: 3px;
-    background: linear-gradient(180deg, color-mix(in srgb, var(--ink) 7%, var(--paper)) 0%, var(--paper) 62%);
-    border: var(--border-w) solid var(--ink);
-    box-shadow: inset 0 2px 4px rgba(17,16,16,.12);
-    transition: box-shadow .15s ease, border-color .15s ease;
-  }
-  .sheet textarea.input { min-height: 88px; }
-  .sheet .input::placeholder { color: color-mix(in srgb, var(--ink) 42%, transparent); }
-  .sheet .input:focus, .sheet .input:focus-visible {
-    border-color: var(--blue); outline: none;
-    box-shadow: inset 0 2px 4px rgba(17,16,16,.06), 0 0 0 3px color-mix(in srgb, var(--blue) 22%, transparent);
-  }
-
   /* «0 días · …» como un único control con segmento prefijo. */
   .tail-row {
     display: flex; align-items: stretch; overflow: hidden; border-radius: 3px;
