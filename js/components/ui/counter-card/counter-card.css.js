@@ -21,7 +21,7 @@ export const styles = css`
     display: inline-flex; align-items: center; justify-content: center;
     font-family: var(--font-display); font-weight: 800; font-size: 13px; line-height: 1; letter-spacing: -.02em;
     font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1, "zero" 1;
-    border: var(--border-w) solid var(--ink);
+    border: var(--border-w) solid var(--ink); border-radius: 6px;
   }
 
   .info { flex: 1; min-width: 0; }

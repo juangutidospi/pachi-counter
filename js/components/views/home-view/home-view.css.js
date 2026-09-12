@@ -12,7 +12,7 @@ export const styles = css`
     font-family: var(--font-body); font-weight: 600; font-size: 10px; letter-spacing: .18em; text-transform: uppercase;
   }
   .masthead .brand { color: var(--ink); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .masthead .edition { flex: none; white-space: nowrap; color: var(--edition-on, var(--paper)); background: var(--edition, var(--ink)); padding: 3px 8px; letter-spacing: .1em; }
+  .masthead .edition { flex: none; white-space: nowrap; color: var(--edition-on, var(--paper)); background: var(--edition, var(--ink)); padding: 3px 8px; letter-spacing: .1em; border-radius: 5px; }
 
   .topbar { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
   .topbar .date { font-family: var(--font-body); font-size: 10.5px; letter-spacing: .16em; text-transform: uppercase; color: var(--dim); font-weight: 600; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -21,7 +21,7 @@ export const styles = css`
   .gear { flex: none; }
 
   .stats { display: grid; grid-template-columns: repeat(3, 1fr); margin-top: 14px;
-    border: var(--border-w) solid var(--ink); }
+    border: var(--border-w) solid var(--ink); border-radius: var(--radius-md); overflow: hidden; }
   .stat { padding: 10px 10px; min-width: 0; border-right: var(--border-w) solid var(--ink); }
   .stat:last-child { border-right: 0; }
   .stat.hi { background: var(--yellow); }

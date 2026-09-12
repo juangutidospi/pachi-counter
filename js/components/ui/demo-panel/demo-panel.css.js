@@ -4,7 +4,7 @@ import { css } from '../../../core/css.js';
 export const styles = css`
   :host { display: block; width: 100%; }
   .panel {
-    padding: var(--space-4); border: var(--border-w) solid var(--ink); border-radius: 0;
+    padding: var(--space-4); border: var(--border-w) solid var(--ink); border-radius: var(--radius-md);
     display: flex; flex-direction: column; gap: var(--space-3);
   }
   .head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }

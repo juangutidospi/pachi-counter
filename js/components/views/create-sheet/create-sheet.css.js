@@ -63,7 +63,7 @@ export const styles = css`
   .pv-disc {
     flex: none; width: 66px; height: 66px; display: grid; place-items: center;
     background: var(--acc, var(--blue)); color: var(--on, var(--paper));
-    border: var(--border-w) solid var(--ink);
+    border: var(--border-w) solid var(--ink); border-radius: var(--radius-sm);
     box-shadow: inset 0 3px 0 rgba(255,255,255,.28), inset 0 -8px 14px rgba(0,0,0,.24), 5px 5px 0 var(--ink);
     transition: background .18s ease, color .18s ease;
   }
@@ -85,7 +85,7 @@ export const styles = css`
 
   /* «0 días · …» como un único control con segmento prefijo. */
   .tail-row {
-    display: flex; align-items: stretch; overflow: hidden; border-radius: 3px;
+    display: flex; align-items: stretch; overflow: hidden; border-radius: var(--radius-sm);
     border: var(--border-w) solid var(--ink);
     background: linear-gradient(180deg, color-mix(in srgb, var(--ink) 7%, var(--paper)) 0%, var(--paper) 62%);
     box-shadow: inset 0 2px 4px rgba(17,16,16,.12);

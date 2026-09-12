@@ -40,7 +40,7 @@ export const base = css`
     font-family: var(--font-heading); font-weight: 700;
     font-size: 13px; line-height: 1; color: var(--ink); text-transform: uppercase; letter-spacing: .02em;
     background: transparent; border: var(--border-w) solid transparent;
-    padding: 10px 16px; border-radius: 0;
+    padding: 10px 16px; border-radius: var(--radius-sm);
     transition: background .12s ease, color .12s ease, transform .22s cubic-bezier(.34,1.56,.64,1);
   }
   .btn svg { display: block; }
@@ -62,7 +62,7 @@ export const base = css`
   }
   .input {
     width: 100%; min-height: 46px; padding: 12px 14px; font: inherit;
-    font-size: 15px; color: var(--ink); caret-color: var(--blue); border-radius: 3px;
+    font-size: 15px; color: var(--ink); caret-color: var(--blue); border-radius: var(--radius-sm);
     background: linear-gradient(180deg, color-mix(in srgb, var(--ink) 7%, var(--paper)) 0%, var(--paper) 62%);
     border: var(--border-w) solid var(--ink);
     box-shadow: inset 0 2px 4px rgba(17, 16, 16, 0.12);
@@ -78,7 +78,7 @@ export const base = css`
   /* — segmentos — */
   .seg {
     display: inline-flex; overflow: hidden;
-    border: var(--border-w) solid var(--ink); border-radius: 0;
+    border: var(--border-w) solid var(--ink); border-radius: var(--radius-sm);
   }
   .seg-opt {
     display: inline-flex; align-items: center; justify-content: center; gap: 6px;
@@ -94,7 +94,7 @@ export const base = css`
   /* — tarjetas — */
   .card {
     display: flex; flex-direction: column; gap: var(--space-2);
-    padding: var(--space-4); border-radius: 0; background: var(--paper);
+    padding: var(--space-4); border-radius: var(--radius-md); background: var(--paper);
     border: var(--border-w) solid var(--ink);
   }
   .card-title { font-family: var(--font-heading); font-weight: 800; font-size: 18px; line-height: 1; text-transform: uppercase; letter-spacing: -.01em; }
@@ -104,7 +104,7 @@ export const base = css`
   /* — tags — */
   .tag {
     display: inline-flex; align-items: center; font-family: var(--font-body); font-weight: 600;
-    font-size: 10px; letter-spacing: .1em; text-transform: uppercase; padding: 3px 8px; border-radius: 0;
+    font-size: 10px; letter-spacing: .1em; text-transform: uppercase; padding: 3px 8px; border-radius: var(--radius-sm);
   }
   .tag-neutral { background: var(--ink); color: var(--paper); }
 
@@ -116,7 +116,7 @@ export const base = css`
   }
   .dialog {
     width: min(330px, 100%); display: flex; flex-direction: column; gap: var(--space-3);
-    padding: var(--space-6); border-radius: 0;
+    padding: var(--space-6); border-radius: var(--radius-md);
     background: var(--paper); border: var(--border-w) solid var(--ink); box-shadow: var(--shadow-lg);
   }
   .dialog-title { font-family: var(--font-heading); font-weight: 800; font-size: 24px; text-transform: uppercase; letter-spacing: -.02em; }

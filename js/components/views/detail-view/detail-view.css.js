@@ -83,11 +83,11 @@ export const styles = css`
 
   /* carátula generativa */
   .cover-block { margin-top: var(--space-8); }
-  .cover-stage { border: var(--border-w) solid var(--ink); box-shadow: var(--shadow-lg); }
+  .cover-stage { border: var(--border-w) solid var(--ink); border-radius: var(--radius-md); overflow: hidden; box-shadow: var(--shadow-lg); }
   .cover-stage canvas { display: block; width: 100%; }
   .cover-share { margin-top: var(--space-3); gap: 6px; }
 
-  .danger { margin-top: var(--space-6); padding: var(--space-3) var(--space-4); border: var(--border-w) solid var(--red); background: color-mix(in srgb, var(--red) 8%, transparent); }
+  .danger { margin-top: var(--space-6); padding: var(--space-3) var(--space-4); border: var(--border-w) solid var(--red); border-radius: var(--radius-sm); background: color-mix(in srgb, var(--red) 8%, transparent); }
   .danger .danger-kicker { font-family: var(--font-body); font-weight: 700; font-size: 10px; letter-spacing: .16em; text-transform: uppercase; color: var(--red); }
   .danger p { margin: 6px 0 0; font-family: var(--font-display); font-weight: 700; font-size: 16px; line-height: 1.2; color: var(--ink); text-wrap: pretty; text-transform: none; }
 
@@ -95,7 +95,7 @@ export const styles = css`
   .phrase .kicker { font-family: var(--font-body); font-weight: 700; font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--blue); }
   .phrase p { margin: 8px 0 0; font-family: var(--font-display); font-weight: 700; font-size: 19px; line-height: 1.25; color: var(--ink); text-wrap: pretty; }
 
-  .stats3 { display: grid; grid-template-columns: repeat(3, 1fr); margin-top: var(--space-6); border: var(--border-w) solid var(--ink); }
+  .stats3 { display: grid; grid-template-columns: repeat(3, 1fr); margin-top: var(--space-6); border: var(--border-w) solid var(--ink); border-radius: var(--radius-md); overflow: hidden; }
   .stat3 { background: transparent !important; border: 0 !important; border-right: var(--border-w) solid var(--ink) !important;
     border-radius: 0; padding: 12px; gap: 4px; }
   .stat3:last-child { border-right: 0 !important; }
@@ -105,7 +105,7 @@ export const styles = css`
   .stat3 .lbl { font-family: var(--font-body); font-size: 8.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--dim); font-weight: 600; }
 
   .edit-row { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3);
-    margin-top: var(--space-4); padding: 10px var(--space-4); border: var(--border-w) solid var(--ink); }
+    margin-top: var(--space-4); padding: 10px var(--space-4); border: var(--border-w) solid var(--ink); border-radius: var(--radius-sm); }
   .edit-row label { font-family: var(--font-body); font-weight: 600; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--dim); }
   .edit-row .input { width: auto; max-width: 170px; min-height: 38px; }
 
@@ -116,7 +116,7 @@ export const styles = css`
   .ladder-title { margin: var(--space-8) 0 var(--space-3); color: var(--color-neutral-500); }
   .ladder { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
   .mtile {
-    position: relative; aspect-ratio: 1; border: var(--border-w) solid var(--ink); background: var(--paper);
+    position: relative; aspect-ratio: 1; border: var(--border-w) solid var(--ink); border-radius: var(--radius-sm); background: var(--paper);
     display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
   }
   .mtile .mnum { font-family: var(--font-display); font-weight: 800; font-size: 21px; line-height: 1;

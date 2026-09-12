@@ -22,7 +22,7 @@ export const styles = css`
 
   .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: var(--space-4); }
   .rec {
-    border: var(--border-w) solid var(--ink); padding: var(--space-4); display: flex; flex-direction: column; align-items: center; text-align: center;
+    border: var(--border-w) solid var(--ink); border-radius: var(--radius-md); padding: var(--space-4); display: flex; flex-direction: column; align-items: center; text-align: center;
     animation: pc-up .4s cubic-bezier(.16,1,.3,1) both;
   }
   .rec .mini { width: 96px; height: 96px; filter: drop-shadow(0 3px 6px rgba(17,16,16,.28)); }
