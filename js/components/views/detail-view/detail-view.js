@@ -114,14 +114,18 @@ export class DetailView extends AppElement {
       </div>`;
   }
 
-  /** @param {object} vm Modelo de vista. @returns {string} Contador de tiempo en vivo. */
+  /** @param {object} vm Modelo de vista. @returns {string} Contador de tiempo en vivo (desglose). */
   _liveTpl(vm) {
     return `
       <div class="live" id="live">
         <div class="live-kicker">${t('detail.liveLabel')}</div>
-        <div class="live-row">
-          <span class="live-days"><b id="live-days">${vm.days}</b> ${escapeHtml(vm.dayWord)}</span>
-          <span class="live-clock" id="live-clock">00:00:00</span>
+        <div class="live-grid">
+          <div class="lseg big"><b id="lv-d">${vm.days}</b><span>${escapeHtml(t('word.days'))}</span></div>
+          <div class="clockgrp">
+            <div class="lseg"><b id="lv-h">00</b><span>${escapeHtml(t('detail.liveH'))}</span></div><i>:</i>
+            <div class="lseg"><b id="lv-m">00</b><span>${escapeHtml(t('detail.liveM'))}</span></div><i>:</i>
+            <div class="lseg"><b id="lv-s">00</b><span>${escapeHtml(t('detail.liveS'))}</span></div>
+          </div>
         </div>
       </div>`;
   }
@@ -294,15 +298,18 @@ export class DetailView extends AppElement {
     const start = new Date(this._c.start + 'T00:00:00').getTime();
     if (isNaN(start)) return;
     const pad = (n) => String(n).padStart(2, '0');
+    const reduce = typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const set = (id, v) => { const el = this.$(id); if (el) el.textContent = v; };
     const tick = () => {
-      const clock = this.$('#live-clock');
-      if (!clock) { if (this._liveTimer) { clearInterval(this._liveTimer); this._liveTimer = null; } return; }
+      const s = this.$('#lv-s');
+      if (!s) { if (this._liveTimer) { clearInterval(this._liveTimer); this._liveTimer = null; } return; }
       let ms = Date.now() - start; if (ms < 0) ms = 0;
-      const days = Math.floor(ms / 86400000);
       const rem = ms % 86400000;
-      clock.textContent = `${pad(Math.floor(rem / 3600000))}:${pad(Math.floor((rem % 3600000) / 60000))}:${pad(Math.floor((rem % 60000) / 1000))}`;
-      const d = this.$('#live-days');
-      if (d) d.textContent = String(days);
+      set('#lv-d', String(Math.floor(ms / 86400000)));
+      set('#lv-h', pad(Math.floor(rem / 3600000)));
+      set('#lv-m', pad(Math.floor((rem % 3600000) / 60000)));
+      s.textContent = pad(Math.floor((rem % 60000) / 1000));
+      if (!reduce) { s.classList.remove('pulse'); void s.offsetWidth; s.classList.add('pulse'); }
     };
     tick();
     this._liveTimer = setInterval(tick, 1000);

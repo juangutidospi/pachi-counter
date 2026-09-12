@@ -91,13 +91,25 @@ export const styles = css`
   .danger .danger-kicker { font-family: var(--font-body); font-weight: 700; font-size: 10px; letter-spacing: .16em; text-transform: uppercase; color: var(--red); }
   .danger p { margin: 6px 0 0; font-family: var(--font-display); font-weight: 700; font-size: 16px; line-height: 1.2; color: var(--ink); text-wrap: pretty; text-transform: none; }
 
-  /* Contador de tiempo en vivo (estilo cronómetro) */
+  /* Contador de tiempo en vivo — desglose hero (días · h : m : s) */
   .live { margin-top: var(--space-6); text-align: center; }
   .live-kicker { font-family: var(--font-mono); font-size: 10px; letter-spacing: .2em; text-transform: uppercase; color: var(--blue); font-weight: 700; }
-  .live-row { display: flex; align-items: baseline; justify-content: center; gap: 12px; margin-top: 6px; flex-wrap: wrap; }
-  .live-days { font-family: var(--font-body); font-weight: 600; font-size: 15px; color: var(--dim); }
-  .live-days b { font-family: var(--font-display); font-weight: 800; font-size: 28px; letter-spacing: -.02em; color: var(--ink); font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1, "zero" 1; }
-  .live-clock { font-family: var(--font-mono); font-weight: 700; font-size: 28px; letter-spacing: .01em; color: var(--ink); font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1; }
+  .live-grid { display: flex; align-items: stretch; justify-content: center; gap: 8px; margin-top: 10px; }
+  .live-grid .clockgrp { display: flex; align-items: center; gap: 8px; }
+  .live-grid .clockgrp i { font-family: var(--font-mono); font-weight: 700; font-size: 26px; line-height: 1; color: var(--color-neutral-600); font-style: normal; }
+  .live-grid .lseg {
+    display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 56px; padding: 9px 8px 7px;
+    border: var(--border-w) solid var(--ink); border-radius: var(--radius-sm);
+    background: linear-gradient(180deg, color-mix(in srgb, var(--ink) 6%, var(--paper)) 0%, var(--paper) 62%);
+    box-shadow: inset 0 2px 4px rgba(17,16,16,.10);
+  }
+  .live-grid .lseg b { font-family: var(--font-mono); font-weight: 700; font-size: 30px; line-height: 1; color: var(--ink); font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1; }
+  .live-grid .lseg.big { padding-inline: 12px; }
+  .live-grid .lseg.big b { font-family: var(--font-display); font-weight: 800; font-size: 40px; letter-spacing: -.02em; }
+  .live-grid .lseg span { font-family: var(--font-mono); font-size: 9px; letter-spacing: .14em; text-transform: uppercase; color: var(--dim); margin-top: 6px; }
+  .live-grid .lseg b.pulse { display: inline-block; animation: pc-livepulse .45s cubic-bezier(.34,1.56,.64,1); }
+  @keyframes pc-livepulse { 0% { transform: scale(1); } 35% { transform: scale(1.16); color: var(--blue); } 100% { transform: scale(1); } }
+  @media (prefers-reduced-motion: reduce) { .live-grid .lseg b.pulse { animation: none; } }
 
   .phrase { margin-top: var(--space-6); }
   .phrase .kicker { font-family: var(--font-body); font-weight: 700; font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--blue); }

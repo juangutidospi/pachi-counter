@@ -102,6 +102,7 @@ export const es = {
     remove: 'Eliminar',
     minus: 'Corregir, restar 1',
     liveLabel: 'En marcha',
+    liveH: 'Horas', liveM: 'Min', liveS: 'Seg',
     editStart: 'Fecha de inicio',
     editCount: 'Cuenta actual',
     play: 'Reproducir',
