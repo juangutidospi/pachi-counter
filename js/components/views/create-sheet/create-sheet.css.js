@@ -11,8 +11,9 @@ export const styles = css`
   .sheet {
     position: relative; display: flex; flex-direction: column;
     max-height: 94%; overflow: hidden;
-    background: var(--paper); border-top: var(--border-w) solid var(--ink);
-    box-shadow: 0 -6px 0 rgba(17,16,16,.12);
+    background: var(--paper); border: var(--border-w) solid var(--ink); border-bottom: 0;
+    border-radius: 20px 20px 0 0;
+    box-shadow: 0 -8px 24px rgba(17,16,16,.16);
   }
   .sheet-scroll { flex: 1; min-height: 0; overflow: auto; padding: var(--space-4) var(--space-6) 46px; }
 
@@ -49,19 +50,27 @@ export const styles = css`
   }
   .grabber { width: 44px; height: 4px; background: var(--ink); margin: 0 auto var(--space-6); }
 
-  /* — Cabecera con vista previa viva del disco — */
-  .head { display: flex; align-items: center; gap: 14px; margin-bottom: var(--space-2); padding-right: 42px; }
+  /* — Hero: franja con tinte del color elegido + disco esmaltado — */
+  .head {
+    position: relative; display: flex; align-items: center; gap: 15px;
+    margin: calc(-1 * var(--space-4)) calc(-1 * var(--space-6)) var(--space-6);
+    padding: 22px 48px 18px var(--space-6);
+    background: linear-gradient(180deg, color-mix(in srgb, var(--acc, var(--blue)) 16%, var(--paper)) 0%, var(--paper) 100%);
+    border-bottom: var(--border-w) solid var(--ink);
+  }
   .pv-disc {
-    flex: none; width: 62px; height: 62px; display: grid; place-items: center;
+    flex: none; width: 66px; height: 66px; display: grid; place-items: center;
     background: var(--acc, var(--blue)); color: var(--on, var(--paper));
-    border: var(--border-w) solid var(--ink); box-shadow: 5px 5px 0 var(--ink);
+    border: var(--border-w) solid var(--ink);
+    box-shadow: inset 0 3px 0 rgba(255,255,255,.28), inset 0 -8px 14px rgba(0,0,0,.24), 5px 5px 0 var(--ink);
     transition: background .18s ease, color .18s ease;
   }
-  .pv-disc svg { width: 30px; height: 30px; }
+  .pv-disc svg { width: 31px; height: 31px; }
   .head-txt { min-width: 0; flex: 1; }
-  .kicker { display: block; font-family: var(--font-body); font-weight: 700; font-size: 10px;
-    letter-spacing: .2em; text-transform: uppercase; color: var(--red); }
-  .pv-title { margin: 4px 0 0; font-family: var(--font-display); font-weight: 800; font-size: 24px;
+  .kicker { display: inline-block; background: var(--red); color: var(--paper); padding: 2px 7px;
+    font-family: var(--font-body); font-weight: 700; font-size: 9px;
+    letter-spacing: .16em; text-transform: uppercase; }
+  .pv-title { margin: 7px 0 0; font-family: var(--font-display); font-weight: 800; font-size: 24px;
     line-height: .95; text-transform: uppercase; letter-spacing: -.02em; color: var(--ink);
     display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
     overflow-wrap: anywhere; }
