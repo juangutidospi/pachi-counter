@@ -98,13 +98,10 @@ export const styles = css`
   .live-grid .clockgrp { display: flex; align-items: center; gap: 8px; }
   .live-grid .clockgrp i { font-family: var(--font-mono); font-weight: 700; font-size: 26px; line-height: 1; color: var(--color-neutral-600); font-style: normal; }
   .live-grid .lseg {
-    display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 56px; padding: 9px 8px 7px;
-    border: var(--border-w) solid var(--ink); border-radius: var(--radius-sm);
-    background: linear-gradient(180deg, color-mix(in srgb, var(--ink) 6%, var(--paper)) 0%, var(--paper) 62%);
-    box-shadow: inset 0 2px 4px rgba(17,16,16,.10);
+    display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 50px; padding: 0 4px;
   }
   .live-grid .lseg b { font-family: var(--font-mono); font-weight: 700; font-size: 30px; line-height: 1; color: var(--ink); font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1; }
-  .live-grid .lseg.big { padding-inline: 12px; }
+  .live-grid .lseg.big { padding-inline: 6px; }
   .live-grid .lseg.big b { font-family: var(--font-display); font-weight: 800; font-size: 40px; letter-spacing: -.02em; }
   .live-grid .lseg span { font-family: var(--font-mono); font-size: 9px; letter-spacing: .14em; text-transform: uppercase; color: var(--dim); margin-top: 6px; }
   .live-grid .lseg b.pulse { display: inline-block; animation: pc-livepulse .45s cubic-bezier(.34,1.56,.64,1); }
