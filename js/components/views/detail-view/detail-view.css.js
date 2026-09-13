@@ -130,20 +130,18 @@ export const styles = css`
   .section-head h6 { margin: 0; color: var(--ink); }
   .section-head .note { font-family: var(--font-body); font-size: 11px; color: var(--dim); }
 
-  .ladder-title { margin: var(--space-8) 0 var(--space-3); color: var(--color-neutral-500); }
-  .ladder { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
-  .mtile {
-    position: relative; aspect-ratio: 1; border: var(--border-w) solid var(--ink); border-radius: var(--radius-sm); background: var(--paper);
-    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
-  }
-  .mtile .mnum { font-family: var(--font-display); font-weight: 800; font-size: 21px; line-height: 1;
-    letter-spacing: -.02em; color: var(--dim); font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1, "zero" 1; }
-  .mtile .munit { font-family: var(--font-body); font-weight: 600; font-size: 8px; letter-spacing: .12em; text-transform: uppercase; color: var(--dim); }
-  .mtile .chk { position: absolute; top: 4px; right: 6px; font-size: 10px; font-weight: 800; }
-  .mtile.done .mnum { color: inherit; }
-  .mtile.done .munit { color: inherit; opacity: .8; }
-  .mtile.next { box-shadow: inset 0 0 0 3px var(--blue); }
-  .mtile.next .mnum, .mtile.next .munit { color: var(--blue); }
+  /* Hitos como medallas + barra de progreso */
+  .ladder-head { display: flex; align-items: baseline; justify-content: space-between; margin: var(--space-8) 0 var(--space-2); }
+  .ladder-title { margin: 0; color: var(--color-neutral-500); }
+  .lad-count { font-family: var(--font-mono); font-weight: 700; font-size: 12px; color: var(--dim); }
+  .lad-bar { height: 8px; border: var(--border-w) solid var(--ink); border-radius: 999px; overflow: hidden; background: var(--paper); }
+  .lad-bar span { display: block; height: 100%; background: var(--blue); border-radius: 999px; transition: width .5s cubic-bezier(.16,1,.3,1); }
+  .medals { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px 8px; margin-top: var(--space-4); }
+  .medal { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .medal-cv { width: 100%; max-width: 78px; aspect-ratio: 1; display: block; }
+  .medal-lb { font-family: var(--font-body); font-weight: 700; font-size: 9.5px; letter-spacing: .03em; text-transform: uppercase; color: var(--dim); text-align: center; }
+  .medal.done .medal-lb { color: var(--ink); }
+  .medal.next .medal-lb { color: var(--blue); }
 
   .note-block { margin-top: var(--space-8); }
 

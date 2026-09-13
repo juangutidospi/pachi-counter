@@ -6,6 +6,8 @@ import { uiIcon } from '../../../core/icons.js';
 import { escapeHtml } from '../../../core/escape-html.js';
 import { buildPosterFile, buildCoverFile, shareOrSave } from '../../../core/share-card.js';
 import { drawCover } from '../../../core/cover-art.js';
+import { drawMedal } from '../../../core/medal-art.js';
+import { counterHex } from '../../../core/mural-art.js';
 import { grooveTexture, seedAngle } from '../../../core/groove-seed.js';
 import { spin, spinStop, playChime } from '../../../core/sound.js';
 import { haptic } from '../../../core/haptics.js';
@@ -169,17 +171,19 @@ export class DetailView extends AppElement {
       </div>`;
   }
 
-  /** @param {object} vm Modelo de vista. @returns {string} Rejilla compacta de hitos. */
+  /** @param {object} vm Modelo de vista. @returns {string} Hitos como medallas + progreso. */
   _ladderTpl(vm) {
     return `
-      <h6 class="ladder-title">${t('detail.milestonesTitle')}</h6>
-      <div class="ladder">
-        ${vm.ladder.map((m) => `
-          <div class="mtile ${m.done ? 'done' : ''} ${m.isNext ? 'next' : ''}"
-            style="${m.done ? `background:${vm.color};color:${vm.on}` : ''}" title="${escapeHtml(m.title)}">
-            ${m.done ? '<span class="chk" aria-hidden="true">✓</span>' : ''}
-            <span class="mnum">${m.m}</span>
-            <span class="munit">${escapeHtml(m.unit)}</span>
+      <div class="ladder-head">
+        <h6 class="ladder-title">${t('detail.milestonesTitle')}</h6>
+        <span class="lad-count">${vm.reached}/${vm.total}</span>
+      </div>
+      <div class="lad-bar"><span style="width:${vm.reachedPct}%"></span></div>
+      <div class="medals">
+        ${vm.ladder.map((m, i) => `
+          <div class="medal ${m.done ? 'done' : ''} ${m.isNext ? 'next' : ''}" title="${escapeHtml(m.title)}">
+            <canvas class="medal-cv" data-i="${i}" data-day="${m.m}" data-done="${m.done ? 1 : 0}" data-next="${m.isNext ? 1 : 0}"></canvas>
+            <span class="medal-lb">${m.m} ${escapeHtml(m.unit)}</span>
           </div>`).join('')}
       </div>`;
   }
@@ -230,10 +234,24 @@ export class DetailView extends AppElement {
     this._initSpinner();
     this._initLive();
     this._startLiveClock();
+    this._drawMedals();
     this._initCover();
     // Pre-genera el cartel para compartir sin perder el gesto en iOS.
     this._shareFile = null;
     buildPosterFile(this._c).then((file) => { this._shareFile = file; });
+  }
+
+  /** Dibuja las medallas de hito (logradas en color, pendientes en gris). */
+  _drawMedals() {
+    if (!this._c) return;
+    const { fill, on } = counterHex(this._c.color);
+    const dpr = window.devicePixelRatio || 1;
+    this.$$('.medal-cv').forEach((cv) => {
+      const w = cv.clientWidth || 72;
+      cv.width = Math.round(w * dpr); cv.height = Math.round(w * dpr);
+      const ctx = cv.getContext('2d'); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      drawMedal(ctx, w, w, { day: +cv.dataset.day, reached: cv.dataset.done === '1', next: cv.dataset.next === '1', fill, on });
+    });
   }
 
   /** Dibuja la carátula generativa y pre-genera su imagen para compartir. */
@@ -515,6 +533,9 @@ export class DetailView extends AppElement {
       seedAngle: seedAngle(c.id || c.name),
       progressPct: (pct * 100).toFixed(1),
       labelSize: digits <= 2 ? '40px' : digits === 3 ? '30px' : '23px',
+      reached: ladder.filter((m) => m <= days).length,
+      total: ladder.length,
+      reachedPct: (ladder.length ? (ladder.filter((m) => m <= days).length / ladder.length) * 100 : 0).toFixed(1),
       ladder: ladder.map((m) => {
         const done = m <= days;
         return {
