@@ -4,8 +4,7 @@ import { router } from '../../../core/router.js';
 import { t } from '../../../core/i18n.js';
 import { uiIcon } from '../../../core/icons.js';
 import { escapeHtml } from '../../../core/escape-html.js';
-import { buildPosterFile, buildCoverFile, shareOrSave } from '../../../core/share-card.js';
-import { drawCover } from '../../../core/cover-art.js';
+import { buildPosterFile, shareOrSave } from '../../../core/share-card.js';
 import { drawMedal } from '../../../core/medal-art.js';
 import { counterHex } from '../../../core/mural-art.js';
 import { grooveTexture, seedAngle } from '../../../core/groove-seed.js';
@@ -37,7 +36,6 @@ export class DetailView extends AppElement {
         ${this._statsTpl(vm)}
         ${this._editTpl(vm)}
         ${this._ladderTpl(vm)}
-        ${this._coverTpl(vm)}
         ${this._noteTpl(vm)}
         ${this._actionsTpl}
       </div>`;
@@ -103,16 +101,6 @@ export class DetailView extends AppElement {
           <button class="btn btn-secondary" id="play">▶ ${t('detail.play')}</button>
           <button class="btn btn-secondary" id="year">${t('detail.year')}</button>
         </div>
-      </div>`;
-  }
-
-  /** @param {object} vm Modelo de vista. @returns {string} Sección de carátula generativa. */
-  _coverTpl(vm) {
-    return `
-      <div class="cover-block">
-        <div class="section-head" style="margin-top:0"><h6>${t('detail.coverTitle')}</h6><span class="note">${t('detail.coverNote')}</span></div>
-        <div class="cover-stage"><canvas id="cover"></canvas></div>
-        <button class="btn btn-secondary btn-block cover-share" id="cover-share">${uiIcon('share', 15)} ${t('detail.coverShare')}</button>
       </div>`;
   }
 
@@ -182,7 +170,7 @@ export class DetailView extends AppElement {
       <div class="medals">
         ${vm.ladder.map((m, i) => `
           <div class="medal ${m.done ? 'done' : ''} ${m.isNext ? 'next' : ''}" title="${escapeHtml(m.title)}">
-            <canvas class="medal-cv" data-i="${i}" data-day="${m.m}" data-done="${m.done ? 1 : 0}" data-next="${m.isNext ? 1 : 0}"></canvas>
+            <canvas class="medal-cv" data-i="${i}" data-day="${m.m}" data-done="${m.done ? 1 : 0}" data-next="${m.isNext ? 1 : 0}" data-last="${i === vm.ladder.length - 1 ? 1 : 0}"></canvas>
             <span class="medal-lb">${m.m} ${escapeHtml(m.unit)}</span>
           </div>`).join('')}
       </div>`;
@@ -235,7 +223,6 @@ export class DetailView extends AppElement {
     this._initLive();
     this._startLiveClock();
     this._drawMedals();
-    this._initCover();
     // Pre-genera el cartel para compartir sin perder el gesto en iOS.
     this._shareFile = null;
     buildPosterFile(this._c).then((file) => { this._shareFile = file; });
@@ -250,27 +237,7 @@ export class DetailView extends AppElement {
       const w = cv.clientWidth || 72;
       cv.width = Math.round(w * dpr); cv.height = Math.round(w * dpr);
       const ctx = cv.getContext('2d'); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      drawMedal(ctx, w, w, { day: +cv.dataset.day, reached: cv.dataset.done === '1', next: cv.dataset.next === '1', fill, on });
-    });
-  }
-
-  /** Dibuja la carátula generativa y pre-genera su imagen para compartir. */
-  _initCover() {
-    const canvas = this.$('#cover');
-    if (!canvas) return;
-    const dpr = window.devicePixelRatio || 1;
-    const w = canvas.clientWidth || 300;
-    canvas.style.height = w + 'px';
-    canvas.width = Math.round(w * dpr); canvas.height = Math.round(w * dpr);
-    const ctx = canvas.getContext('2d');
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    drawCover(ctx, w, w, this._c, 0);
-    this._coverFile = null;
-    buildCoverFile(this._c).then((f) => { this._coverFile = f; });
-    this.on(this.$('#cover-share'), 'click', () => {
-      const done = (r) => { if (r === 'saved') router.flash(t('toast.imgSaved')); else if (r === 'error') router.flash(t('toast.imgFail')); };
-      if (this._coverFile) shareOrSave(this._coverFile, this._c.name).then(done);
-      else buildCoverFile(this._c).then((f) => shareOrSave(f, this._c.name).then(done));
+      drawMedal(ctx, w, w, { day: +cv.dataset.day, reached: cv.dataset.done === '1', next: cv.dataset.next === '1', last: cv.dataset.last === '1', fill, on });
     });
   }
 
