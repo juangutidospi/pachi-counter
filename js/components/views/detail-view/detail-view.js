@@ -243,29 +243,43 @@ export class DetailView extends AppElement {
       return { ctx, w, h };
     };
     let { ctx, w, h } = fit();
-    const cols = ['#e5342a', '#2340d8', '#f4c020', '#1f9d57', '#d9a520', '#6a3de8'];
+    const cols = ['#e5342a', '#2340d8', '#f4c020', '#1f9d57', '#d9a520', '#6a3de8', '#0c9aa2', '#e8543a', '#f7f2e6'];
     const rnd = (a, b) => a + Math.random() * (b - a);
-    const N = Math.max(28, Math.min(70, Math.round(h / 18)));
-    const P = Array.from({ length: N }, () => ({
-      x: rnd(0, w), y: rnd(-h, h), s: rnd(6, 12), vy: rnd(18, 46), rot: rnd(0, 6.28), vr: rnd(-2, 2),
-      col: cols[(Math.random() * cols.length) | 0], kind: (Math.random() * 3) | 0, sway: rnd(0.5, 1.6), ph: rnd(0, 6.28),
-    }));
-    const piece = (p) => {
-      ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rot); ctx.fillStyle = p.col; ctx.globalAlpha = 0.85;
-      if (p.kind === 0) ctx.fillRect(-p.s / 2, -p.s / 2, p.s, p.s);
-      else if (p.kind === 1) { ctx.beginPath(); ctx.arc(0, 0, p.s / 2, 0, 6.2832); ctx.fill(); }
-      else { ctx.beginPath(); ctx.moveTo(-p.s / 2, p.s / 2); ctx.lineTo(0, -p.s / 2); ctx.lineTo(p.s / 2, p.s / 2); ctx.closePath(); ctx.fill(); }
+    const N = Math.max(90, Math.min(200, Math.round(w * h / 5200)));
+    const make = (top) => {
+      const z = rnd(0.5, 1.25); // profundidad → tamaño/velocidad/opacidad (parallax)
+      return {
+        x: rnd(0, w), y: top ? rnd(-h * 0.6, -6) : rnd(-h, h), z,
+        s: rnd(7, 15) * z, vy: rnd(28, 70) * z, drift: rnd(-10, 10),
+        rot: rnd(0, 6.28), vr: rnd(-3.4, 3.4), flip: rnd(0, 6.28), vf: rnd(2, 6),
+        col: cols[(Math.random() * cols.length) | 0], kind: (Math.random() * 5) | 0,
+        sway: rnd(6, 20), amp: rnd(6, 22), ph: rnd(0, 6.28),
+      };
+    };
+    const P = Array.from({ length: N }, () => make(false));
+    const piece = (p, ts) => {
+      ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rot);
+      ctx.scale(1, Math.cos(p.flip)); // giro 3D (destella al voltear)
+      ctx.globalAlpha = 0.55 + 0.4 * (p.z - 0.5); ctx.fillStyle = p.col;
+      const s = p.s;
+      if (p.kind === 0) ctx.fillRect(-s / 2, -s / 2, s, s);
+      else if (p.kind === 1) { ctx.beginPath(); ctx.arc(0, 0, s / 2, 0, 6.2832); ctx.fill(); }
+      else if (p.kind === 2) { ctx.beginPath(); ctx.moveTo(-s / 2, s / 2); ctx.lineTo(0, -s / 2); ctx.lineTo(s / 2, s / 2); ctx.closePath(); ctx.fill(); }
+      else if (p.kind === 3) ctx.fillRect(-s * 0.22, -s, s * 0.44, s * 2); // serpentina
+      else { ctx.beginPath(); ctx.arc(0, 0, s / 2, 0, 6.2832); ctx.fill(); ctx.globalCompositeOperation = 'destination-out'; ctx.beginPath(); ctx.arc(0, 0, s / 4, 0, 6.2832); ctx.fill(); } // aro
       ctx.restore();
     };
-    if (reduce) { ctx.clearRect(0, 0, w, h); P.forEach(piece); return; }
+    if (reduce) { ctx.clearRect(0, 0, w, h); P.forEach((p) => piece(p, 0)); return; }
     let last = 0;
     const loop = (ts) => {
       const dt = last ? Math.min(0.05, (ts - last) / 1000) : 0.016; last = ts;
       ctx.clearRect(0, 0, w, h);
       for (const p of P) {
-        p.y += p.vy * dt; p.rot += p.vr * dt; p.x += Math.sin(ts / 1000 * p.sway + p.ph) * 0.4;
-        if (p.y - p.s > h) { p.y = -p.s; p.x = rnd(0, w); }
-        piece(p);
+        p.y += p.vy * dt; p.rot += p.vr * dt; p.flip += p.vf * dt;
+        p.x += (p.drift + Math.sin(ts / 1000 * (p.sway / 6) + p.ph) * p.amp) * dt;
+        if (p.y - p.s > h) { Object.assign(p, make(true)); }
+        else if (p.x < -20) p.x = w + 20; else if (p.x > w + 20) p.x = -20;
+        piece(p, ts);
       }
       this._confettiRaf = requestAnimationFrame(loop);
     };
