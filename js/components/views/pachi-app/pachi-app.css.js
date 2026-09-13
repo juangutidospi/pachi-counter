@@ -107,7 +107,7 @@ export const styles = css`
     display: grid; align-items: end; justify-items: center; padding-bottom: 92px; pointer-events: none;
   }
   .toast {
-    max-width: 84%; padding: 10px 16px; border-radius: 0;
+    max-width: 84%; padding: 10px 16px; border-radius: var(--radius-sm);
     background: var(--ink); color: var(--paper); font-family: var(--font-body); font-weight: 500; font-size: 12.5px;
     box-shadow: 4px 4px 0 var(--blue); text-align: center; animation: pc-toast-in .25s ease both;
   }

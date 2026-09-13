@@ -39,9 +39,8 @@ export class CreateSheet extends AppElement {
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square"><path d="M6 6l12 12M18 6 6 18"></path></svg>
           </button>
           <div class="sheet-scroll">
-          <div class="grabber"></div>
-
           <header class="head">
+            <span class="grabber" aria-hidden="true"></span>
             <div class="pv-disc" id="pv-disc">${counterIcon(d.icon, 30)}</div>
             <div class="head-txt">
               <span class="kicker">${t('create.badge')}</span>

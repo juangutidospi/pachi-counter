@@ -3,7 +3,9 @@ import { css } from '../../../core/css.js';
 /** Estilos de la vista de detalle — Bauhaus. */
 export const styles = css`
   :host { display: block; }
-  .detail { padding: 44px 22px 108px; animation: pc-fade .3s ease both; container-type: inline-size; }
+  .detail { padding: 44px 22px 108px; animation: pc-fade .3s ease both; container-type: inline-size; position: relative; isolation: isolate; }
+  /* confeti de celebración de fondo (racha de un año) */
+  .confetti { position: absolute; inset: 0; z-index: -1; pointer-events: none; }
 
   .top { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); flex-wrap: wrap; }
   .top .back { gap: 4px; margin-left: -4px; }
@@ -16,6 +18,12 @@ export const styles = css`
     transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); transition: transform .18s ease; }
   .vinyl.dragging { cursor: grabbing; transition: none; }
   .vinyl svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+  /* Cuerpo del disco: negro con material (luz arriba-izquierda) + sombra. */
+  .vinyl .vinyl-base { position: absolute; inset: 0; border-radius: 50%; z-index: 0;
+    background: radial-gradient(circle at 36% 34%, #26221e 0%, #141210 55%, #050505 100%);
+    border: var(--border-w) solid var(--ink);
+    box-shadow: 0 12px 26px rgba(17,16,16,.34), inset 0 0 34px rgba(0,0,0,.55); }
 
   /* Vinilo vivo: brillo especular que sigue al puntero/giroscopio. */
   .vinyl .glint { position: absolute; inset: 0; border-radius: 50%; overflow: hidden; pointer-events: none;
@@ -46,8 +54,11 @@ export const styles = css`
     box-shadow: 0 0 0 4px var(--paper);
     animation: pc-hub-pop .6s cubic-bezier(.34,1.56,.64,1) .15s both;
   }
-  .vinyl .label .num { font-family: var(--font-display); font-weight: 800; line-height: .9; letter-spacing: -.005em; font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1, "zero" 1; }
-  .vinyl .label .tail { font-family: var(--font-body); font-weight: 600; font-size: 8.5px; letter-spacing: .1em; text-transform: uppercase; margin-top: 5px; opacity: .85; padding: 0 6px; }
+  .vinyl .label { isolation: isolate; }
+  .vinyl .label::before { content: ""; position: absolute; inset: 0; border-radius: 50%; z-index: 0; pointer-events: none;
+    background: radial-gradient(ellipse at 42% 26%, rgba(255,255,255,.32), rgba(255,255,255,0) 58%); }
+  .vinyl .label .num { position: relative; z-index: 1; font-family: var(--font-display); font-weight: 800; line-height: .9; letter-spacing: -.005em; font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1, "zero" 1; }
+  .vinyl .label .tail { position: relative; z-index: 1; font-family: var(--font-body); font-weight: 600; font-size: 8.5px; letter-spacing: .1em; text-transform: uppercase; margin-top: 5px; opacity: .85; padding: 0 6px; }
 
   /* brazo de tocadiscos: cae sobre el disco al abrir */
   .vinyl .tonearm { pointer-events: none; }
@@ -74,19 +85,36 @@ export const styles = css`
 
   /* carátula generativa */
   .cover-block { margin-top: var(--space-8); }
-  .cover-stage { border: var(--border-w) solid var(--ink); box-shadow: var(--shadow-lg); }
+  .cover-stage { border: var(--border-w) solid var(--ink); border-radius: var(--radius-md); overflow: hidden; box-shadow: var(--shadow-lg); }
   .cover-stage canvas { display: block; width: 100%; }
   .cover-share { margin-top: var(--space-3); gap: 6px; }
 
-  .danger { margin-top: var(--space-6); padding: var(--space-3) var(--space-4); border: var(--border-w) solid var(--red); background: color-mix(in srgb, var(--red) 8%, transparent); }
+  .danger { margin-top: var(--space-6); padding: var(--space-3) var(--space-4); border: var(--border-w) solid var(--red); border-radius: var(--radius-sm); background: color-mix(in srgb, var(--red) 8%, transparent); }
   .danger .danger-kicker { font-family: var(--font-body); font-weight: 700; font-size: 10px; letter-spacing: .16em; text-transform: uppercase; color: var(--red); }
   .danger p { margin: 6px 0 0; font-family: var(--font-display); font-weight: 700; font-size: 16px; line-height: 1.2; color: var(--ink); text-wrap: pretty; text-transform: none; }
 
-  .phrase { margin-top: var(--space-6); padding-left: 14px; border-left: 6px solid var(--red); }
+  /* Contador de tiempo en vivo — desglose hero (días · h : m : s) */
+  .live { margin-top: var(--space-6); text-align: center; }
+  .live-kicker { font-family: var(--font-mono); font-size: 10px; letter-spacing: .2em; text-transform: uppercase; color: var(--blue); font-weight: 700; }
+  .live-grid { display: flex; align-items: stretch; justify-content: center; gap: 8px; margin-top: 10px; }
+  .live-grid .clockgrp { display: flex; align-items: center; gap: 8px; }
+  .live-grid .clockgrp i { font-family: var(--font-mono); font-weight: 700; font-size: 26px; line-height: 1; color: var(--color-neutral-600); font-style: normal; }
+  .live-grid .lseg {
+    display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 50px; padding: 0 4px;
+  }
+  .live-grid .lseg b { font-family: var(--font-mono); font-weight: 700; font-size: 30px; line-height: 1; color: var(--ink); font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1; }
+  .live-grid .lseg.big { padding-inline: 6px; }
+  .live-grid .lseg.big b { font-family: var(--font-display); font-weight: 800; font-size: 40px; letter-spacing: -.02em; }
+  .live-grid .lseg span { font-family: var(--font-mono); font-size: 9px; letter-spacing: .14em; text-transform: uppercase; color: var(--dim); margin-top: 6px; }
+  .live-grid .lseg b.pulse { display: inline-block; animation: pc-livepulse .45s cubic-bezier(.34,1.56,.64,1); }
+  @keyframes pc-livepulse { 0% { transform: scale(1); } 35% { transform: scale(1.16); color: var(--blue); } 100% { transform: scale(1); } }
+  @media (prefers-reduced-motion: reduce) { .live-grid .lseg b.pulse { animation: none; } }
+
+  .phrase { margin-top: var(--space-6); }
   .phrase .kicker { font-family: var(--font-body); font-weight: 700; font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--blue); }
   .phrase p { margin: 8px 0 0; font-family: var(--font-display); font-weight: 700; font-size: 19px; line-height: 1.25; color: var(--ink); text-wrap: pretty; }
 
-  .stats3 { display: grid; grid-template-columns: repeat(3, 1fr); margin-top: var(--space-6); border: var(--border-w) solid var(--ink); }
+  .stats3 { display: grid; grid-template-columns: repeat(3, 1fr); margin-top: var(--space-6); border: var(--border-w) solid var(--ink); border-radius: var(--radius-md); overflow: hidden; }
   .stat3 { background: transparent !important; border: 0 !important; border-right: var(--border-w) solid var(--ink) !important;
     border-radius: 0; padding: 12px; gap: 4px; }
   .stat3:last-child { border-right: 0 !important; }
@@ -96,7 +124,7 @@ export const styles = css`
   .stat3 .lbl { font-family: var(--font-body); font-size: 8.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--dim); font-weight: 600; }
 
   .edit-row { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3);
-    margin-top: var(--space-4); padding: 10px var(--space-4); border: var(--border-w) solid var(--ink); }
+    margin-top: var(--space-4); padding: 10px var(--space-4); border: var(--border-w) solid var(--ink); border-radius: var(--radius-sm); }
   .edit-row label { font-family: var(--font-body); font-weight: 600; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--dim); }
   .edit-row .input { width: auto; max-width: 170px; min-height: 38px; }
 
@@ -104,20 +132,18 @@ export const styles = css`
   .section-head h6 { margin: 0; color: var(--ink); }
   .section-head .note { font-family: var(--font-body); font-size: 11px; color: var(--dim); }
 
-  .ladder-title { margin: var(--space-8) 0 var(--space-3); color: var(--color-neutral-500); }
-  .ladder { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
-  .mtile {
-    position: relative; aspect-ratio: 1; border: var(--border-w) solid var(--ink); background: var(--paper);
-    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
-  }
-  .mtile .mnum { font-family: var(--font-display); font-weight: 800; font-size: 21px; line-height: 1;
-    letter-spacing: -.02em; color: var(--dim); font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1, "zero" 1; }
-  .mtile .munit { font-family: var(--font-body); font-weight: 600; font-size: 8px; letter-spacing: .12em; text-transform: uppercase; color: var(--dim); }
-  .mtile .chk { position: absolute; top: 4px; right: 6px; font-size: 10px; font-weight: 800; }
-  .mtile.done .mnum { color: inherit; }
-  .mtile.done .munit { color: inherit; opacity: .8; }
-  .mtile.next { box-shadow: inset 0 0 0 3px var(--blue); }
-  .mtile.next .mnum, .mtile.next .munit { color: var(--blue); }
+  /* Hitos como medallas + barra de progreso */
+  .ladder-head { display: flex; align-items: baseline; justify-content: space-between; margin: var(--space-8) 0 var(--space-2); }
+  .ladder-title { margin: 0; color: var(--color-neutral-500); }
+  .lad-count { font-family: var(--font-mono); font-weight: 700; font-size: 12px; color: var(--dim); }
+  .lad-bar { height: 8px; border: var(--border-w) solid var(--ink); border-radius: 999px; overflow: hidden; background: var(--paper); }
+  .lad-bar span { display: block; height: 100%; background: var(--blue); border-radius: 999px; transition: width .5s cubic-bezier(.16,1,.3,1); }
+  .medals { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px 8px; margin-top: var(--space-4); }
+  .medal { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .medal-cv { width: 100%; max-width: 78px; aspect-ratio: 1; display: block; }
+  .medal-lb { font-family: var(--font-body); font-weight: 700; font-size: 9.5px; letter-spacing: .03em; text-transform: uppercase; color: var(--dim); text-align: center; }
+  .medal.done .medal-lb { color: var(--ink); }
+  .medal.next .medal-lb { color: var(--blue); }
 
   .note-block { margin-top: var(--space-8); }
 

@@ -11,25 +11,25 @@
  * construyen (deporte, lectura, agua…).
  */
 export const COUNTER_ICONS = {
-  ban: 'M5.6 5.6 18.4 18.4M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18z',
-  cig: 'M3 14h13v3H3zM12.5 14v3M20 8.5c-1.6 1-1.6 2.6 0 3.6M17 14v3',
-  bottle: 'M10 3h4v3.5l1.2 2.3V20a1 1 0 0 1-1 1h-4.4a1 1 0 0 1-1-1V8.8L10 6.5zM8.8 13h6.4',
-  wine: 'M8 3h8l-1 5.5a3 3 0 0 1-6 0zM12 14v5M9 20.5h6',
-  cup: 'M5 8h11v4.5a5.5 5.5 0 0 1-5.5 5.5h0A5.5 5.5 0 0 1 5 12.5zM16 9h1.6a2 2 0 0 1 0 4H16M8 3v2.2M11.5 3v2.2',
-  pill: 'M5.5 12a4.2 4.2 0 0 1 4.2-4.2h4.6a4.2 4.2 0 0 1 0 8.4H9.7A4.2 4.2 0 0 1 5.5 12zM12 7.8v8.4',
-  dice: 'M4 4h16v16H4zM8.5 8.5h.02M15.5 8.5h.02M12 12h.02M8.5 15.5h.02M15.5 15.5h.02',
-  burger: 'M4 9c0-3 3.5-5 8-5s8 2 8 5zM4 9h16M4 13h16a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4z',
-  sugar: 'M6 8h9v9H6zM6 8l3-3h9v9l-3 3M15 8l3-3',
-  phone: 'M8.5 3h7a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1h-7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1zM10.5 18h3',
-  tv: 'M4 7h16v10H4zM9 20.5h6M12 17v3.5M14 3l-2 3-2-3',
-  money: 'M3 6h18v12H3zM12 9a3 3 0 0 0 0 6 3 3 0 0 0 0-6M6.5 9v.02M17.5 15v.02',
-  bolt: 'M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12z',
-  drop: 'M12 3.2c3.4 3.6 5.6 6.3 5.6 9.1A5.6 5.6 0 0 1 12 18a5.6 5.6 0 0 1-5.6-5.7c0-2.8 2.2-5.5 5.6-9.1z',
+  ban: 'M12 3.5a8.5 8.5 0 1 0 0 17 8.5 8.5 0 0 0 0-17zM6.4 6.4 17.6 17.6',
+  cig: 'M4 15h11.5a1 1 0 0 1 1 1v1a1 1 0 0 1-1 1H4zM13 15v3M19.8 8.2c-1.3 1-1.3 2.4 0 3.4M17 8.2c-1.3 1-1.3 2.4 0 3.4',
+  bottle: 'M10.2 3.5h3.6v3l1.1 2.2v10.3a1.5 1.5 0 0 1-1.5 1.5h-2.8a1.5 1.5 0 0 1-1.5-1.5V8.7l1.1-2.2zM9.4 13h5.2',
+  wine: 'M8.2 4h7.6l-1 5.4a2.8 2.8 0 0 1-5.6 0zM12 14.5v5M9 20.5h6',
+  cup: 'M5 8.5h10.5v4.2A5.2 5.2 0 0 1 5 12.7zM15.5 9.5h1.6a2 2 0 0 1 0 4h-1.6M8 4.2v2M11.5 4.2v2',
+  pill: 'M6 12a4 4 0 0 1 4-4h4a4 4 0 0 1 0 8h-4a4 4 0 0 1-4-4zM12 8.2v7.6',
+  dice: 'M6 4.5h12a1.5 1.5 0 0 1 1.5 1.5v12a1.5 1.5 0 0 1-1.5 1.5H6A1.5 1.5 0 0 1 4.5 18V6A1.5 1.5 0 0 1 6 4.5zM9 9h.01M15 9h.01M12 12h.01M9 15h.01M15 15h.01',
+  burger: 'M4.5 9.5a7.5 5 0 0 1 15 0zM4.5 9.5h15M12 13.2h6.5a3.5 3.5 0 0 1-3.5 3.3H9a3.5 3.5 0 0 1-3.5-3.3H9',
+  sugar: 'M6.5 8.5 12 5l5.5 3.5v7L12 19l-5.5-3.5zM12 5v14M6.5 8.5 12 12l5.5-3.5',
+  phone: 'M8.5 3.5h7a1.5 1.5 0 0 1 1.5 1.5v14a1.5 1.5 0 0 1-1.5 1.5h-7A1.5 1.5 0 0 1 7 19V5a1.5 1.5 0 0 1 1.5-1.5zM10.5 17.5h3',
+  tv: 'M5 8h14a1.5 1.5 0 0 1 1.5 1.5v7A1.5 1.5 0 0 1 19 18H5a1.5 1.5 0 0 1-1.5-1.5v-7A1.5 1.5 0 0 1 5 8zM9 21h6M12 4.5 15 8M12 4.5 9 8',
+  money: 'M4 6.5h16a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1zM12 9.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M6.5 9.5h.01M17.5 14.5h.01',
+  bolt: 'M13 3 5.5 13.2H11l-1 7.8 8-11H12z',
+  drop: 'M12 3.6c3.3 3.6 5.4 6.3 5.4 9A5.4 5.4 0 0 1 12 18a5.4 5.4 0 0 1-5.4-5.4c0-2.7 2.1-5.4 5.4-9z',
   moon: 'M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z',
-  heart: 'M12 20s-7-4.4-7-9.2A3.8 3.8 0 0 1 12 8.4 3.8 3.8 0 0 1 19 10.8C19 15.6 12 20 12 20z',
-  book: 'M5 4h9a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3zM17 7h2v13',
-  leaf: 'M20 4C10 4 5 8.5 5 14a5 5 0 0 0 5 5c5.5 0 10-5 10-15zM9 19c1.5-4 3.8-6.6 7-8.5',
-  weight: 'M4 9v6M20 9v6M7 7v10M17 7v10M7 12h10',
+  heart: 'M12 20.2C7.6 16.9 5 14 5 10.9A3.9 3.9 0 0 1 12 8.5 3.9 3.9 0 0 1 19 10.9c0 3.1-2.6 6-7 9.3z',
+  book: 'M6 4.5h7.5a3 3 0 0 1 3 3v12H9a3 3 0 0 1-3-3zM16.5 7.5H18v12',
+  leaf: 'M19.5 4.5C10 4.5 5 8.8 5 14a5 5 0 0 0 5 5c5.2 0 9.5-5 9.5-14.5zM9 19c1.4-3.8 3.6-6.4 7-8.3',
+  weight: 'M4.5 10v4M19.5 10v4M7.5 7.5v9M16.5 7.5v9M7.5 12h9',
 };
 
 /** Iconos de interfaz. */
@@ -48,7 +48,7 @@ export const UI_ICONS = {
  * @returns {string} SVG como cadena HTML.
  */
 export function counterIcon(key, size = 20) {
-  return svg(COUNTER_ICONS[key] || COUNTER_ICONS.bolt, size, 2.1);
+  return svg(COUNTER_ICONS[key] || COUNTER_ICONS.bolt, size, 1.9);
 }
 
 /**
@@ -70,6 +70,6 @@ export function uiIcon(key, size = 17) {
  */
 function svg(d, size, stroke) {
   return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" ` +
-    `stroke-width="${stroke}" stroke-linecap="square" stroke-linejoin="miter" style="display:block">` +
+    `stroke-width="${stroke}" stroke-linecap="round" stroke-linejoin="round" style="display:block">` +
     `<path d="${d}"></path></svg>`;
 }

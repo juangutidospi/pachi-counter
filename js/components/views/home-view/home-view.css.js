@@ -12,7 +12,7 @@ export const styles = css`
     font-family: var(--font-body); font-weight: 600; font-size: 10px; letter-spacing: .18em; text-transform: uppercase;
   }
   .masthead .brand { color: var(--ink); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .masthead .edition { flex: none; white-space: nowrap; color: var(--edition-on, var(--paper)); background: var(--edition, var(--ink)); padding: 3px 8px; letter-spacing: .1em; }
+  .masthead .edition { flex: none; white-space: nowrap; color: var(--edition-on, var(--paper)); background: var(--edition, var(--ink)); padding: 3px 8px; letter-spacing: .1em; border-radius: 5px; }
 
   .topbar { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
   .topbar .date { font-family: var(--font-body); font-size: 10.5px; letter-spacing: .16em; text-transform: uppercase; color: var(--dim); font-weight: 600; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -21,14 +21,14 @@ export const styles = css`
   .gear { flex: none; }
 
   .stats { display: grid; grid-template-columns: repeat(3, 1fr); margin-top: 14px;
-    border: var(--border-w) solid var(--ink); }
+    border: var(--border-w) solid var(--ink); border-radius: var(--radius-md); overflow: hidden; }
   .stat { padding: 10px 10px; min-width: 0; border-right: var(--border-w) solid var(--ink); }
   .stat:last-child { border-right: 0; }
   .stat.hi { background: var(--yellow); }
   .stat .num { font-family: var(--font-display); font-weight: 800; font-size: min(23px, 8cqw); line-height: 1; letter-spacing: -.03em; color: var(--ink); font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1, "zero" 1; }
   .stat .lbl { font-family: var(--font-body); font-size: 8.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--dim); margin-top: 5px; font-weight: 600; }
 
-  .focus { margin-top: 14px; padding-left: 12px; border-left: 5px solid var(--red); }
+  .focus { margin-top: 14px; }
   .focus .kicker { font-family: var(--font-body); font-size: 9.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--blue); font-weight: 700; }
   .focus p { margin: 6px 0 0; font-family: var(--font-display); font-weight: 700; font-size: 15.5px; line-height: 1.25; color: var(--ink); text-wrap: pretty; }
 

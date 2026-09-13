@@ -4,8 +4,9 @@ import { router } from '../../../core/router.js';
 import { t } from '../../../core/i18n.js';
 import { uiIcon } from '../../../core/icons.js';
 import { escapeHtml } from '../../../core/escape-html.js';
-import { buildPosterFile, buildCoverFile, shareOrSave } from '../../../core/share-card.js';
-import { drawCover } from '../../../core/cover-art.js';
+import { buildPosterFile, shareOrSave } from '../../../core/share-card.js';
+import { drawMedal } from '../../../core/medal-art.js';
+import { counterHex } from '../../../core/mural-art.js';
 import { grooveTexture, seedAngle } from '../../../core/groove-seed.js';
 import { spin, spinStop, playChime } from '../../../core/sound.js';
 import { haptic } from '../../../core/haptics.js';
@@ -27,14 +28,15 @@ export class DetailView extends AppElement {
     const vm = this._viewModel(c);
     this.shadowRoot.innerHTML = `
       <div class="detail">
+        ${vm.yearHit ? '<canvas class="confetti" id="confetti" aria-hidden="true"></canvas>' : ''}
         ${this._topTpl(vm)}
         ${this._vinylTpl(vm)}
+        ${vm.manual ? '' : this._liveTpl(vm)}
         ${vm.danger ? this._dangerTpl(vm) : ''}
         ${this._phraseTpl(vm)}
         ${this._statsTpl(vm)}
         ${this._editTpl(vm)}
         ${this._ladderTpl(vm)}
-        ${this._coverTpl(vm)}
         ${this._noteTpl(vm)}
         ${this._actionsTpl}
       </div>`;
@@ -54,21 +56,22 @@ export class DetailView extends AppElement {
 
   /** @param {object} vm Modelo de vista. @returns {string} Disco de vinilo personal (líneas sobre papel). */
   _vinylTpl(vm) {
-    // Surcos generativos (únicos por contador) + surcos de hito en color.
+    // Surcos finos claros sobre el disco negro; los de hito logrado, en color.
     const texture = vm.texture.map((g) =>
-      `<circle cx="130" cy="130" r="${g.r}" fill="none" stroke="var(--color-neutral-700)" stroke-width="1" opacity="${g.opacity}"${g.gap ? ' stroke-dasharray="3 6"' : ''}></circle>`
+      `<circle cx="130" cy="130" r="${g.r}" fill="none" stroke="rgba(214,203,182,.10)" stroke-width="1" opacity="${g.opacity}"${g.gap ? ' stroke-dasharray="3 6"' : ''}></circle>`
     ).join('');
     const grooves = vm.grooves.map((g) =>
-      `<circle cx="130" cy="130" r="${g.r}" fill="none" stroke="${g.reached ? vm.color : 'var(--color-neutral-700)'}" stroke-width="${g.reached ? 4 : 1.5}" opacity="${g.reached ? 1 : 0.5}"></circle>`
+      `<circle cx="130" cy="130" r="${g.r}" fill="none" stroke="${g.reached ? vm.color : 'rgba(214,203,182,.30)'}" stroke-width="${g.reached ? 4 : 1.5}" opacity="${g.reached ? 1 : 0.7}"></circle>`
     ).join('');
     return `
       <div class="vinyl-wrap">
         <div class="vinyl">
+          <div class="vinyl-base" aria-hidden="true"></div>
           <svg class="disc" viewBox="0 0 260 260" aria-hidden="true">
-            <circle cx="130" cy="130" r="120" fill="none" stroke="var(--ink)" stroke-width="2"></circle>
+            <circle cx="130" cy="130" r="120" fill="none" stroke="rgba(255,255,255,.10)" stroke-width="1.5"></circle>
             ${texture}
             ${grooves}
-            <line x1="130" y1="12" x2="130" y2="130" stroke="var(--color-neutral-600)" stroke-width="1.5" opacity="0.45"
+            <line x1="130" y1="12" x2="130" y2="130" stroke="rgba(214,203,182,.28)" stroke-width="1.5" opacity="0.6"
               transform="rotate(${vm.seedAngle} 130 130)"></line>
           </svg>
           <svg class="progress" viewBox="0 0 260 260" aria-hidden="true">
@@ -102,13 +105,19 @@ export class DetailView extends AppElement {
       </div>`;
   }
 
-  /** @param {object} vm Modelo de vista. @returns {string} Sección de carátula generativa. */
-  _coverTpl(vm) {
+  /** @param {object} vm Modelo de vista. @returns {string} Contador de tiempo en vivo (desglose). */
+  _liveTpl(vm) {
     return `
-      <div class="cover-block">
-        <div class="section-head" style="margin-top:0"><h6>${t('detail.coverTitle')}</h6><span class="note">${t('detail.coverNote')}</span></div>
-        <div class="cover-stage"><canvas id="cover"></canvas></div>
-        <button class="btn btn-secondary btn-block cover-share" id="cover-share">${uiIcon('share', 15)} ${t('detail.coverShare')}</button>
+      <div class="live" id="live">
+        <div class="live-kicker">${t('detail.liveLabel')}</div>
+        <div class="live-grid">
+          <div class="lseg big"><b id="lv-d">${vm.days}</b><span>${escapeHtml(t('word.days'))}</span></div>
+          <div class="clockgrp">
+            <div class="lseg"><b id="lv-h">00</b><span>${escapeHtml(t('detail.liveH'))}</span></div><i>:</i>
+            <div class="lseg"><b id="lv-m">00</b><span>${escapeHtml(t('detail.liveM'))}</span></div><i>:</i>
+            <div class="lseg"><b id="lv-s">00</b><span>${escapeHtml(t('detail.liveS'))}</span></div>
+          </div>
+        </div>
       </div>`;
   }
 
@@ -151,17 +160,19 @@ export class DetailView extends AppElement {
       </div>`;
   }
 
-  /** @param {object} vm Modelo de vista. @returns {string} Rejilla compacta de hitos. */
+  /** @param {object} vm Modelo de vista. @returns {string} Hitos como medallas + progreso. */
   _ladderTpl(vm) {
     return `
-      <h6 class="ladder-title">${t('detail.milestonesTitle')}</h6>
-      <div class="ladder">
-        ${vm.ladder.map((m) => `
-          <div class="mtile ${m.done ? 'done' : ''} ${m.isNext ? 'next' : ''}"
-            style="${m.done ? `background:${vm.color};color:${vm.on}` : ''}" title="${escapeHtml(m.title)}">
-            ${m.done ? '<span class="chk" aria-hidden="true">✓</span>' : ''}
-            <span class="mnum">${m.m}</span>
-            <span class="munit">${escapeHtml(m.unit)}</span>
+      <div class="ladder-head">
+        <h6 class="ladder-title">${t('detail.milestonesTitle')}</h6>
+        <span class="lad-count">${vm.reached}/${vm.total}</span>
+      </div>
+      <div class="lad-bar"><span style="width:${vm.reachedPct}%"></span></div>
+      <div class="medals">
+        ${vm.ladder.map((m, i) => `
+          <div class="medal ${m.done ? 'done' : ''} ${m.isNext ? 'next' : ''}" title="${escapeHtml(m.title)}">
+            <canvas class="medal-cv" data-i="${i}" data-day="${m.m}" data-done="${m.done ? 1 : 0}" data-next="${m.isNext ? 1 : 0}" data-last="${i === vm.ladder.length - 1 ? 1 : 0}"></canvas>
+            <span class="medal-lb">${m.m} ${escapeHtml(m.unit)}</span>
           </div>`).join('')}
       </div>`;
   }
@@ -211,29 +222,92 @@ export class DetailView extends AppElement {
     this._animateOdometer();
     this._initSpinner();
     this._initLive();
-    this._initCover();
+    this._startLiveClock();
+    this._drawMedals();
+    this._initConfetti();
     // Pre-genera el cartel para compartir sin perder el gesto en iOS.
     this._shareFile = null;
     buildPosterFile(this._c).then((file) => { this._shareFile = file; });
   }
 
-  /** Dibuja la carátula generativa y pre-genera su imagen para compartir. */
-  _initCover() {
-    const canvas = this.$('#cover');
-    if (!canvas) return;
+  /** Confeti de celebración de fondo cuando la racha cumple el año (365 días). */
+  _initConfetti() {
+    const cv = this.$('#confetti');
+    if (!cv) return;
+    const reduce = typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches;
     const dpr = window.devicePixelRatio || 1;
-    const w = canvas.clientWidth || 300;
-    canvas.style.height = w + 'px';
-    canvas.width = Math.round(w * dpr); canvas.height = Math.round(w * dpr);
-    const ctx = canvas.getContext('2d');
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    drawCover(ctx, w, w, this._c, 0);
-    this._coverFile = null;
-    buildCoverFile(this._c).then((f) => { this._coverFile = f; });
-    this.on(this.$('#cover-share'), 'click', () => {
-      const done = (r) => { if (r === 'saved') router.flash(t('toast.imgSaved')); else if (r === 'error') router.flash(t('toast.imgFail')); };
-      if (this._coverFile) shareOrSave(this._coverFile, this._c.name).then(done);
-      else buildCoverFile(this._c).then((f) => shareOrSave(f, this._c.name).then(done));
+    const detail = this.$('.detail');
+    const fit = () => {
+      const w = (detail && detail.clientWidth) || cv.clientWidth || 360;
+      const h = (detail && detail.scrollHeight) || cv.clientHeight || 700;
+      cv.style.height = h + 'px';
+      cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
+      const c = cv.getContext('2d'); c.setTransform(dpr, 0, 0, dpr, 0, 0);
+      return { ctx: c, w, h };
+    };
+    let { ctx, w, h } = fit();
+    const cols = ['#e5342a', '#2340d8', '#f4c020', '#1f9d57', '#d9a520', '#6a3de8', '#0c9aa2', '#e8543a', '#f7f2e6'];
+    const rnd = (a, b) => a + Math.random() * (b - a);
+    const N = Math.max(90, Math.min(200, Math.round(w * h / 5200)));
+    const make = (top) => {
+      const z = rnd(0.5, 1.25); // profundidad → tamaño/velocidad/opacidad (parallax)
+      return {
+        x: rnd(0, w), y: top ? rnd(-h * 0.6, -6) : rnd(0, h), z,
+        s: rnd(7, 15) * z, vy: rnd(28, 70) * z, drift: rnd(-10, 10),
+        rot: rnd(0, 6.28), vr: rnd(-3.4, 3.4), flip: rnd(0, 6.28), vf: rnd(2, 6),
+        col: cols[(Math.random() * cols.length) | 0], kind: (Math.random() * 5) | 0,
+        sway: rnd(6, 20), amp: rnd(6, 22), ph: rnd(0, 6.28),
+      };
+    };
+    const P = Array.from({ length: N }, () => make(false));
+    const piece = (p, ts) => {
+      ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rot);
+      ctx.scale(1, Math.cos(p.flip)); // giro 3D (destella al voltear)
+      ctx.globalAlpha = 0.55 + 0.4 * (p.z - 0.5); ctx.fillStyle = p.col;
+      const s = p.s;
+      if (p.kind === 0) ctx.fillRect(-s / 2, -s / 2, s, s);
+      else if (p.kind === 1) { ctx.beginPath(); ctx.arc(0, 0, s / 2, 0, 6.2832); ctx.fill(); }
+      else if (p.kind === 2) { ctx.beginPath(); ctx.moveTo(-s / 2, s / 2); ctx.lineTo(0, -s / 2); ctx.lineTo(s / 2, s / 2); ctx.closePath(); ctx.fill(); }
+      else if (p.kind === 3) ctx.fillRect(-s * 0.22, -s, s * 0.44, s * 2); // serpentina
+      else { ctx.beginPath(); ctx.arc(0, 0, s / 2, 0, 6.2832); ctx.fill(); ctx.globalCompositeOperation = 'destination-out'; ctx.beginPath(); ctx.arc(0, 0, s / 4, 0, 6.2832); ctx.fill(); } // aro
+      ctx.restore();
+    };
+    if (reduce) { ctx.clearRect(0, 0, w, h); P.forEach((p) => piece(p, 0)); return; }
+    let last = 0;
+    const loop = (ts) => {
+      const dt = last ? Math.min(0.05, (ts - last) / 1000) : 0.016; last = ts;
+      ctx.clearRect(0, 0, w, h);
+      for (const p of P) {
+        p.y += p.vy * dt; p.rot += p.vr * dt; p.flip += p.vf * dt;
+        p.x += (p.drift + Math.sin(ts / 1000 * (p.sway / 6) + p.ph) * p.amp) * dt;
+        if (p.y - p.s > h) { Object.assign(p, make(true)); }
+        else if (p.x < -20) p.x = w + 20; else if (p.x > w + 20) p.x = -20;
+        piece(p, ts);
+      }
+      this._confettiRaf = requestAnimationFrame(loop);
+    };
+    this._confettiRaf = requestAnimationFrame(loop);
+    // Reajusta al alto real del detalle (ya maquetado) y reparte por todo el fondo.
+    requestAnimationFrame(() => {
+      const d = fit(); ctx = d.ctx; w = d.w; h = d.h;
+      const want = Math.max(90, Math.min(220, Math.round(w * h / 5200)));
+      while (P.length < want) P.push(make(false));
+      for (const p of P) { p.x = rnd(0, w); p.y = rnd(0, h); }
+    });
+    this._onConfettiResize = () => { const d = fit(); ctx = d.ctx; w = d.w; h = d.h; };
+    window.addEventListener('resize', this._onConfettiResize);
+  }
+
+  /** Dibuja las medallas de hito (logradas en color, pendientes en gris). */
+  _drawMedals() {
+    if (!this._c) return;
+    const { fill, on } = counterHex(this._c.color);
+    const dpr = window.devicePixelRatio || 1;
+    this.$$('.medal-cv').forEach((cv) => {
+      const w = cv.clientWidth || 72;
+      cv.width = Math.round(w * dpr); cv.height = Math.round(w * dpr);
+      const ctx = cv.getContext('2d'); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      drawMedal(ctx, w, w, { day: +cv.dataset.day, reached: cv.dataset.done === '1', next: cv.dataset.next === '1', last: cv.dataset.last === '1', fill, on });
     });
   }
 
@@ -268,6 +342,32 @@ export class DetailView extends AppElement {
       this._playTimers.push(setTimeout(step, 1100));
     };
     step();
+  }
+
+  /**
+   * Contador de tiempo en vivo (días + HH:MM:SS) desde el inicio de la racha,
+   * refrescado cada segundo. Solo para contadores automáticos (por fecha).
+   */
+  _startLiveClock() {
+    if (!this._c || this._c.mode === 'manual') return;
+    const start = new Date(this._c.start + 'T00:00:00').getTime();
+    if (isNaN(start)) return;
+    const pad = (n) => String(n).padStart(2, '0');
+    const reduce = typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const set = (id, v) => { const el = this.$(id); if (el) el.textContent = v; };
+    const tick = () => {
+      const s = this.$('#lv-s');
+      if (!s) { if (this._liveTimer) { clearInterval(this._liveTimer); this._liveTimer = null; } return; }
+      let ms = Date.now() - start; if (ms < 0) ms = 0;
+      const rem = ms % 86400000;
+      set('#lv-d', String(Math.floor(ms / 86400000)));
+      set('#lv-h', pad(Math.floor(rem / 3600000)));
+      set('#lv-m', pad(Math.floor((rem % 3600000) / 60000)));
+      s.textContent = pad(Math.floor((rem % 60000) / 1000));
+      if (!reduce) { s.classList.remove('pulse'); void s.offsetWidth; s.classList.add('pulse'); }
+    };
+    tick();
+    this._liveTimer = setInterval(tick, 1000);
   }
 
   /** Física del vinilo: giro lento en reposo + arrastre con inercia (flick). */
@@ -367,6 +467,9 @@ export class DetailView extends AppElement {
     if (this._rafSpin) cancelAnimationFrame(this._rafSpin);
     if (this._onOrient) window.removeEventListener('deviceorientation', this._onOrient);
     if (this._playTimers) this._playTimers.forEach(clearTimeout);
+    if (this._liveTimer) clearInterval(this._liveTimer);
+    if (this._confettiRaf) cancelAnimationFrame(this._confettiRaf);
+    if (this._onConfettiResize) window.removeEventListener('resize', this._onConfettiResize);
     spinStop();
   }
 
@@ -462,6 +565,7 @@ export class DetailView extends AppElement {
       why: c.note || '',
       grooves,
       danger: store.relapseHistory(c).dangerToday,
+      yearHit: days >= 365,
       manual: c.mode === 'manual',
       startIso: c.start,
       todayIso: isoFromDayIndex(store.today()),
@@ -469,6 +573,9 @@ export class DetailView extends AppElement {
       seedAngle: seedAngle(c.id || c.name),
       progressPct: (pct * 100).toFixed(1),
       labelSize: digits <= 2 ? '40px' : digits === 3 ? '30px' : '23px',
+      reached: ladder.filter((m) => m <= days).length,
+      total: ladder.length,
+      reachedPct: (ladder.length ? (ladder.filter((m) => m <= days).length / ladder.length) * 100 : 0).toFixed(1),
       ladder: ladder.map((m) => {
         const done = m <= days;
         return {

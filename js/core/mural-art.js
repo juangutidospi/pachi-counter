@@ -14,7 +14,10 @@ import { seedFrom, rng } from './groove-seed.js';
 /** Tokens de color resueltos a hex (el canvas no entiende var(--…)). */
 const TOKHEX = {
   blue: '#2340d8', red: '#e5342a', yellow: '#f4c020', green: '#1f9d57', teal: '#0c9aa2',
-  violet: '#6a3de8', magenta: '#d62f86', orange: '#ef6c14', ink: '#111010', paper: '#efe9dc',
+  violet: '#6a3de8', magenta: '#d62f86', orange: '#ef6c14',
+  coral: '#e8543a', rose: '#d94f86', plum: '#7c2150', terra: '#b0531f',
+  lime: '#8fae1a', cyan: '#12a5c4', indigo: '#3730a3', slate: '#445f7a',
+  ink: '#111010', paper: '#efe9dc',
 };
 const HEX = { paper: '#efe9dc', paper2: '#e7e0cf', ink: '#111010', dim: '#6b6459', hair: 'rgba(17,16,16,.07)', groove: '#c3baa4' };
 
@@ -41,6 +44,23 @@ export function counterHex(colorKey) {
 
 /** Paleta hex compartida (tokens Bauhaus). */
 export const ARTHEX = HEX;
+
+/**
+ * Grano de tinta determinista (textura risograph que rompe el plano).
+ * @param {CanvasRenderingContext2D} ctx Contexto.
+ * @param {number} W Ancho. @param {number} H Alto.
+ * @param {number} n Número de puntos. @param {number} a Opacidad.
+ */
+function grain(ctx, W, H, n, a) {
+  ctx.save();
+  ctx.globalAlpha = a; ctx.fillStyle = HEX.ink;
+  for (let i = 0; i < n; i++) {
+    const gx = (((Math.sin(i * 12.9898) * 43758.5453) % 1) + 1) % 1 * W;
+    const gy = (((Math.sin(i * 78.233) * 12543.7891) % 1) + 1) % 1 * H;
+    ctx.fillRect(gx, gy, 1, 1);
+  }
+  ctx.restore();
+}
 
 /**
  * Recopila los datos de dibujo del mural desde el store.
@@ -94,6 +114,7 @@ export function drawMural(ctx, W, H, t, data) {
     const ch = areaH / rows;
     const base = Math.min(cw, ch) * 0.44;
 
+    ctx.globalCompositeOperation = 'multiply'; // overprint entre figuras
     items.forEach((it, idx) => {
       const col = idx % cols;
       const row = Math.floor(idx / cols);
@@ -113,7 +134,11 @@ export function drawMural(ctx, W, H, t, data) {
         if (rr > size * 0.14) { ctx.beginPath(); ctx.arc(cx, cy, rr, 0, Math.PI * 2); ctx.stroke(); }
       }
     });
+    ctx.globalCompositeOperation = 'source-over';
   }
+
+  // grano risograph sobre la composición
+  grain(ctx, W, areaH, Math.round(W * areaH / 34), 0.05);
 
   // recaídas prensadas: pequeñas marcas de tinta repartidas
   if (data.relapses > 0) {
