@@ -236,11 +236,14 @@ export class DetailView extends AppElement {
     if (!cv) return;
     const reduce = typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches;
     const dpr = window.devicePixelRatio || 1;
+    const detail = this.$('.detail');
     const fit = () => {
-      const w = cv.clientWidth || 360, h = cv.clientHeight || 700;
+      const w = (detail && detail.clientWidth) || cv.clientWidth || 360;
+      const h = (detail && detail.scrollHeight) || cv.clientHeight || 700;
+      cv.style.height = h + 'px';
       cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
-      const ctx = cv.getContext('2d'); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      return { ctx, w, h };
+      const c = cv.getContext('2d'); c.setTransform(dpr, 0, 0, dpr, 0, 0);
+      return { ctx: c, w, h };
     };
     let { ctx, w, h } = fit();
     const cols = ['#e5342a', '#2340d8', '#f4c020', '#1f9d57', '#d9a520', '#6a3de8', '#0c9aa2', '#e8543a', '#f7f2e6'];
@@ -249,7 +252,7 @@ export class DetailView extends AppElement {
     const make = (top) => {
       const z = rnd(0.5, 1.25); // profundidad → tamaño/velocidad/opacidad (parallax)
       return {
-        x: rnd(0, w), y: top ? rnd(-h * 0.6, -6) : rnd(-h, h), z,
+        x: rnd(0, w), y: top ? rnd(-h * 0.6, -6) : rnd(0, h), z,
         s: rnd(7, 15) * z, vy: rnd(28, 70) * z, drift: rnd(-10, 10),
         rot: rnd(0, 6.28), vr: rnd(-3.4, 3.4), flip: rnd(0, 6.28), vf: rnd(2, 6),
         col: cols[(Math.random() * cols.length) | 0], kind: (Math.random() * 5) | 0,
@@ -284,6 +287,13 @@ export class DetailView extends AppElement {
       this._confettiRaf = requestAnimationFrame(loop);
     };
     this._confettiRaf = requestAnimationFrame(loop);
+    // Reajusta al alto real del detalle (ya maquetado) y reparte por todo el fondo.
+    requestAnimationFrame(() => {
+      const d = fit(); ctx = d.ctx; w = d.w; h = d.h;
+      const want = Math.max(90, Math.min(220, Math.round(w * h / 5200)));
+      while (P.length < want) P.push(make(false));
+      for (const p of P) { p.x = rnd(0, w); p.y = rnd(0, h); }
+    });
     this._onConfettiResize = () => { const d = fit(); ctx = d.ctx; w = d.w; h = d.h; };
     window.addEventListener('resize', this._onConfettiResize);
   }
