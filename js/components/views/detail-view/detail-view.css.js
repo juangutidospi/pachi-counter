@@ -3,7 +3,9 @@ import { css } from '../../../core/css.js';
 /** Estilos de la vista de detalle — Bauhaus. */
 export const styles = css`
   :host { display: block; }
-  .detail { padding: 44px 22px 108px; animation: pc-fade .3s ease both; container-type: inline-size; }
+  .detail { padding: 44px 22px 108px; animation: pc-fade .3s ease both; container-type: inline-size; position: relative; isolation: isolate; }
+  /* confeti de celebración de fondo (racha de un año) */
+  .confetti { position: absolute; inset: 0; z-index: -1; pointer-events: none; }
 
   .top { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); flex-wrap: wrap; }
   .top .back { gap: 4px; margin-left: -4px; }

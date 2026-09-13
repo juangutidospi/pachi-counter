@@ -28,6 +28,7 @@ export class DetailView extends AppElement {
     const vm = this._viewModel(c);
     this.shadowRoot.innerHTML = `
       <div class="detail">
+        ${vm.yearHit ? '<canvas class="confetti" id="confetti" aria-hidden="true"></canvas>' : ''}
         ${this._topTpl(vm)}
         ${this._vinylTpl(vm)}
         ${vm.manual ? '' : this._liveTpl(vm)}
@@ -223,9 +224,54 @@ export class DetailView extends AppElement {
     this._initLive();
     this._startLiveClock();
     this._drawMedals();
+    this._initConfetti();
     // Pre-genera el cartel para compartir sin perder el gesto en iOS.
     this._shareFile = null;
     buildPosterFile(this._c).then((file) => { this._shareFile = file; });
+  }
+
+  /** Confeti de celebración de fondo cuando la racha cumple el año (365 días). */
+  _initConfetti() {
+    const cv = this.$('#confetti');
+    if (!cv) return;
+    const reduce = typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const dpr = window.devicePixelRatio || 1;
+    const fit = () => {
+      const w = cv.clientWidth || 360, h = cv.clientHeight || 700;
+      cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
+      const ctx = cv.getContext('2d'); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      return { ctx, w, h };
+    };
+    let { ctx, w, h } = fit();
+    const cols = ['#e5342a', '#2340d8', '#f4c020', '#1f9d57', '#d9a520', '#6a3de8'];
+    const rnd = (a, b) => a + Math.random() * (b - a);
+    const N = Math.max(28, Math.min(70, Math.round(h / 18)));
+    const P = Array.from({ length: N }, () => ({
+      x: rnd(0, w), y: rnd(-h, h), s: rnd(6, 12), vy: rnd(18, 46), rot: rnd(0, 6.28), vr: rnd(-2, 2),
+      col: cols[(Math.random() * cols.length) | 0], kind: (Math.random() * 3) | 0, sway: rnd(0.5, 1.6), ph: rnd(0, 6.28),
+    }));
+    const piece = (p) => {
+      ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rot); ctx.fillStyle = p.col; ctx.globalAlpha = 0.85;
+      if (p.kind === 0) ctx.fillRect(-p.s / 2, -p.s / 2, p.s, p.s);
+      else if (p.kind === 1) { ctx.beginPath(); ctx.arc(0, 0, p.s / 2, 0, 6.2832); ctx.fill(); }
+      else { ctx.beginPath(); ctx.moveTo(-p.s / 2, p.s / 2); ctx.lineTo(0, -p.s / 2); ctx.lineTo(p.s / 2, p.s / 2); ctx.closePath(); ctx.fill(); }
+      ctx.restore();
+    };
+    if (reduce) { ctx.clearRect(0, 0, w, h); P.forEach(piece); return; }
+    let last = 0;
+    const loop = (ts) => {
+      const dt = last ? Math.min(0.05, (ts - last) / 1000) : 0.016; last = ts;
+      ctx.clearRect(0, 0, w, h);
+      for (const p of P) {
+        p.y += p.vy * dt; p.rot += p.vr * dt; p.x += Math.sin(ts / 1000 * p.sway + p.ph) * 0.4;
+        if (p.y - p.s > h) { p.y = -p.s; p.x = rnd(0, w); }
+        piece(p);
+      }
+      this._confettiRaf = requestAnimationFrame(loop);
+    };
+    this._confettiRaf = requestAnimationFrame(loop);
+    this._onConfettiResize = () => { const d = fit(); ctx = d.ctx; w = d.w; h = d.h; };
+    window.addEventListener('resize', this._onConfettiResize);
   }
 
   /** Dibuja las medallas de hito (logradas en color, pendientes en gris). */
@@ -398,6 +444,8 @@ export class DetailView extends AppElement {
     if (this._onOrient) window.removeEventListener('deviceorientation', this._onOrient);
     if (this._playTimers) this._playTimers.forEach(clearTimeout);
     if (this._liveTimer) clearInterval(this._liveTimer);
+    if (this._confettiRaf) cancelAnimationFrame(this._confettiRaf);
+    if (this._onConfettiResize) window.removeEventListener('resize', this._onConfettiResize);
     spinStop();
   }
 
@@ -493,6 +541,7 @@ export class DetailView extends AppElement {
       why: c.note || '',
       grooves,
       danger: store.relapseHistory(c).dangerToday,
+      yearHit: days >= 365,
       manual: c.mode === 'manual',
       startIso: c.start,
       todayIso: isoFromDayIndex(store.today()),
